@@ -16,7 +16,7 @@
 \makeatother
 
 
-%\usepackage[chapter]{algorithm}
+\usepackage[chapter]{algorithm}
 \RequirePackage{verbatim}
 %\RequirePackage[Glenn]{fncychap}
 \usepackage{fancyhdr}
@@ -174,12 +174,12 @@ pdfproducer = {pdflatex}
 \begin{document}
 \input{portada/portada_2}
 \input{prefacios/prefacio}
-%\frontmatter
-%\tableofcontents
+\frontmatter
+\tableofcontents
 %\listoffigures
 %\listoftables
 %
-%\mainmatter
+\mainmatter
 \setlength{\parskip}{5pt}
 
 \input{capitulos/01_Introduccion}
@@ -201,9 +201,11 @@ pdfproducer = {pdflatex}
 %%\chapter{Conclusiones y Trabajos Futuros}
 %
 %
+
 %%\nocite{*}
-%\bibliography{bibliografia/bibliografia}\addcontentsline{toc}{chapter}{Bibliografía}
-%\bibliographystyle{miunsrturl}
+
+\bibliographystyle{plain}
+\bibliography{bibliografia/library.bib}\addcontentsline{toc}{chapter}{Bibliografía}
 %
 %\appendix
 %\input{apendices/manual_usuario/manual_usuario}
@@ -211,7 +213,7 @@ pdfproducer = {pdflatex}
 %\input{glosario/entradas_glosario}
 % \addcontentsline{toc}{chapter}{Glosario}
 % \printglossary
-\chapter*{}
-\thispagestyle{empty}
+%\chapter*{}
+%\thispagestyle{empty}
 
 \end{document}
