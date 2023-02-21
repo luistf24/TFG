@@ -4,7 +4,9 @@
 En este capítulo se introducirá la teoría sobre criptografía y curvas elípticas necesaria para entender la base detrás de los criptosistemas de las aplicaciones de mensajería.
 Mayormente la información ha sido obtenida de \cite{GomezPardo2002b}
 
-\section{Cifrado y secreto}
+\section{Introducción a la criptografía}
+
+\subsection{Cifrado y secreto}
 
 \begin{itemize}
 	\item $\mathcal{M}$ el conjunto de los mensajes, textos en claro o \emph{plaintexts},
@@ -12,7 +14,7 @@ Mayormente la información ha sido obtenida de \cite{GomezPardo2002b}
 	\item $\mathcal{K} \subseteq \mathcal{K}_p\times\mathcal{K}_s$ el espacio de clave o \emph{key space}
 \end{itemize}
 Un criptosistema viene definido por dos aplicaciones
-$$\mathcal{E}:\mathcal{K}_p\times\mathcal{M}\rightarrow\mathcal{C}$$
+$$E:\mathcal{K}_p\times\mathcal{M}\rightarrow\mathcal{C}$$
 $$\mathcal{D}:\mathcal{K}_s\times\mathcal{C}\rightarrow\mathcal{M}$$
 tales que para cualquier clave $k_p \in \mathcal{K}_p$, existe una clave $k_s$ de manera que dato cualquier mensaje $m \in \mathcal{M}$,
 $$
@@ -27,10 +29,20 @@ $$
 $$
 En la criptografía clásica, también llamada simétrica, se tiene que $\mathcal{K}_p=\mathcal{K}_s$ y $k_s = k_p = k \in \mathcal{K}$, o al menos hay métodos eficientes para conocer $k_s$ a partir de $k_p$ y viceversa. En la criptografía asimétrica, no se conocen métodos eficientes para conocer $k_s$ a partir de $k_p$.
 
-\section{Objetivos de la criptografía}
+\subsection{Objetivos de la criptografía}
 \begin{itemize}
 		\item \textbf{Confidencialidad:} La información solo puede ser accesible por las entidades autorizadas. 
 		\item \textbf{Integridad:} La información no ha sido alterada en el envío.
 		\item \textbf{Autenticidad:} La información proviene de quién afirma haberla enviado
 		\item \textbf{No repudio:} El emisario de una información no puede a posteriori negar que se realizado tal envío.
+\end{itemize}
+
+\subsection{Ataques}
+Se sigue el principio de Kerckhoffs el cual establece que el adversario conoce todos los detalles del criptosistema excepto la clave empleada. Los posibles ataques son:
+\begin{itemize}
+		\item \textbf{Criptograma} El adversario conoce el criptograma.
+		\item \textbf{Mensaje Conocido} El atacante conoce parejas mensaje/criptograma cifradas con una misma clave
+		\item \textbf{Mensaje escogido} El atacante puede generar criptogramas para mensajes de su elección. Una vez obtenidas dichas parejas, trata de averiguar el mensaje correspondiente a un criptograma desconocido.
+		\item \textbf{Mensaje escogido-adaptativo} El atacante no solo puede generar pareas mensaje/criptograma a su elección, sino que puede hacerlo tantas veces como quiera realizando los análisis que considere oportunos
+		\item \textbf{Criptograma escogido y escogido-adaptativo} Similar a los anteriores pero partiendo del criptograma, teniendo acceso a descifrar los criptogramas que desee, inicialmente o a lo largo del proceso. Lo que se busca en este ataque es la clave.
 \end{itemize}
