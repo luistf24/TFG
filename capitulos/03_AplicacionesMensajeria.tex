@@ -1,0 +1,23 @@
+\chapter{Aplicaciones de Mensajería}
+
+Me voy a centrar en Telegram, Whatsapp y Facebook Chat, Signal y la de apple.
+
+\section{Telegram (MTProto)}
+
+Referencias: \cite{Miculan2021}
+Telegram utiliza MTProto 2.0. \\
+Añadir Historia de MTProto. \\ 
+
+MTProto 2.0 es una suite de protocolos criptográficos diseñados para implementar de manera rápida, escalable y segura intercambio de mensajes sin depositar esa responsabilidad en el la seguridad debajo de dicho protocolo.
+
+\subsection{Modelo de seguridad}
+Los protocolos de Telegram se modelan en ProVerif \cite{ProVer}, que es un verificador criptográfico simbólico. \\
+MTProto 2.0 sigue la siguiente regla de reducción
+
+\lstinputlisting[
+    caption=Regla Reducción 1,
+    label={lst:listing-cpp},
+    language=C++,
+    style=CodigoC,
+    ]{./ejemplos/ejemplo1.cpp}
+	
