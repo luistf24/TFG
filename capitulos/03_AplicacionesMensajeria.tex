@@ -8,7 +8,7 @@ Referencias: \cite{Miculan2021} \cite{WebProto}
 
 \subsection{Descripción general}
 MTProto 2.0 es una suite de protocolos criptográficos diseñados para implementar de manera rápida, escalable y segura intercambio de mensajes sin depositar esa responsabilidad en la seguridad del transporte debajo de dicho protocolo.
-El protocolo esta subdividido en tres componentes virtuales independiente:
+El protocolo esta subdividido en tres componentes virtuales independientes:
 \begin{itemize}
 	\item \textbf{Componente de alto nivel:} Define el método por el cual las consultas de la API y las respuestas se convierten en mensajes binarios. 
 	\item \textbf{Capa criptográfica(autorización):} Define el método por el cual los mensajes están cifrados antes de ser enviados a través del protocolo de transporte.
@@ -67,13 +67,23 @@ MTProto 2.0 sigue la siguiente regla de reducción
     style=CodigoC,
     ]{./ejemplos/ejemplo1.cpp}
 
-%\subsection{Protocolo MTProto 2.0}
-%Como se ha mencionado anteriormente MTProto es una suite cliente/servidor diseñada para acceder a servidores MTProto. Esta suite se puede dividir tres componentes principales.
+\subsection{Funcionamiento del protocolo}
+La descripción del funcionamiento del protocolo la he obtenido de \cite{telegram2}. Previamente a explicar el funcionamiento de MTProto 2.0 voy a introducir las definiciones de los elementos más importantes que entrarán en juego durante el funcionamiento de este.\\
+\begin{description}
+	\item \textbf{Authorization Key (auth\textunderscore key)}\\
+	Es una clave de 2048 bit compartida por el dispositivo del cliente y el servidor, se crea durante el registro del usuario, se almacena en el dispositivo de este mediante el protocolo de intercambio de claves \emph{Diffie-Hellman} y nunca se transmite a través de la red. Cada clave de autorización es única y dependiente del usuario, aunque un usuario puede tener más de una ya que Telegram permite tener sesiones persistentes en diferentes dispositivos. En caso de ser necesario estas claves pueden ser bloqueadas para siempre como por ejemplo podría pasar si un dispositivo con sesión persistente se pierde.
 
-%\begin{itemize}
-	%\item \textbf{API de alto nivel:} Define como las consultas de la API y respuestas de esta son convertidas en mensajes binarios.
-	%\item \textbf{Componentes criptográficos y de autorización:} Definen como la aplicaciones se autentifican con el servidor y los mensajes son cifrados antes de ser transmitidos a través del protocolo de transporte.	
-	%\item \textbf{Componente de transporte:} Define como el cliente y el servidor realmente intercambian los mensajes por un protocolo existente como UDP, TCP, HTTP, HTTPS, etc. Cabe a destacar que también los protocolos de conexión inseguros son soportados.
-	%\item \textbf{Autorización:} Este módulo provee las funcionalidades para la primera autorización del cliente y del servidor. Se ejecuta solo en la primera ejecución de la aplicación.
-%\end{itemize}
-%\\
+	\item \textbf{Server Key}\\
+	Es una clave RSA de 2048 bits usada por el servidor para firmar sus mensajes durante el proceso de registro y la clave se está generando. La aplicación tiene una clave publica del servidor que puede ser utilizada para verificar la firmas pero no para firmar mensajes. La clave privada del servidor es almacenada en este y raramente cambia.
+
+	\item \textbf{Key Identifier (auth\textunderscore key\textunderscore id)}\\
+			Se usan los 64 bits menos significativos del hash SHA1 de la \emph{Authorization Key} para indicar que clave en particular se ha usado para cifrar el mensaje. Las claves tienen que ser identificadas unívocamente y en caso de colisión, la \emph{Authorization Key} se regenera. Un identificador Zero Key significa que el cifrado no se usa y esto está permitido para muy pocos mensajes usados durante el registro para generar la clave en el intercambio \emph{Diffie-Hellman}.
+	
+	\item \textbf{Session}\\
+	Es un número de 64 bits generado aleatoriamente por el cliente para distinguir entre sesiones individuales como pueden ser diferentes instancias de la aplicación creadas con la misma \emph{Authorization Key} donde una instancia de la aplicación es la conjunción de la \emph{Key Identifier} y la \emph{Session}.\\
+	Bajo ninguna circunstancia un mensaje perteneciente a una sesión puede ser enviado a otra.
+
+	\item  \textbf{Server Salt}\\
+	Es un número de 64 bits generado aleatoriamente que cambia cada 30 minutos independiente de las sesiones por una petición del servidor. Una vez generado el nuevo salt todos los mensajes tienen que tenerlo aunque se aceptan los mensajes con el salt previo. Es necesario para proteger ante ciertos ataques como podría ser ajustar el reloj de la víctima en un momento futuro.
+
+\end{description}
