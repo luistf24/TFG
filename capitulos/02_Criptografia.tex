@@ -102,16 +102,18 @@ El bloque ha cifrar o descifrar se traslada directamente byte a byte sobre la ma
 
 En otros casos el bloque y la clave pueden ser representados como vectores de registro de 32 bits donde cada registro esta compuesto por los bytes de la columna correspondiente ordenados en orden descendiente.\\
 
-Siendo $B$ el bloque que queremos cifrar y $S$ la matriz de estado, el algoritmo AES con $n$ rondas queda como sigue:
+Siendo $B$ el bloque que queremos cifrar y $M$ la matriz de estado, el algoritmo AES con $n$ quedaría:
 
 \begin{enumerate}
 	\item Calcular $K_0, K_1,...,K_n$ subclaves a partar de la clave $K$.
-	\item $S\leftarrow B \oplus K_0$
+	\item $M\leftarrow B \oplus K_0$
 	\item Para $i=1$ hasta $n$ hacer
 	\begin{description}
 			\item Aplicar la roda \emph{i}-ésima del algoritmo con la subclave $K_i$
 	\end{description}
 \end{enumerate}
+Como las funciones usadas en cada ronda son invertibles, para descifrar aplicaremos las funciones inversas de las funciones usadas para cifrar en el orden opuesto.
+
 \newpage
 \begin{table}[htb]
 	\begin{center}
@@ -122,7 +124,72 @@ Siendo $B$ el bloque que queremos cifrar y $S$ la matriz de estado, el algoritmo
 				$N_b = 6$(128 bits)& 12 & 12 & 14\\ \hline
 				$N_b = 8$(128 bits)& 14 & 14 & 14\\ \hline
 		\end{tabular}
-		\caption{Ejemplo de clave con $N_k=4$(128 bits).}
+		\caption{Número de rodas en función del tamaño de la clave y bloque}
+		\label{rondas_aes}
 	\end{center}
 \end{table}
 
+\subsection{Las Rondas de AES}
+Dado que el algoritmo AES puede aplicarse para longitudes diferentes de bloque y clave, el número de rondas es variables, como se ha visto en \ref{rondas_aes}.\\
+Siendo $M$ la matriz de estado y $K_i$ la subclave correspondiente a la ronda $i$-ésima, cada ronda posee esta estructura:
+\begin{enumerate}
+	\item $M \leftarrow ByteSub(M)$
+	\item $M \leftarrow DesplazarFila(M)$
+	\item $M \leftarrow MezclarColumnas(M)$
+	\item $M \leftarrow K_i \oplus M$
+\end{enumerate}
+En la última ronda se hacen solo los tres primeros pasos del algoritmo.
+
+\begin{description}
+	\item \textbf{Función ByteSub}\\
+		La función \emph{ByteSub} es una sustitución no lineal que se aplica a cada byte de la matriz de estado. Se obtiene componiendo dos transformaciones:
+		\begin{enumerate}
+			\item Cada byte se considera como un elemento del $GF(2^8)$ generado por el polinomio irreducible $m(x)=x^8+x^4+x^3+x+1$ y es sustituido por su inversa multiplicativa quedando el valor cero inalterado. 
+			\item A continuación se aplica la siguiente transformación afín en $GF(2)$ siendo $x_0, x_1,...,x_7$ los bits del byte correspondiente e $y_0, y_1,...,y_7$ los del resultado:
+
+				\begin{equation*} 
+					\begin{bmatrix} 
+						y_0\\
+						y_1\\
+						y_2\\
+						y_3\\
+						y_4\\
+						y_5\\
+						y_6\\
+						y_7\\
+					\end{bmatrix}
+					=
+					\begin{bmatrix} % O matrices como esta de 4 x 3
+						1 & 0 & 0 & 0 & 1 & 1 & 1 & 1\\
+						1 & 1 & 0 & 0 & 0 & 1 & 1 & 1\\
+						1 & 1 & 1 & 0 & 0 & 0 & 1 & 1\\
+						1 & 1 & 1 & 1 & 0 & 0 & 0 & 1\\
+						1 & 1 & 1 & 1 & 1 & 0 & 0 & 0\\
+						0 & 1 & 1 & 1 & 1 & 1 & 0 & 0\\
+						0 & 0 & 1 & 1 & 1 & 1 & 1 & 0\\
+						0 & 0 & 0 & 1 & 1 & 1 & 1 & 1\\
+					\end{bmatrix}
+					\begin{bmatrix}
+						x_0\\
+						x_1\\
+						x_2\\
+						x_3\\
+						x_4\\
+						x_5\\
+						x_6\\
+						x_7\\
+					\end{bmatrix}
+					+
+					\begin{bmatrix}
+						1\\
+						1\\
+						0\\
+						0\\
+						0\\
+						1\\
+						1\\
+						0\\
+					\end{bmatrix}
+			\end{equation*}
+		\end{enumerate}
+\end{description}
