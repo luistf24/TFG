@@ -231,12 +231,35 @@ La función de selección toma consecutivamente de la secuencia obtenida bloques
 
 Sea $K(i)$ un vector de bytes de tamaño $4N_k$ conteniendo la clave y sea $W(i)$ un vector de $N_b(n+1)$ registros de 4 bytes, siendo $n$ el número de rondas. 
 La función de expansión tiene dos versiones según el valor de $N_k$:
+
 \begin{itemize}
 	\item Si $N_k<=6$:
 	\begin{algorithm}
-		Para i desde 0 hasta N_k-1 ha
+		Para $i$ desde 0 hasta $N_{k}-1$ hacer:
+		\begin{description}
+			$W(i)\leftarrow(K(4·i), K(4·i+1), K(4·i+2), K(4·i+3))$
+		\end{description}
+		Para $i$ desde $N_k$ hasta $N_{b}·(n+1)$ hacer:\\
+			\hspace*{20}$tmp\leftarrow W(i-1)$\\
+			\hspace*{20}Si $i$ $mod N_k == 0$\\
+			\hspace*{40}$tmp\leftarrow Sub(Rot(tmp))\oplus Rc(i/N_k)$\\
+			\hspace*{20}$W(i)\leftarrow W(i-N_k)\oplus tmp$
 	\end{algorithm}
+\newpage
 	\item Si $N_k>6$:
+	\begin{algorithm}
+		Para $i$ desde 0 hasta $N_{k}-1$ hacer:
+		\begin{description}
+			$W(i)\leftarrow(K(4·i), K(4·i+1), K(4·i+2), K(4·i+3))$
+		\end{description}
+		Para $i$ desde $N_k$ hasta $N_{b}·(n+1)$ hacer:\\
+			\hspace*{20}$tmp\leftarrow W(i-1)$\\
+			\hspace*{20}Si $i$ $mod N_k == 0$\\
+			\hspace*{40}$tmp\leftarrow Sub(Rot(tmp))\oplus Rc(i/N_k)$\\
+			\hspace*{20}Si $i$ $mod N_k == 4$\\
+			\hspace*{40}$tmp\leftarrow Sub(tmp)$\\
+			\hspace*{20}$W(i)\leftarrow W(i-N_k)\oplus tmp$
+	\end{algorithm}
 \end{itemize}
 
 La función \emph{Sub} devuelve el resultado de aplicar la s-caja de AES a cada uno de los bytes del registro de cuatro que se le pasa como parámetro, la función \emph{Rot} desplaza a la izquierda los bytes del registro y $RC(j)$ es una constante que se define como:
