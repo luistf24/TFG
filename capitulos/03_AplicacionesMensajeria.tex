@@ -56,22 +56,13 @@ Bajo estas circunstancias, el servidor enviará un mensaje especial al cliente e
 Habiendo recibido el mensaje, el cliente primero ejecutará una sincronización de la hora y después verificará la \emph{Message Key} para ver si es correcto.\\
 En caso de que no sea correcto, el cliente deberá generar una nueva sesión para asegurar la monotonía de los \emph{Message Keys}.
 \end{description}
-\subsection{Modelo de seguridad}
-Los protocolos de Telegram se modelan en ProVerif \cite{ProVer}, que es un verificador criptográfico simbólico. Los protocolos y propiedades de seguridad están especificadas en una variante del \emph{$\pi$-cálculo} que es una notación desarrollada por Robin Milner, Joachim Parrow y David Walker, como un avance sobre el cálculo de sistemas comunicantes con el fin de proveer movilidad al modelado concurrente para representar procesos criptográficos y traducirlos en una teoría de Horn.\\
-MTProto 2.0 sigue la siguiente regla de reducción
 
-\lstinputlisting[
-    caption=Regla Reducción 1,
-    label={lst:listing-cpp},
-    language=C++,
-    style=CodigoC,
-    ]{./ejemplos/ejemplo1.cpp}
+\subsection{Descripción de las claves:}
+En esta sección se describirán las distintas claves que entran en juego en el proceso de cifrado y descifrado de MTProto 2.0 \cite{telegram2}.
 
-\subsection{Funcionamiento del protocolo}
-La descripción del funcionamiento del protocolo la he obtenido de \cite{telegram2}. Previamente a explicar el funcionamiento de MTProto 2.0 voy a introducir las definiciones de los elementos más importantes que entrarán en juego durante el funcionamiento de este.\\
 \begin{description}
 	\item \textbf{Authorization Key (auth\textunderscore key)}\\
-	Es una clave de 2048 bit compartida por el dispositivo del cliente y el servidor, se crea durante el registro del usuario, se almacena en el dispositivo de este mediante el protocolo de intercambio de claves \emph{Diffie-Hellman} y nunca se transmite a través de la red. Cada clave de autorización es única y dependiente del usuario, aunque un usuario puede tener más de una ya que Telegram permite tener sesiones persistentes en diferentes dispositivos. En caso de ser necesario estas claves pueden ser bloqueadas para siempre como por ejemplo podría pasar si un dispositivo con sesión persistente se pierde.
+	Es una clave de 2048 bit compartida por el dispositivo del cliente y el servidor, se crea durante el registro del usuario, se almacena en el dispositivo de este mediante el protocolo de intercambio de claves \emph{Diffie-Hellman} y nunca se transmite a través de la red. Cada \emph{Authorization key} es única y dependiente del usuario, aunque un usuario puede tener más de una ya que Telegram permite tener sesiones persistentes en diferentes dispositivos. En caso de ser necesario estas claves pueden ser bloqueadas para siempre como por ejemplo podría pasar si un dispositivo con sesión persistente se pierde.
 
 	\item \textbf{Server Key}\\
 	Es una clave RSA de 2048 bits usada por el servidor para firmar sus mensajes durante el proceso de registro y la clave se está generando. La aplicación tiene una clave publica del servidor que puede ser utilizada para verificar la firmas pero no para firmar mensajes. La clave privada del servidor es almacenada en este y raramente cambia.
@@ -112,3 +103,39 @@ La descripción del funcionamiento del protocolo la he obtenido de \cite{telegra
 \end{description}
 
 \includegraphics[scale=0.5]{imagenes/MTProto2.png} 
+
+\subsection{Creación de la \emph{Authorization Key}}
+Como hemos visto en el apartado anterior la \emph{Authorization Key} se genera durante el registro del usuario en la aplicación. El formato de las consultas usa \emph{Binary Data Serialization} ya que MTProto requiere que los tipos de datos estén en formato binario y \emph{TL Language} que sirve para describir el sistema utilizado de tipos y funciones.\\
+Los números de gran tamaño son transmitidos como cadenas que contienen la secuencias de bytes en formato \emph{big endian}, los números de menor tamaño como pueden ser los \emph{int, long int128...} usan normalmente el formato \emph{little endian} aunque si pertenecen al \emph{SHA1} los bytes no son reorganizado.\\
+Una vez introducido los formatos que seguirán las consultas y los números veamos los pasos que se siguen en la creación de la \emph{Authorization Key}.
+
+\begin{enumerate}
+	\item El cliente envía una consulta al servidor, en esta consulta irá el \emph{nonce} que es un número aleatorio \emph{int128} generado por el cliente que servirá para para que el servidor lo identifique, este número no es secreto y a partir de ese momento irá incorporado en todas las consultas. 
+	
+	\item El servidor le responde enviándole: 
+	\begin{itemize}
+		\item \emph{server\textunderscore nonce}: que es un número aleatorio \emph{int128} generado por el servidor que sirve para que el cliente lo identifique y al igual que el \emph{nonce} no será secreto e irá incluido en las siguientes consultas y respuestas. 
+		\item \emph{pq}: Que es una representación de un número natural en formato \emph{big endian} que es el producto de dos números primos, \emph{pq} por lo general verifica $pq \leq 2^{63}-1$
+		\item \emph{server\textunderscore public\textunderscore key\textunderscore fingerprints}: Es una lista de \emph{fingerprints} de claves RSA públicas.
+	\end{itemize}
+
+	\item El cliente descompone \emph{pq} en factores primos tal que $p$\textless$q$. Con esto empieza el intercambio de claves Diffie-Hellman.
+
+	\item El cliente envía una nueva consulta que contiene:
+	\begin{itemize}
+		\item \emph{nonce}
+		\item \emph{server\textunderscore nonce}
+		\item \emph{p}: Factor obtenido en el paso anterior, es de tipo \emph{long}
+		\item \emph{q}: El otro factor obtenido en el paso anterior, al igual que \emph{p} es de tipo \emph{long}
+		\item \emph{public\textunderscore key\textunderscore fingerprint}: Una de las \emph{fingerprints} obtenida de la lista enviada por el servidor en el paso anterior, es del tipo \emph{long}.
+		\item \emph{encrypted\textunderscore data}: Mensaje cifrado obtenido aplicando RSA a \emph{data} y \emph{server\textunderscore public \textunderscore key} donde:
+		\begin{itemize}
+			\item \emph{data}: Es una serialización de \emph{pq}, \emph{p}, \emph{q}, \emph{nonce}, \emph{server\textunderscore nonce}, \emph{new\textunderscore nonce} (un nuevo número aleatorio generado por el cliente y desde este paso conocido por el cliente y el servidor) y \emph{dc} o una serialización de \emph{pq}, \emph{p}, \emph{q}, \emph{nonce}, \emph{server\textunderscore nonce}, \emph{new\textunderscore nonce}, \emph{dc} y \emph{expires\textunderscore in}.
+
+			\item \emph{dc} es un identificador de la consulta, es del tipo \emph{int}.
+
+			\item \emph{expires\textunderscore in} es el tiempo en el que expira la consulta, es del tipo \emph{int}.
+		\end{itemize}
+	\end{itemize}
+\end{enumerate}
+
