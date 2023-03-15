@@ -125,8 +125,8 @@ Una vez introducido los formatos que seguirán las consultas y los números veam
 	\begin{itemize}
 		\item \emph{nonce}
 		\item \emph{server\textunderscore nonce}
-		\item \emph{p}: Factor obtenido en el paso anterior, es de tipo \emph{long}
-		\item \emph{q}: El otro factor obtenido en el paso anterior, al igual que \emph{p} es de tipo \emph{long}
+		\item \emph{p}: Factor obtenido en el paso anterior, es de tipo \emph{long}.
+		\item \emph{q}: El otro factor obtenido en el paso anterior, al igual que \emph{p} es de tipo \emph{long}.
 		\item \emph{public\textunderscore key\textunderscore fingerprint}: Una de las \emph{fingerprints} obtenida de la lista enviada por el servidor en el paso anterior, es del tipo \emph{long}.
 		\item \emph{encrypted\textunderscore data}: Mensaje cifrado obtenido aplicando RSA a \emph{data} y \emph{server\textunderscore public \textunderscore key} donde:
 		\begin{itemize}
@@ -137,5 +137,17 @@ Una vez introducido los formatos que seguirán las consultas y los números veam
 			\item \emph{expires\textunderscore in} es el tiempo en el que expira la consulta, es del tipo \emph{int}.
 		\end{itemize}
 	\end{itemize}
+	Después de este paso alguien podría interceptar la consulta y modificarla con una cosulta suya haciendo un ataque \textbf{man-in-the-middle}. 
+	Este ataque no sería muy efectivo, ya que el único elemento que podría modificar sería \emph{new\textunderscore nonce} porque los demás están cifrados y el resultado sería que el atacante genere una \emph{Authorization\textunderscore key} propia independiente de la del cliente haciendo que el ataque no sea efectivo.
+
+	\item El servidor responde enviando:
+		\begin{itemize}
+			\item \emph{nonce}
+			\item \emph{server\textunderscore nonce}
+			\item \emph{encrypted\textunderscore answer}: Respuesta cifrada que es del tipo \emph{string} y contiene:
+			\begin{itemize}
+				\item \emph{new\textunderscore nonce\textunderscore hash}: Son los 128 bits menos significativos de \emph{SHA1(new\textunderscore nonce)}.
+			\end{itemize}
+		\end{itemize}
 \end{enumerate}
 
