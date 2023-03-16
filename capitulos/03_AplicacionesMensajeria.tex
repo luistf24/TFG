@@ -114,8 +114,8 @@ Una vez introducido los formatos que seguirán las consultas y los números veam
 	
 	\item El servidor le responde enviándole: 
 	\begin{itemize}
-		\item \emph{server\textunderscore nonce}: que es un número aleatorio \emph{int128} generado por el servidor que sirve para que el cliente lo identifique y al igual que el \emph{nonce} no será secreto e irá incluido en las siguientes consultas y respuestas. 
-		\item \emph{pq}: Que es una representación de un número natural en formato \emph{big endian} que es el producto de dos números primos, \emph{pq} por lo general verifica $pq \leq 2^{63}-1$
+		\item \emph{server\textunderscore nonce}: Es un número aleatorio \emph{int128} generado por el servidor que sirve para que el cliente lo identifique y al igual que el \emph{nonce} no será secreto e irá incluido en las siguientes consultas y respuestas. 
+		\item \emph{pq}: Es una representación de un número natural en formato \emph{big endian} que es el producto de dos números primos, \emph{pq} por lo general verifica $pq \leq 2^{63}-1$
 		\item \emph{server\textunderscore public\textunderscore key\textunderscore fingerprints}: Es una lista de \emph{fingerprints} de claves RSA públicas.
 	\end{itemize}
 
@@ -147,7 +147,30 @@ Una vez introducido los formatos que seguirán las consultas y los números veam
 			\item \emph{encrypted\textunderscore answer}: Respuesta cifrada que es del tipo \emph{string} y contiene:
 			\begin{itemize}
 				\item \emph{new\textunderscore nonce\textunderscore hash}: Son los 128 bits menos significativos de \emph{SHA1(new\textunderscore nonce)}.
+				\item \emph{answer}: Es una serialización de \emph{nonce}, \emph{server\textunderscore nonce}, \emph{g}, \emph{dh\textunderscore prime}, \emph{g\textunderscore a} y \emph{server\textunderscore time}.
+				\item \emph{answer\textunderscore with\textunderscore hash}: Es una generación con la función hash \emph{HASH1} quedando de la siguiente forma: \emph{SHA1(answer)+answer+(0-15 bytes aleatorios)} de manera que la longitud sea divisible por 16, es del tipo \emph{string}.
+				\item \empph{answer\textunderscore aes\textunderscore key}: \emph{SHA1(new\textunderscore nonce + server\textunderscore nonce) + substr(SHA1(server\textunderscore nonce + new\textunderscore nonce), 0, 12)} y es del tipo \emph{string}.
+				\item \emph{tmp\textunderscore aes\textunderscore iv}: \emph{substr(SHA1(server\textunderscore nonce + new\textunderscore nonce), 12, 8) + SHA1(new\textunderscore nonce + new\textunderscore nonce) + substr(new\textunderscore, 0, 4)}
+				\item \emph{encrypted\textunderscore answer}: \emph{AES256\textunderscore ige\textunderscore encrypt(answer\textunderscore with\textunderscore hash, tmp\textunderscore aes\textunderscore key, tmp\textunderscore aes\textunderscore iv)} donde:
+				\begin{itemize}
+					\item \emph{tmp\textunderscore aes\textunderscore key}: Es una clave de 256 bits
+					\item \emph{tmp\textunderscore aes\textunderscore iv}: Es un vector de inicialización de 256 bits.
+				\end{itemize}
+				Al igual que en el resto de las instancias que usan el cifrado AES, a los datos cifrados se le añaden bytes aleatorios de forma que el tamaño sea divisible por 16.
 			\end{itemize}
+		\end{itemize}
+	Después de este paso \emph{new\textunderscore nonce} sigue siendo únicamente conocido por el cliente y el servidor de esta manera el cliente garantiza que el servidor es el que está al otro lado de la comunicación y que la respuesta de este es correcta, ya que los datos están cifrados usando \emph{new\textunderscore nonce}.\\
+	El cliente comprueba que \emph{p} el cual es un primo usado en Diffie-Hellman, es un número primo seguro de 2048 bits, es decir, se tiene que verificar que \emph{p} y $\frac{p-1}{2}$ son primos, además, $2^{2047}$\textless \emph{p} \textless $2^{2048}$, y \emph{g} genera un subgrupo cíclico con un orden primo $\frac{p-1}{2}$.\\
+	Si la verificación tarda mucho tiempo, cosa que ocurre en dispositivos antiguos, se ejecutarían solo 15 iteraciones en el algoritmo de Miller-Rabin para garantizar que \emph{p} y $\frac{p-1}{2}$ sean primos con una probabilidad de error muy baja, alrededor de una millonésima, y dejar el resto de iteraciones para después, ejecutándose estas de fondo.
+
+	\item El cliente genera un número aleatorio \emph{b} de 2048 bits y lo envía al servidor en un mensaje que contiene:
+		\begin{itemize}
+			\item \emph{nonce}
+			\item \emph{server\textunderscore nonce}
+			\item \emph{encrypted\textunderscore data} que se descifra de la siguiente manera:
+				\begin{itemize}
+					\item \emph{g\textunderscore b} = $g^b$ mod \emph{dh\textunderscore prime}
+				\end{itemize}
 		\end{itemize}
 \end{enumerate}
 
