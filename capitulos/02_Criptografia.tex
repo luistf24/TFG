@@ -72,7 +72,7 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 			\begin{description}
 				\item $c_{[i]} = E_k(m_{[i]})$
 			\end{description}
-		\item Devolvemos $c_{[1]}...c_{[l]}$
+			\item Devolvemos $c_{[1]}...c_{[l]}$
 		\end{description}
 
 		\item \textbf{\emph{Descifrado ECB}}
@@ -82,7 +82,7 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 			\begin{description}
 				\item $m_{[i]} = D_k(c_{[i]})$
 			\end{description}
-		\item Devolvemos $m_{[1]}...m_{[l]}$
+			\item Devolvemos $m_{[1]}...m_{[l]}$
 		\end{description}
 	\end{itemize}
 
@@ -96,7 +96,7 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 			\begin{description}
 				\item $c_{[i]} = E_k(m_{[i]}\oplus c_{[i-1]})$
 			\end{description}
-		\item Devolvemos $c_{[1]}...c_{[l]}$
+			\item Devolvemos $c_{[1]}...c_{[l]}$
 		\end{description}
 
 		\item \textbf{\emph{Descifrado CBC}}
@@ -106,7 +106,7 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 			\begin{description}
 				\item $m_{[i]} = D_k(c_{[i]})\oplus c_{[i]}$
 			\end{description}
-		\item Devolvemos $m_{[1]}...m_{[{l}]}$
+			\item Devolvemos $m_{[1]}...m_{[{l}]}$
 		\end{description}
 	\end{itemize}
 
@@ -121,7 +121,7 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 				\item $c_{[i]} = m_{[i]}\oplus msb_r(E_k(m_{[i]}))$
 				\item $x_{[i+1]} = lsb_{N-r}(x_i)||c_{[i]$
 			\end{description}
-		\item Devolvemos $c_{[1]}...c_{[l]}$
+			\item Devolvemos $c_{[1]}...c_{[l]}$
 		\end{description}
 
 		\item \textbf{\emph{Descifrado CFB}}
@@ -132,33 +132,38 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 				\item $m_{[i]} = c_{[i]}\oplus msb_r(E_k(x_{[i]}))$
 				\item $x_{[i+1]} = lsb_{N-r}(x_i)||c_{[i]$
 			\end{description}
-		\item Devolvemos $m_{[1]}...m_{[l]}$
+			\item Devolvemos $m_{[1]}...m_{[l]}$
 		\end{description}
 	\end{itemize}
 
 	\item \textbf{Output FeedBack}
 	\begin{itemize}
-		\item \textbf{\emph{Cifrado ECB}}
+		\item \textbf{\emph{Cifrado OFB}}
 		\begin{description}
-			\item Dividimos m en $m_{[1]}...m_{[l]}$ con $m{[i]} \in \mathbb{B}^N$
+			\item $x_{[0]} \in \mathbb{B}^N$
+			\item Dividimos m en $m_{[1]}...m_{[l]}$ con $m_{[i]} \in \mathbb{B}^N$
 			\item Para i=1,...,l hacer
 			\begin{description}
-				\item $c{[i]} = E_k(m[i])$
+				\item $x_{[i]} = E_k(x_{[i-1]})$
+				\item $c_{[i]} = m_{[i]}\oplus x_{[i]}$
 			\end{description}
-		\item Devolvemos $c[{1}]...c[{l}]$
+			\item Devolvemos $c_{[1]}...c_{[l]}$
 		\end{description}
 
+\newpage
 		\item \textbf{\emph{Descifrado ECB}}
 		\begin{description}
-			\item Dividimos c en $c_{[1]}...c_{[l]}$ con $c{[i]} \in \mathbb{B}^N$
+			\item Dividimos c en $c_{[1]}...c_{[l]}$ con $c_{[i]} \in \mathbb{B}^N$
 			\item Para i=1,...,l hacer
 			\begin{description}
-				\item $m{[i]} = D_k(c[i])$
+				\item $x_{[i]} = E_k(x_{[i-1]})$
+				\item $m_{[i]} = c_{[i]}\oplus x_{[i]}$
 			\end{description}
-		\item Devolvemos $m[{1}]...m[{l}]$
+			\item Devolvemos $m_{[1]}...m_{[l]}$
 		\end{description}
 	\end{itemize}
 \end{itemize}
+
 \subsection{Estructura de AES}
 En el algoritmo AES se define cada ronda como una composición de cuatro funciones invertibles diferentes, formando tres \emph{capas}. Estas funciones tienen un propósito específico:
 \begin{itemize}
@@ -211,7 +216,6 @@ Siendo $B$ el bloque que queremos cifrar y $S$ la matriz de estado, el algoritmo
 \end{enumerate}
 Como las funciones usadas en cada ronda son invertibles, para descifrar aplicaremos las funciones inversas de las funciones usadas para cifrar en el orden opuesto.
 
-\newpage
 \begin{table}[htb]
 	\begin{center}
 		\begin{tabular}{| l | l | l | l |}
@@ -315,7 +319,7 @@ En la última ronda se hacen solo los tres primeros pasos del algoritmo.
 			\caption{Esquema de las funciones $MezclarColumnas$ y $DesplazarFila$}
 			\label{desplazarymezclar}
 		\end{figure}
-
+\newpage
 	\item \textbf{MezclarColumnas}\\
 		Durante la aplicación de esta función se considera cada columna del vector de estado se considera un polinomio cuyos coeficientes pertenecen a $GF(2^8)$ y se multiplica módulo $x^4+1$ por: $c(x)=03x^3+01x^2+01x+02$ donde 03 es el valor hexadecimal que se obtiene concatenado los coeficientes binarios del polinomio correspondiente en $GF(2^8)$, en este caso sería 00000011 y por tanto $x+1$ análogamente se haría con los demás.\\
 		La inversa de $MezclarColumnas$ se obtiene multiplicando cada columna de la matriz de estado por el polinomio: $d(x)=0Bx^3+0Dx^2+09x+0E$
@@ -342,7 +346,7 @@ La función de expansión tiene dos versiones según el valor de $N_k$:
 			\hspace*{40}$tmp\leftarrow Sub(Rot(tmp))\oplus Rc(i/N_k)$\\
 			\hspace*{20}$W(i)\leftarrow W(i-N_k)\oplus tmp$
 	\end{algorithm}
-\newpage
+
 	\item Si $N_k>6$:
 	\begin{algorithm}
 		Para $i$ desde 0 hasta $N_{k}-1$ hacer:
