@@ -160,7 +160,7 @@ Una vez introducido los formatos que seguirán las consultas y los números veam
 			\end{itemize}
 		\end{itemize}
 	Después de este paso \emph{new\textunderscore nonce} sigue siendo únicamente conocido por el cliente y el servidor de esta manera el cliente garantiza que el servidor es el que está al otro lado de la comunicación y que la respuesta de este es correcta, ya que los datos están cifrados usando \emph{new\textunderscore nonce}.\\
-	El cliente comprueba que \emph{p} el cual es un primo usado en Diffie-Hellman, es un número primo seguro de 2048 bits, es decir, se tiene que verificar que \emph{p} y $\frac{p-1}{2}$ son primos, además, $2^{2047}$\textless \emph{p} \textless $2^{2048}$, y \emph{g} genera un subgrupo cíclico con un orden primo $\frac{p-1}{2}$.\\
+	El cliente comprueba que \emph{p} el cual es un primo usado en Diffie-Hellman, es un número primo seguro de 2048 bits, es decir, se tiene que verificar que \emph{p} y $\frac{p-1}{2}$ son primos, además, $2^{2047}$\textless \emph{p} \textless $2^{2048}$, y \emph{g} genera un subgrupo cíclico con orden primo $\frac{p-1}{2}$.\\
 	Si la verificación tarda mucho tiempo, cosa que ocurre en dispositivos antiguos, se ejecutarían solo 15 iteraciones en el algoritmo de Miller-Rabin para garantizar que \emph{p} y $\frac{p-1}{2}$ sean primos con una probabilidad de error muy baja, alrededor de una millonésima, y dejar el resto de iteraciones para después, ejecutándose estas de fondo.
 
 	\item El cliente genera un número aleatorio \emph{b} de 2048 bits y lo envía al servidor en un mensaje que contiene:
@@ -170,7 +170,47 @@ Una vez introducido los formatos que seguirán las consultas y los números veam
 			\item \emph{encrypted\textunderscore data} que se descifra de la siguiente manera:
 				\begin{itemize}
 					\item \emph{g\textunderscore b} = $g^b$ mod \emph{dh\textunderscore prime}
+					\item \emph{data} que es una serialización donde:
+						\begin{itemize}
+							\item \emph{nonce}
+							\item \emph{server\textunderscore nonce}
+							\item \emph{retry\textunderscore id} que vale 0 en el primer intento y en caso contrario, vale \emph{auth\textunderscore key\textunderscore aux\textunderscore hash} del intento fallido anterior y es del tipo \emph{long}.
+							\item \emph{g\textunderscore b} que es del tipo \emph{string}.
+						\end{itemize}
+					\item \emph{data\textunderscore with\textunderscore hash} que es: \emph{SHA1(data)+data+(0-15 bytes aleatorios de manera que el tamaño sea divisible por 16)}.
+					\item \emph{encrypted\textunderscore data} que es: \emph{AES256\textunderscore ige\textunderscore encrypt(data\textunderscore with\textunderscore hash, tmp\textunderscore aes\textunderscore key, tmp\textunderscore aes\textunderscore iv)}.
 				\end{itemize}
 		\end{itemize}
+	\item Una vez hecho los pasos previos tendríamos que \emph{auth\textunderscore key} vale $g^{ab}$ mod \emph{dh\textunderscore prime}, en el servidor se calcula como \emph{$g\textunderscore b^{a}$ mod \emph{dh\textunderscore prime}} y en el cliente se calcula como $g\textunderscore a^b$ mod \emph{dh\textunderscore prime}.
+	\item \emph{auth\textunderscore key\textunderscore hash} se calcula como los 64 bits de menor prioridad de \emph{SHA1(auth\textunderscore key)}. El servidor comprueba si existe alguna otra clave con el mismo \emph{auth\textunderscore hash} y responde de alguna de las siguientes tres formas
+	\begin{enumerate}
+		\item Una serialización de: 
+			\begin{itemize}
+				\item \emph{nonce}
+				\item \emph{server\textunderscore nonce}
+				\item \emph{new\textunderscore nonce\textunderscore hash1}
+			\end{itemize}
+		\item Una serialización de:
+			\begin{itemize}
+				\item \emph{nonce}	
+				\item \emph{server\textunderscore nonce}
+				\item \emph{new\textunderscore nonce\textunderscore hash2}
+			\end{itemize}
+		\item Una serialización de:
+			\begin{itemize}
+				\item \emph{nonce}	
+				\item \emph{server\textunderscore nonce}
+				\item \emph{new\textunderscore nonce\textunderscore hash3}
+			\end{itemize}
+	\end{enumerate}
+	Donde \emph{new\textunderscore nonce\textunderscore hash1}, \emph{new\textunderscore nonce\textunderscore hash2} y \emph{new\textunderscore nonce\textunderscore hash3} son los 128 bits menos significativos de SHA1 de la cadena de bytes obtenida al añadir a \emph{new\textunderscore nonce} un byte con el valor 1,2 o 3 respectivamente y seguido de \emph{auth\textunderscore key\textunderscore hash}.\\
+	\emph{Auth\textunderscore key\textunderscore aux\textunderscore hash} son los 64 bits más significativos de \emph{SHA1(auth\textunderscore key)}.
+	Si algo falla durante estos pasos, el cliente volvería al paso 6 y generándose un nuevo \emph{b}. Al mismo tiempo se define \emph{server\textunderscore salt} como \emph{substr(new\textunderscore nonce, 0, 8)} XOR \emph{substr(server\textunderscore nonce, 0, 8)}.\\
+	
 \end{enumerate}
+\textbf{Gestión de errores}
 
+Si el cliente no obtiene alguna respuesta del servidor en un intervalo de tiempo determinado se repite la consulta, análogamente ocurre con el servidor. Sin embargo si el servidor no obtiene una segunda respuesta del cliente en 10 minutos, reiniciará la conexión y el cliente tendrá que empezar de nuevo.
+
+\subsection{Generando la clave y el vector de inicialización de AES}
+En esta subse
