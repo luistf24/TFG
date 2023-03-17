@@ -213,4 +213,18 @@ Una vez introducido los formatos que seguirán las consultas y los números veam
 Si el cliente no obtiene alguna respuesta del servidor en un intervalo de tiempo determinado se repite la consulta, análogamente ocurre con el servidor. Sin embargo si el servidor no obtiene una segunda respuesta del cliente en 10 minutos, reiniciará la conexión y el cliente tendrá que empezar de nuevo.
 
 \subsection{Generando la clave y el vector de inicialización de AES}
-En esta subse
+En esta sección hablaré de como se generan la clave de autorización (\emph{auth\textunderscore key}) y de la clave del mensaje (\emph{msg\textunderscore key}) necesarias para calcular la clave de AES (\emph{aes\textunderscore key}) y el vector de inicialización de 256 bits (\emph{iv\textunderscore aes}) usados para cifrar los mensajes en MTProto 2.0.\\
+El algoritmo consiste en:
+\begin{enumerate}
+	\item Calculamos \emph{msg\textunderscore key\textunderscore large} como \emph{SHA256(substr(auth\textunderscore 88+x, 32)+plaintext+random\textunderscore padding)}.
+	\item Calculamos \emph{msg\textunderscore key} como \emph{substr(msg\textunderscore key\textunderscore large, 8, 16)}.
+	\item Calculamos \emph{sha256\textunderscore a} como \emph{SHA256(msg\textunderscore key+substr(auth\textunderscore key, x, 36))}.
+	\item Calculamos \emph{sha256\textunderscore b} como \emph{SHA256(substr(auth\textunderscore key, 40+x, 36)+msg\textunderscore key)}
+\end{enumerate}
+Y una vez hechos estos pasos, ya podemos calcular la clave para AES y el vector de inicialización.
+\begin{itemize}
+	\item \textbf{\emph{aes\textunderscore key}}: \emph{substr(sha256\textunderscore a, 0, 8)+substr(sha256\textunderscore b, 8, 16)+substr(sha256\textunderscore a, 24, 8)}.
+	\item \textbf{\emph{aes\textunderscore iv}}: \emph{substr(sha256\textunderscore b, 0, 8) + substr(sha256\textunderscore a, 8 16)+substr(sha256\textunderscore b, 24, 8)}.
+\end{itemize}
+\emph{x} vale 0 cuando los mensajes van del cliente al servidor y 8 cuando los mensajes van del servidor al cliente.\\
+Los 1024 bits menos significativos de la \emph{auth\textunderscore key} no se utilizan para el cálculo ya que estos se usan para cifrar la copia local de los datos recibidos del servidor además, los 512 bits menos significativos no se almacenan en el servidor por lo que si el cliente pierde la clave o la contraseña del dispositivo, no se podrán descifrar los datos locales.

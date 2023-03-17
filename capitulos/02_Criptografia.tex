@@ -60,8 +60,105 @@ $$
 $$
 	D:\mathbb{B}^K\times\mathbb{B}^N\rightarrow \mathbb{B}^N,
 $$
-Donde N es el tamaño del bloque y K es el tamaño de la clave.
+Donde N es el tamaño del bloque y K es el tamaño de la clave.\\
+Los cifrados tienen distintos modos de operación los cuales dependen solo del tamaño del bloque, estos son:\\
+\begin{itemize}
+	\item \textbf{Electronic CodeBook}
+	\begin{itemize}
+		\item \textbf{\emph{Cifrado ECB}}
+		\begin{description}
+			\item Dividimos m en $m_{[1]}...m_{[l]}$ con $m_{[i]} \in \mathbb{B}^N$
+			\item Para i=1,...,l hacer
+			\begin{description}
+				\item $c_{[i]} = E_k(m_{[i]})$
+			\end{description}
+		\item Devolvemos $c_{[1]}...c_{[l]}$
+		\end{description}
 
+		\item \textbf{\emph{Descifrado ECB}}
+		\begin{description}
+			\item Dividimos c en $c_{[1]}...c_{[l]}$ con $c_{[i]} \in \mathbb{B}^N$
+			\item Para i=1,...,l hacer
+			\begin{description}
+				\item $m_{[i]} = D_k(c_{[i]})$
+			\end{description}
+		\item Devolvemos $m_{[1]}...m_{[l]}$
+		\end{description}
+	\end{itemize}
+
+	\item \textbf{Cipher-Bloc Chaining}
+	\begin{itemize}
+		\item \textbf{\emph{Cifrado CBC}}
+		\begin{description}
+			\item $c_{[0]} \in \mathbb{B}^*$
+			\item Dividimos m en $m_{[1]}...m_{[l]}$ con $m_{[i]} \in \mathbb{B}^N$
+			\item Para i=1,...,l hacer
+			\begin{description}
+				\item $c_{[i]} = E_k(m_{[i]}\oplus c_{[i-1]})$
+			\end{description}
+		\item Devolvemos $c_{[1]}...c_{[l]}$
+		\end{description}
+
+		\item \textbf{\emph{Descifrado CBC}}
+		\begin{description}
+			\item Dividimos c en $c_{[0]}...c_{[l]}$ con $c_{[i]} \in \mathbb{B}^N$
+			\item Para i=1,...,l hacer
+			\begin{description}
+				\item $m_{[i]} = D_k(c_{[i]})\oplus c_{[i]}$
+			\end{description}
+		\item Devolvemos $m_{[1]}...m_{[{l}]}$
+		\end{description}
+	\end{itemize}
+
+	\item \textbf{Cipher FeedBack}
+	\begin{itemize}
+		\item \textbf{\emph{Cifrado CFB}}
+		\begin{description}
+			\item $x_{[0]} \in \mathbb{B}^r$
+			\item Dividimos m en $m_{[1]}...m_{[l]}$ con $m_{[i]} \in \mathbb{B}^N$
+			\item Para i=1,...,l hacer
+			\begin{description}
+				\item $c_{[i]} = m_{[i]}\oplus msb_r(E_k(m_{[i]}))$
+				\item $x_{[i+1]} = lsb_{N-r}(x_i)||c_{[i]$
+			\end{description}
+		\item Devolvemos $c_{[1]}...c_{[l]}$
+		\end{description}
+
+		\item \textbf{\emph{Descifrado CFB}}
+		\begin{description}
+			\item Dividimos c en $c_{[1]}...c_{[l]}$ con $c_{[i]} \in \mathbb{B}^r$
+			\item Para i=1,...,l hacer
+			\begin{description}
+				\item $m_{[i]} = c_{[i]}\oplus msb_r(E_k(x_{[i]}))$
+				\item $x_{[i+1]} = lsb_{N-r}(x_i)||c_{[i]$
+			\end{description}
+		\item Devolvemos $m_{[1]}...m_{[l]}$
+		\end{description}
+	\end{itemize}
+
+	\item \textbf{Output FeedBack}
+	\begin{itemize}
+		\item \textbf{\emph{Cifrado ECB}}
+		\begin{description}
+			\item Dividimos m en $m_{[1]}...m_{[l]}$ con $m{[i]} \in \mathbb{B}^N$
+			\item Para i=1,...,l hacer
+			\begin{description}
+				\item $c{[i]} = E_k(m[i])$
+			\end{description}
+		\item Devolvemos $c[{1}]...c[{l}]$
+		\end{description}
+
+		\item \textbf{\emph{Descifrado ECB}}
+		\begin{description}
+			\item Dividimos c en $c_{[1]}...c_{[l]}$ con $c{[i]} \in \mathbb{B}^N$
+			\item Para i=1,...,l hacer
+			\begin{description}
+				\item $m{[i]} = D_k(c[i])$
+			\end{description}
+		\item Devolvemos $m[{1}]...m[{l}]$
+		\end{description}
+	\end{itemize}
+\end{itemize}
 \subsection{Estructura de AES}
 En el algoritmo AES se define cada ronda como una composición de cuatro funciones invertibles diferentes, formando tres \emph{capas}. Estas funciones tienen un propósito específico:
 \begin{itemize}
