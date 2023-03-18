@@ -15,7 +15,6 @@ El protocolo esta subdividido en tres componentes virtuales independientes:
 	\item \textbf{Componente de transporte:} Define el método por el cual el cliente y el servidor para transmitir los mensajes sobre otro protocolo de red como HTTP, HTTPS, WS, WSS, TCP o UDP.
 \end{itemize}
 
-\includegraphics[scale=0.4]{imagenes/diagramaMTProto.jpg} 
 
 \subsection{Resumen de los componentes}
 \begin{description}
@@ -149,7 +148,7 @@ Una vez introducido los formatos que seguirán las consultas y los números veam
 				\item \emph{new\textunderscore nonce\textunderscore hash}: Son los 128 bits menos significativos de \emph{SHA1(new\textunderscore nonce)}.
 				\item \emph{answer}: Es una serialización de \emph{nonce}, \emph{server\textunderscore nonce}, \emph{g}, \emph{dh\textunderscore prime}, \emph{g\textunderscore a} y \emph{server\textunderscore time}.
 				\item \emph{answer\textunderscore with\textunderscore hash}: Es una generación con la función hash \emph{HASH1} quedando de la siguiente forma: \emph{SHA1(answer)+answer+(0-15 bytes aleatorios)} de manera que la longitud sea divisible por 16, es del tipo \emph{string}.
-				\item \empph{answer\textunderscore aes\textunderscore key}: \emph{SHA1(new\textunderscore nonce + server\textunderscore nonce) + substr(SHA1(server\textunderscore nonce + new\textunderscore nonce), 0, 12)} y es del tipo \emph{string}.
+				\item \emph{answer\textunderscore aes\textunderscore key}: \emph{SHA1(new\textunderscore nonce + server\textunderscore nonce) + substr(SHA1(server\textunderscore nonce + new\textunderscore nonce), 0, 12)} y es del tipo \emph{string}.
 				\item \emph{tmp\textunderscore aes\textunderscore iv}: \emph{substr(SHA1(server\textunderscore nonce + new\textunderscore nonce), 12, 8) + SHA1(new\textunderscore nonce + new\textunderscore nonce) + substr(new\textunderscore, 0, 4)}
 				\item \emph{encrypted\textunderscore answer}: \emph{AES256\textunderscore ige\textunderscore encrypt(answer\textunderscore with\textunderscore hash, tmp\textunderscore aes\textunderscore key, tmp\textunderscore aes\textunderscore iv)} donde:
 				\begin{itemize}
@@ -227,4 +226,24 @@ Y una vez hechos estos pasos, ya podemos calcular la clave para AES y el vector 
 	\item \textbf{\emph{aes\textunderscore iv}}: \emph{substr(sha256\textunderscore b, 0, 8) + substr(sha256\textunderscore a, 8 16)+substr(sha256\textunderscore b, 24, 8)}.
 \end{itemize}
 \emph{x} vale 0 cuando los mensajes van del cliente al servidor y 8 cuando los mensajes van del servidor al cliente.\\
-Los 1024 bits menos significativos de la \emph{auth\textunderscore key} no se utilizan para el cálculo ya que estos se usan para cifrar la copia local de los datos recibidos del servidor además, los 512 bits menos significativos no se almacenan en el servidor por lo que si el cliente pierde la clave o la contraseña del dispositivo, no se podrán descifrar los datos locales.
+Los 1024 bits menos significativos de la \emph{auth\textunderscore key} no se utilizan para el cálculo ya que estos se usan para cifrar la copia local de los datos recibidos del servidor además, los 512 bits menos significativos no se almacenan en el servidor por lo que si el cliente pierde la clave o la contraseña del dispositivo, no se podrán descifrar los datos locales. Un esquema del proceso se puede ver en \ref{mtproto2}
+\newpage
+\begin{figure}[htb]
+	\centering
+	\includegraphics[scale=0.4]{imagenes/diagramaMTProto.jpg} 
+	\caption{Esquema del cifrado de mensajes usado en MTProto 2.0}
+	\label{mtproto2}
+\end{figure}
+
+\subsection{Envío de mensajes}
+Una vez realizado el intercambio de claves mediante \emph{Diffie-Hellman} y la generación de la clave y el vector de inicialización de AES ya se podrían enviar mensajes cifrados entre el cliente y el servidor utilizando \emph{AES256}.
+Los protocolos de transporte que están disponibles son:
+\begin{itemize}
+	\item \emph{TCP}
+	\item \emph{WebSocket}
+	\item \emph{WebSocket} sobre \emph{HTTPS}
+	\item \emph{HTTP}
+	\item \emph{HTTPS}
+	\item \emph{UDP}
+\end{itemize}
+
