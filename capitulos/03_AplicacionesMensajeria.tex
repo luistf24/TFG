@@ -215,7 +215,7 @@ Si el cliente no obtiene alguna respuesta del servidor en un intervalo de tiempo
 En esta sección hablaré de como se generan la clave de autorización (\emph{auth\textunderscore key}) y de la clave del mensaje (\emph{msg\textunderscore key}) necesarias para calcular la clave de AES (\emph{aes\textunderscore key}) y el vector de inicialización de 256 bits (\emph{iv\textunderscore aes}) usados para cifrar los mensajes en MTProto 2.0.\\
 El algoritmo consiste en:
 \begin{enumerate}
-	\item Calculamos \emph{msg\textunderscore key\textunderscore large} como \emph{SHA256(substr(auth\textunderscore 88+x, 32)+plaintext+random\textunderscore padding)}.
+	\item Calculamos \emph{msg\textunderscore key\textunderscore large} como \emph{SHA256(substr(auth\textunderscore key, 88+x, 32)+plaintext+random\textunderscore padding)}.
 	\item Calculamos \emph{msg\textunderscore key} como \emph{substr(msg\textunderscore key\textunderscore large, 8, 16)}.
 	\item Calculamos \emph{sha256\textunderscore a} como \emph{SHA256(msg\textunderscore key+substr(auth\textunderscore key, x, 36))}.
 	\item Calculamos \emph{sha256\textunderscore b} como \emph{SHA256(substr(auth\textunderscore key, 40+x, 36)+msg\textunderscore key)}

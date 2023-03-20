@@ -92,8 +92,9 @@ pdfproducer = {pdflatex}
 %Definimos los tipos teorema, ejemplo y definición podremos usar estos tipos
 %simplemente poniendo \begin{teorema} \end{teorema} ...
 \newtheorem{teorema}{Teorema}[chapter]
-\newtheorem{ejemplo}{Ejemplo}[chapter]
-\newtheorem{definicion}{Definición}[chapter]
+\newtheorem{proposicion}[teorema]{Proposición}
+\newtheorem{ejemplo}[teorema]{Ejemplo}
+\newtheorem{definicion}[teorema]{Definición}
 
 \definecolor{gray97}{gray}{.97}
 \definecolor{gray75}{gray}{.75}

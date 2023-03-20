@@ -4,15 +4,16 @@
 En este capítulo se introducirá la teoría sobre criptografía y curvas elípticas necesaria para entender la base detrás de los criptosistemas de las aplicaciones de mensajería.
 
 \section{Introducción a la criptografía}
-Mayormente la información de este apartado ha sido obtenida de \cite{GomezPardo2002b}
-\subsection{Cifrado y secreto}
+Mayormente la información de este apartado ha sido obtenida de \cite{GomezPardo2002b} para los criptosistemas simétricos y \cite{angelRiosMateos} para los cifrados asimétricos.
 
+\subsection{Cifrado simétrico}
+Un criptosistema simétrico está formado por:
 \begin{itemize}
-	\item $\mathcal{M}$ el conjunto de los mensajes, textos en claro o \emph{plaintexts},
-	\item $\mathcal{C}$ el conjunto de los criptogramas o \emph{cyphertexts},
-	\item $\mathcal{K} \subseteq \mathcal{K}_p\times\mathcal{K}_s$ el espacio de clave o \emph{key space}
+	\item $\mathcal{M}$ el conjunto de los mensajes.
+	\item $\mathcal{C}$ el conjunto de los criptogramas.
+	\item $\mathcal{K} \subseteq \mathcal{K}_p\times\mathcal{K}_s$ el espacio de las claves. 
 \end{itemize}
-Un criptosistema viene definido por dos aplicaciones
+Un criptosistema simétrico viene definido por dos aplicaciones
 $$E:\mathcal{K}_p\times\mathcal{M}\rightarrow\mathcal{C}$$
 $$\mathcal{D}:\mathcal{K}_s\times\mathcal{C}\rightarrow\mathcal{M}$$
 tales que para cualquier clave $k_p \in \mathcal{K}_p$, existe una clave $k_s$ de manera que dato cualquier mensaje $m \in \mathcal{M}$,
@@ -26,7 +27,30 @@ $$
 $$
 	D_{k_p}:\mathcal{C}\rightarrow\mathcal{M},[D_{k_s}(c)=D(k_s,c)]
 $$
-En la criptografía clásica, también llamada simétrica, se tiene que $\mathcal{K}_p=\mathcal{K}_s$ y $k_s = k_p = k \in \mathcal{K}$, o al menos hay métodos eficientes para conocer $k_s$ a partir de $k_p$ y viceversa. En la criptografía asimétrica, no se conocen métodos eficientes para conocer $k_s$ a partir de $k_p$.
+
+\subsection{Cifrado asimétrico}
+Un criptosistema asimétrico está formado por:
+\begin{itemize}
+	\item $\mathcal{M}$ es el conjunto de los mensajes
+	\item $\mathcal{C}$ es el conjunto de los criptogramas
+	\item Una función $P:\mathcal{K}' \rightarrow \mathcal{K}$, que nos permitirá generar la clave pública.
+\end{itemize}
+Un criptosistema asimétrico viene definido por dos aplicaciones:
+$$E:\mathcal{K}\times\mathcal{M}\rightarrow\mathcal{C}$$
+$$\mathcal{D}:\mathcal{K}'\times\mathcal{C}\rightarrow\mathcal{M}$$
+tales que para cualquier clave privada $k' \in \mathcal{K}'$ obtenemos la clave pública como $P(k')=k$ y se definen las funciones de cifrado y descifrado como:
+$$
+	E_{k}:\mathcal{M}\rightarrow\mathcal{C},[E_{k}(m)=E(k,m)]
+$$
+$$
+	D_{k'}:\mathcal{C}\rightarrow\mathcal{M},[D_{k'}(c)=D(k',c)]
+$$
+Para que un criptosistema asimétrico sea seguro tenemos que garantizar:
+\begin{itemize}
+	\item $P$ es una función de dirección única.
+	\item Para la mayoría de los $k \in \mathcal{K}$, la aplicación $E_k$ es de dirección única.
+	\item $\mathcal{D}_k'$ se puede calcular en un periodo corto de tiempo si se conoce $k'$ y que sea imposible o el periodo sea muy largo en caso de solo conocerse $k$.
+\end{itemize}
 
 \subsection{Objetivos de la criptografía}
 \begin{itemize}
@@ -45,11 +69,11 @@ Se sigue el principio de Kerckhoffs el cual establece que el adversario conoce t
 		\item \textbf{Mensaje escogido-adaptativo} El atacante no solo puede generar pareas mensaje/criptograma a su elección, sino que puede hacerlo tantas veces como quiera realizando los análisis que considere oportunos
 		\item \textbf{Criptograma escogido y escogido-adaptativo} Similar a los anteriores pero partiendo del criptograma, teniendo acceso a descifrar los criptogramas que desee, inicialmente o a lo largo del proceso. Lo que se busca en este ataque es la clave.
 \end{itemize}
-\newpage
+%\newpage
 \section{El algoritmo Rijndael AES}
 El algoritmo Rijndael llamado así en honor a sus dos autores Joan Daemen y Vicent Rijmen, es un algoritmo de cifrado por bloques que fue adoptado en octubre de 2000 por el NIST(\emph{National Institute for Standards and Technology}) para su empleo en aplicaciones criptográficas no militares en sustitución del algoritmo \emph{DES} después de un proceso de más tres años en los que se buscaba un algoritmo que fuera potente, eficiente y fácil de implementar.\\
 Está diseñado para manejar longitudes de clave y de bloque variables entre los 128 y los 256 bits y aunque estos sean variables, en el estándar adoptado por el Gobierno de Estados Unidos en 2001 \cite{aesUsa} establece una longitud fija de bloque de 128 bits y una longitud de clave a escoger entre 128, 192 y 256 bits.\\
-La información para los siguientes apartados de AES la he obtenido de \cite{En2011}.
+La información para los siguientes apartados de AES la he obtenido de \cite{GomezPardo2002b} para el primero y \cite{En2011} para el resto.
 
 \subsection{Cifrados de bloque}
 Son criptosistemas de clave simétrica en los que la longitud de los bloques y claves es fija.\\
@@ -150,7 +174,7 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 			\item Devolvemos $c_{[1]}...c_{[l]}$
 		\end{description}
 
-\newpage
+%\newpage
 		\item \textbf{\emph{Descifrado OFB}}
 		\begin{description}
 			\item Dividimos c en $c_{[1]}...c_{[l]}$ con $c_{[i]} \in \mathbb{B}^N$
@@ -368,3 +392,21 @@ La función \emph{Sub} devuelve el resultado de aplicar la s-caja de AES a cada 
 	\item $Rc(j)=(R(j),0,0,0)$
 	\item Cada $R(i)$ es el elemento de $GF(2^8)$ correspondiente al valor $x^{i-1}$ módulo $x^8+x^4+x^3+x+1$
 \end{itemize}
+
+\section{Criptosistema de Rivest-Shamir-Adleman, RSA}
+El criptosistema RSA llamado así en honor a sus creadores Ron Rivest, Adi Shamir y Loenard Adleman, fué desarrollado en 1977. Cabe a destacar que en 1973 se desarrolló en secreto un criptosistema similar por Clifford Cocks para la \emph{Government Communications Headquarters}, que es la agencia de inteligencia de señales británica, y fue desclasificado en 1997\cite{cliffordCocks}.\\
+Este criptosistema está basado en el Teorema de Euler y en particular en la \textbf{proposición 2.2}.
+\begin{teorema}
+	(Teorema de Euler) Sean a,n $\in \mathbb{Z}$ primos relativos entre sí, entonces $a^{\phi(n)}\equiv 1$ mod n.
+\end{teorema}
+Donde $\phi(n)$ es la \emph{funclón de Euler} definida como $\phi(n)=|\mathbb{Z}^*_n|$ y se puede calcular de la siguiente forma $$\phi(n)=n\prod_{p_i|n}(1-\frac{1}{p_i})$$
+
+
+\begin{proposicion}
+	Sea $n = pq$, donde p y q son dos primos distintos. Si $x\equiv 1$ mod $\phi(n)$, entonces $a^x\equiv a$ mod n $\forall a \n \in \mathbb{Z}$.\\
+	\begin{proof}
+		\textbf{Demostración.}\\
+		Si a es múltiplo de n, entonces se cumple que $a^x \equiv 0 \equiv a$ mod n. Si a y n son coprimos, $mcm(a,n) = 1$ entonces tendríamos que $a^x \equiv a$ mod n por el Teorema de Euler.\\
+		Nos quedaría ver ocurre en el caso de a sea múltiplo de p o de q, pero no de ambos. Por simetría supondremos que a es múltiplo de p, pero no de q. En este caso tenemos que $a^x \equiv 0 \equiv a$ mod p  y $a^x \equiv a$ mod q por el Teorema de Fermat, como p y q son coprimos entre sí, aplicando el Teorema Chino de los Restos se deduce que $a^x \equiv a$ mod n. \blacksquare
+	\end{proof}
+\end{proposicion}
