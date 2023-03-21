@@ -410,3 +410,25 @@ Donde $\phi(n)$ es la \emph{funclón de Euler} definida como $\phi(n)=|\mathbb{Z
 		Nos quedaría ver ocurre en el caso de a sea múltiplo de p o de q, pero no de ambos. Por simetría supondremos que a es múltiplo de p, pero no de q. En este caso tenemos que $a^x \equiv 0 \equiv a$ mod p  y $a^x \equiv a$ mod q por el Teorema de Fermat, como p y q son coprimos entre sí, aplicando el Teorema Chino de los Restos se deduce que $a^x \equiv a$ mod n. \blacksquare
 	\end{proof}
 \end{proposicion}
+
+\subsection{Descripción de RSA}
+El funcionamiento de RSA lo he obtenido de \cite{angelRiosMateos} y es el siguiente:\\
+El usuario elige dos números primos distintos \emph{p} y \emph{q} de buen tamaño ya que mientras más grandes sean más seguro será el cifrado.
+Se calcula $n = pq$ y $\phi(n) = (p-1)(q-1)$, a continuación se elige un elemento $c \in \mathbb{Z}_{\phi(n)}^*$ y se calcula el inverso \emph{d}, de \emph{c} en $\mathbb{Z}_{\phi(n)}$. La clave pública será $k=(n,c)$ y la clave privada $k'=(n,d)$.\\
+En un principio se consideraba que un tamaño de $n$ de 1024 bits era lo suficientemente grande para que fuera seguro, pero en 2003 Tromer y Shamir mostraron que es posible factorizar números de 1024 bits \cite{1024RSA} por lo que en la actualidad se considera 2048 bits como un tamaño seguro.\\
+En conjunto de los mensajes sin cifrar es $\mathcal{M}$, el de los mensajes cifrados será $\mathcal{C}$ y se verifica que $\mathcal{M} = \mathcal{C} = \mathbb{Z}_n$ y las funciones de cifrado y descifrado serán respectivamente:
+\begin{align*}
+	E_{k}:\mathcal{M}\rightarrow\mathcal{C}\\
+	a \rightarrow a^c
+\end{align*}
+\begin{align*}
+	D_{k'}:\mathcal{C}\rightarrow\mathcal{M}\\
+	a \rightarrow a^d
+\end{align*}
+
+\subsection{Ataques}
+Como hemos visto anteriormente RSA puede ser vulnerable en función de los números primos que se elijan y el tamaño de estos. En este apartado veremos algunos posibles ataques que se podrían llevar a cabo.
+\begin{description}
+	\item \textbf{Ataque por módulo común.} Este ataque se da cuando hay una mala elección de las claves, típicamente cuando se tienen que generar múltiples claves para varios usuarios y para optimizar, se utiliza el mismo módulo $n$ para todos. Mientras el exponente sea distinto, la clave sigue siendo segura, pero si se da que se cifra el mismo mensaje con los distintos exponentes pero el mismo módulo, se puede descifrar el mensaje original. Añadir lo de los apuntes de Lobillo
+	\item \textbf{Ataque por exponente pequeño.} Este ataque se puede hacer cuando se elige un exponente muy pequeño y se cifra el mismo mensaje con distinto módulo. En este caso se puede resolver aplicando el Teorema Chino del Resto. Añadir lo de los apuntes de Lobillo
+\end{description}
