@@ -416,7 +416,7 @@ El funcionamiento de RSA lo he obtenido de \cite{angelRiosMateos} y es el siguie
 El usuario elige dos números primos distintos \emph{p} y \emph{q} de buen tamaño ya que mientras más grandes sean más seguro será el cifrado.
 Se calcula $n = pq$ y $\phi(n) = (p-1)(q-1)$, a continuación se elige un elemento $c \in \mathbb{Z}_{\phi(n)}^*$ y se calcula el inverso \emph{d}, de \emph{c} en $\mathbb{Z}_{\phi(n)}$. La clave pública será $k=(n,c)$ y la clave privada $k'=(n,d)$.\\
 En un principio se consideraba que un tamaño de $n$ de 1024 bits era lo suficientemente grande para que fuera seguro, pero en 2003 Tromer y Shamir mostraron que es posible factorizar números de 1024 bits \cite{1024RSA} por lo que en la actualidad se considera 2048 bits como un tamaño seguro.\\
-En conjunto de los mensajes sin cifrar es $\mathcal{M}$, el de los mensajes cifrados será $\mathcal{C}$ y se verifica que $\mathcal{M} = \mathcal{C} = \mathbb{Z}_n$ y las funciones de cifrado y descifrado serán respectivamente:
+El conjunto de los mensajes sin cifrar es $\mathcal{M}$, el de los mensajes cifrados será $\mathcal{C}$ y se verifica que $\mathcal{M} = \mathcal{C} = \mathbb{Z}_n$ y las funciones de cifrado y descifrado serán respectivamente:
 \begin{align*}
 	E_{k}:\mathcal{M}\rightarrow\mathcal{C}\\
 	a \rightarrow a^c
