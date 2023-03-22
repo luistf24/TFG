@@ -456,7 +456,7 @@ Como hemos visto anteriormente RSA puede ser vulnerable en función de los núme
 	\item \textbf{Ataque con primos muy próximos.}\\
 	Este ataque se da cuando se eligen dos primos muy próximos entre sí. Dado $n=pq$ con $p$\textless $q$ tenemos que  
 	\begin{align*}
-			n=(\frac{p+q}{2})^2-(\frac{p-q}{2})^2
+			n=\left (\frac{p+q}{2}\right )^2-\left (\frac{p-q}{2}\right )^2
 	\end{align*}
 	Si $p$ y $q$ son cercanos, $s=\frac{p-q}{2}$ es pequeño y $t=\frac{p+q}{2}$ es un entero ligeramente mayor que $\sqrt{n}$ tal que $t^2 - n^2$ es un cuadrado perfecto. Probando sucesivamente con valores mayores que $\sqrt{n}$ hasta encontrar una descomposición $n=t^2-s^2$, tenemos que $p=t+s$ y $q=t-s$.
 \end{description}
