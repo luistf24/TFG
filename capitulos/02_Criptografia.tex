@@ -427,8 +427,36 @@ En conjunto de los mensajes sin cifrar es $\mathcal{M}$, el de los mensajes cifr
 \end{align*}
 
 \subsection{Ataques}
-Como hemos visto anteriormente RSA puede ser vulnerable en función de los números primos que se elijan y el tamaño de estos. En este apartado veremos algunos posibles ataques que se podrían llevar a cabo.
+Como hemos visto anteriormente RSA puede ser vulnerable en función de los números primos que se elijan y el tamaño de estos. En este apartado veremos algunos posibles ataques que se podrían llevar a cabo \cite{GomezPardo2002b}.
 \begin{description}
-	\item \textbf{Ataque por módulo común.} Este ataque se da cuando hay una mala elección de las claves, típicamente cuando se tienen que generar múltiples claves para varios usuarios y para optimizar, se utiliza el mismo módulo $n$ para todos. Mientras el exponente sea distinto, la clave sigue siendo segura, pero si se da que se cifra el mismo mensaje con los distintos exponentes pero el mismo módulo, se puede descifrar el mensaje original. Añadir lo de los apuntes de Lobillo
-	\item \textbf{Ataque por exponente pequeño.} Este ataque se puede hacer cuando se elige un exponente muy pequeño y se cifra el mismo mensaje con distinto módulo. En este caso se puede resolver aplicando el Teorema Chino del Resto. Añadir lo de los apuntes de Lobillo
+	\item \textbf{Ataque por módulo común.}\\
+	Este ataque se da cuando hay una mala elección de las claves, típicamente cuando se tienen que generar múltiples claves para varios usuarios y para optimizar, se utiliza el mismo módulo $n$ para todos. Mientras el exponente sea distinto, la clave sigue siendo segura, pero si se da que se cifra el mismo mensaje con los distintos exponentes pero el mismo módulo, se puede descifrar el mensaje original.\\
+	Supongamos que tenemos dos claves públicas con el mismo módulo, $(n, e_1)$ y $(n, e_2)$ y además ser verifica que  $mcm(e_1,e_2)$. Supongamos que $re_1+se_2=1$ con $r$\textless $0$\textless $s$. Como se ha visto el mensaje cifrado respectivamente será:
+	\begin{align*}
+		c_1 = m^{e_1} \mod n\\
+		c_2 = m^{e_2} \mod n
+	\end{align*}
+	Si $(c_1,n) \neq 1$, podemos factorizar $n$ y romper la clave, por lo que podemos suponer que $c_1 \in \mathcal{U}(\mathbb{Z}_n)$. Calculamos $c_1^{-1}$ con el algoritmo extendido de Euclídes tenemos que :
+	\begin{align*}
+			(c^{-1})^{-r}c_2^s \equiv (m^{e_1})^r(m^{e_2})^s \equiv m^{e_1r+e_2s} = m \mod n
+	\end{align*}
+
+	\item \textbf{Ataque por exponente pequeño.}\\
+	Este ataque se puede hacer cuando se elige un exponente muy pequeño y se cifra el mismo mensaje con distinto módulo. En este caso se puede resolver aplicando el Teorema Chino del Resto. Supongamos a varios receptores con claves públicas $(n_i, e)$, con $1\leq i \leq r$, tal que mcm$(n_i, n_j) = 1$ si $i\neq j$ ya que en caso contrario, se podría factorizar el módulo correspondiente mediante el cálculo del MCD.\\
+	Llamamos $c_i = m^e \mod n_i$ para cada $1\leq i \leq r$. Seleccionamos $\{i_1,...,i_e \}\subseteq \{1,...,r\}$ y empleando el inverso del isomorfismo de anillos
+	\begin{align*}
+		\chi:\mathbb{Z}_{n_{i_1}...n_{i_e}}\rightarrow \mathbb{Z}_{n_{i_1}}\times ... \times \mathbb{Z}_{n_{i_e}}
+	\end{align*}
+	obtenido gracias al Teorema Chino del Resto, se puede calcular
+	\begin{align*}
+		\chi^{-1}(c_{i_1},...,c_{i_e}) = m^e \mod n_{i_1},....n_{i_e}
+	\end{align*}
+	Dado $m^e$\textless $n_{i_1}...n_{i_e}$, se puede obtener $m$ calculando la raíz $e$-ésima en $\mathbb{Z} \subseteq \mathbb{R}$, siempre y cuando $e$ no sea muy grande.
+
+	\item \textbf{Ataque con primos muy próximos.}\\
+	Este ataque se da cuando se eligen dos primos muy próximos entre sí. Dado $n=pq$ con $p$\textless $q$ tenemos que  
+	\begin{align*}
+			n=(\frac{p+q}{2})^2-(\frac{p-q}{2})^2
+	\end{align*}
+	Si $p$ y $q$ son cercanos, $s=\frac{p-q}{2}$ es pequeño y $t=\frac{p+q}{2}$ es un entero ligeramente mayor que $\sqrt{n}$ tal que $t^2 - n^2$ es un cuadrado perfecto. Probando sucesivamente con valores mayores que $\sqrt{n}$ hasta encontrar una descomposición $n=t^2-s^2$, tenemos que $p=t+s$ y $q=t-s$.
 \end{description}
