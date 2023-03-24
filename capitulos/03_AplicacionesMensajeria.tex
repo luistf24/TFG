@@ -1,9 +1,13 @@
 \chapter{Aplicaciones de Mensajería}
 
-Me voy a centrar en Telegram, Whatsapp Facebook Chat y Signal, y AppleChat.
+Los cifrados que se van a desarrollar serán los de Telegram, Whatsapp Facebook Chat y Signal, y AppleChat.
 
 \section{Telegram (MTProto)}
-
+MTProto es el protocolo de datos con el Telegram cifra sus mensajes. Fue desarrollado por el matemático Nikolái Dúrov y financiado por Pável Dúrov. Al contrario que la mayoría de cifrados, MTProto esta enfocado en ser multisesión e independiente de la plataforma y el transporte de archivos independiente de su formato. MTProto tiene dos versiones:
+\begin{itemize}
+	\item \textbf{MTProto v1:} En esta versión los mensajes son cifrados con el algoritmo \emph{SHA-1} y en 2017 fue reemplazado ya que se encontró una vulnerabilidad en la intercepción de mensajes debido a \emph{SHA-1}.
+	\item \textbf{MTProto v2:} En 2017 se actualizó MTProto, en esta versión se cambió el cifrado \emph{SHA-1} por \emph{SHA-256} que es el que se utiliza actualmente y el que se desarrollará a continuación.
+\end{itemize}
 Referencias: \cite{Miculan2021} \cite{WebProto}
 
 \subsection{Descripción general}

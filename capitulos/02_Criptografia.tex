@@ -63,11 +63,11 @@ Para que un criptosistema asimétrico sea seguro tenemos que garantizar:
 \subsection{Ataques}
 Se sigue el principio de Kerckhoffs el cual establece que el adversario conoce todos los detalles del criptosistema excepto la clave empleada. Los posibles ataques son:
 \begin{itemize}
-		\item \textbf{Criptograma} El adversario conoce el criptograma.
-		\item \textbf{Mensaje Conocido} El atacante conoce parejas mensaje/criptograma cifradas con una misma clave
-		\item \textbf{Mensaje escogido} El atacante puede generar criptogramas para mensajes de su elección. Una vez obtenidas dichas parejas, trata de averiguar el mensaje correspondiente a un criptograma desconocido.
-		\item \textbf{Mensaje escogido-adaptativo} El atacante no solo puede generar pareas mensaje/criptograma a su elección, sino que puede hacerlo tantas veces como quiera realizando los análisis que considere oportunos
-		\item \textbf{Criptograma escogido y escogido-adaptativo} Similar a los anteriores pero partiendo del criptograma, teniendo acceso a descifrar los criptogramas que desee, inicialmente o a lo largo del proceso. Lo que se busca en este ataque es la clave.
+		\item \textbf{Criptograma:} El adversario conoce el criptograma.
+		\item \textbf{Mensaje Conocido:} El atacante conoce parejas mensaje/criptograma cifradas con una misma clave
+		\item \textbf{Mensaje escogido:} El atacante puede generar criptogramas para mensajes de su elección. Una vez obtenidas dichas parejas, trata de averiguar el mensaje correspondiente a un criptograma desconocido.
+		\item \textbf{Mensaje escogido-adaptativo:} El atacante no solo puede generar pareas mensaje/criptograma a su elección, sino que puede hacerlo tantas veces como quiera realizando los análisis que considere oportunos
+		\item \textbf{Criptograma escogido y escogido-adaptativo:} Similar a los anteriores pero partiendo del criptograma, teniendo acceso a descifrar los criptogramas que desee, inicialmente o a lo largo del proceso. Lo que se busca en este ataque es la clave.
 \end{itemize}
 %\newpage
 \section{El algoritmo Rijndael AES}
@@ -395,7 +395,7 @@ La función \emph{Sub} devuelve el resultado de aplicar la s-caja de AES a cada 
 
 \section{Criptosistema de Rivest-Shamir-Adleman, RSA}
 El criptosistema RSA llamado así en honor a sus creadores Ron Rivest, Adi Shamir y Loenard Adleman, fué desarrollado en 1977. Cabe a destacar que en 1973 se desarrolló en secreto un criptosistema similar por Clifford Cocks para la \emph{Government Communications Headquarters}, que es la agencia de inteligencia de señales británica, y fue desclasificado en 1997\cite{cliffordCocks}.\\
-Este criptosistema está basado en el Teorema de Euler y en particular en la \textbf{proposición 2.2}.
+Este criptosistema está basado en el \emph{Teorema de Euler} y en particular en la \emph{proposición 2.2}.
 \begin{teorema}
 	(Teorema de Euler) Sean a,n $\in \mathbb{Z}$ primos relativos entre sí, entonces $a^{\phi(n)}\equiv 1$ mod n.
 \end{teorema}
