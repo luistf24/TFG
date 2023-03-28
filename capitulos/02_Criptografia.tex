@@ -67,9 +67,9 @@ En este apartado veremos los distintos ataques que se pueden plantear en un crip
 Los posibles ataques son:
 \begin{itemize}
 		\item \textbf{Criptograma:} El adversario conoce el criptograma.
-		\item \textbf{Mensaje Conocido:} El atacante conoce parejas mensaje/criptograma cifradas con una misma clave
+		\item \textbf{Mensaje Conocido:} El atacante conoce parejas mensaje/criptograma cifradas con una misma clave.
 		\item \textbf{Mensaje escogido:} El atacante puede generar criptogramas para mensajes de su elección. Una vez obtenidas dichas parejas, trata de averiguar el mensaje correspondiente a un criptograma desconocido.
-		\item \textbf{Mensaje escogido-adaptativo:} El atacante no solo puede generar pareas mensaje/criptograma a su elección, sino que puede hacerlo tantas veces como quiera realizando los análisis que considere oportunos
+		\item \textbf{Mensaje escogido-adaptativo:} El atacante no solo puede generar pareas mensaje/criptograma a su elección, sino que puede hacerlo tantas veces como quiera realizando los análisis que considere oportunos.
 		\item \textbf{Criptograma escogido y escogido-adaptativo:} Similar a los anteriores pero partiendo del criptograma, teniendo acceso a descifrar los criptogramas que desee, inicialmente o a lo largo del proceso. Lo que se busca en este ataque es la clave.
 \end{itemize}
 \newpage
@@ -119,7 +119,7 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 			\centering
 			\includegraphics[scale=0.4]{imagenes/ecb.png} 
 			\caption{Esquema del cifrado y descifrado del modo ECB}
-			\label{desplazarymezclar}
+			\label{esquemaecb}
 		\end{figure}
 		
 	\item \textbf{Cipher-Block Chaining}
@@ -150,7 +150,7 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 			\centering
 			\includegraphics[scale=0.4]{imagenes/cbc.png} 
 			\caption{Esquema del cifrado y descifrado del modo CBC}
-			\label{desplazarymezclar}
+			\label{esquemahtb}
 		\end{figure}
 
 	\item \textbf{Cipher FeedBack}
@@ -184,8 +184,9 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 			\centering
 			\includegraphics[scale=0.4]{imagenes/cfb.png} 
 			\caption{Esquema del cifrado y descifrado del modo CFB}
-			\label{desplazarymezclar}
+			\label{esquemacfb}
 		\end{figure}
+
 	\item \textbf{Output FeedBack}
 	\begin{itemize}
 		\item \textbf{\emph{Cifrado OFB}}
@@ -218,7 +219,7 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 			\centering
 			\includegraphics[scale=0.4]{imagenes/ofb.png} 
 			\caption{Esquema del cifrado y descifrado del modo OFB}
-			\label{desplazarymezclar}
+			\label{esquemaofb}
 		\end{figure}
 \newpage
 Las imágenes de los distintos modos de AES las he obtenido de \cite{cifradobloque}.
