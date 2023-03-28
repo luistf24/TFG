@@ -10,7 +10,7 @@ MTProto es el protocolo de datos con el Telegram cifra sus mensajes. Fue desarro
 \end{itemize}
 Referencias: \cite{Miculan2021} \cite{WebProto}
 
-\subsection{Descripción general}
+\subsection{Descripción general y resumen de los componentes}
 MTProto 2.0 es una suite de protocolos criptográficos diseñados para implementar de manera rápida, escalable y segura intercambio de mensajes sin depositar esa responsabilidad en la seguridad del transporte debajo de dicho protocolo.
 El protocolo esta subdividido en tres componentes virtuales independientes:
 \begin{itemize}
@@ -18,9 +18,7 @@ El protocolo esta subdividido en tres componentes virtuales independientes:
 	\item \textbf{Capa criptográfica(autorización):} Define el método por el cual los mensajes están cifrados antes de ser enviados a través del protocolo de transporte.
 	\item \textbf{Componente de transporte:} Define el método por el cual el cliente y el servidor para transmitir los mensajes sobre otro protocolo de red como HTTP, HTTPS, WS, WSS, TCP o UDP.
 \end{itemize}
-
-
-\subsection{Resumen de los componentes}
+Y se pueden resumir en:
 \begin{description}
 	\item \textbf{Componentes de alto nivel(Lenguajes de consulta/API RPC):}
 Desde el punto de vista del componente de alto nivel, el cliente y el servidor intercambian mensajes dentro de una sesión.\\

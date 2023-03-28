@@ -4,6 +4,7 @@
 En este capítulo se introducirá la teoría sobre criptografía y curvas elípticas necesaria para entender la base detrás de los criptosistemas de las aplicaciones de mensajería.
 
 \section{Introducción a la criptografía}
+En este apartado voy a hacer una breve introducción a la criptografía simétrica y asimétrica, así como los objetivos de un criptosistema y los posibles ataques que nos servirán para entender los cifrados que utilizarán las distintas aplicaciones de mensajería y que se desarrollarán después de este.\\
 Mayormente la información de este apartado ha sido obtenida de \cite{GomezPardo2002b} para los criptosistemas simétricos y \cite{angelRiosMateos} para los cifrados asimétricos.
 
 \subsection{Cifrado simétrico}
@@ -53,6 +54,7 @@ Para que un criptosistema asimétrico sea seguro tenemos que garantizar:
 \end{itemize}
 
 \subsection{Objetivos de la criptografía}
+Los principales objetivos que debe cumplir todos los criptosistemas son:
 \begin{itemize}
 		\item \textbf{Confidencialidad:} La información solo puede ser accesible por las entidades autorizadas. 
 		\item \textbf{Integridad:} La información no ha sido alterada en el envío.
@@ -61,7 +63,8 @@ Para que un criptosistema asimétrico sea seguro tenemos que garantizar:
 \end{itemize}
 
 \subsection{Ataques}
-Se sigue el principio de Kerckhoffs el cual establece que el adversario conoce todos los detalles del criptosistema excepto la clave empleada. Los posibles ataques son:
+En este apartado veremos los distintos ataques que se pueden plantear en un criptosistema, supondremos que se sigue el principio de \emph{Kerckhoffs} el cual establece que el adversario conoce todos los detalles del criptosistema excepto la clave empleada.\\
+Los posibles ataques son:
 \begin{itemize}
 		\item \textbf{Criptograma:} El adversario conoce el criptograma.
 		\item \textbf{Mensaje Conocido:} El atacante conoce parejas mensaje/criptograma cifradas con una misma clave
@@ -69,11 +72,13 @@ Se sigue el principio de Kerckhoffs el cual establece que el adversario conoce t
 		\item \textbf{Mensaje escogido-adaptativo:} El atacante no solo puede generar pareas mensaje/criptograma a su elección, sino que puede hacerlo tantas veces como quiera realizando los análisis que considere oportunos
 		\item \textbf{Criptograma escogido y escogido-adaptativo:} Similar a los anteriores pero partiendo del criptograma, teniendo acceso a descifrar los criptogramas que desee, inicialmente o a lo largo del proceso. Lo que se busca en este ataque es la clave.
 \end{itemize}
-%\newpage
+\newpage
 \section{El algoritmo Rijndael AES}
+En esta sección hablare sobre el cifrado Rijndael AES el cual es un cifrado de bloque simétrico muy utilizado actualmente por aplicaciones como \emph{Telegram}, \emph{WhatsApp} y \emph{FacebookChat} entre otras.\\
 El algoritmo Rijndael llamado así en honor a sus dos autores Joan Daemen y Vicent Rijmen, es un algoritmo de cifrado por bloques que fue adoptado en octubre de 2000 por el NIST(\emph{National Institute for Standards and Technology}) para su empleo en aplicaciones criptográficas no militares en sustitución del algoritmo \emph{DES} después de un proceso de más tres años en los que se buscaba un algoritmo que fuera potente, eficiente y fácil de implementar.\\
 Está diseñado para manejar longitudes de clave y de bloque variables entre los 128 y los 256 bits y aunque estos sean variables, en el estándar adoptado por el Gobierno de Estados Unidos en 2001 \cite{aesUsa} establece una longitud fija de bloque de 128 bits y una longitud de clave a escoger entre 128, 192 y 256 bits.\\
-La información para los siguientes apartados de AES la he obtenido de \cite{GomezPardo2002b} para el primero y \cite{En2011} para el resto.
+La información para los siguientes apartados de AES la he obtenido de \cite{GomezPardo2002b} para el primero y \cite{En2011} para el resto.\\
+Como he mencionado anteriormente, AES es un cifrado de bloque, por lo que empezaré introduciendo que son los cifrados de bloque y los distintos modos de operación que tienen para así poder entender mejor el cifrado AES.
 
 \subsection{Cifrados de bloque}
 Son criptosistemas de clave simétrica en los que la longitud de los bloques y claves es fija.\\
@@ -110,6 +115,13 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 		\end{description}
 	\end{itemize}
 
+		\begin{figure}[htb]
+			\centering
+			\includegraphics[scale=0.4]{imagenes/ecb.png} 
+			\caption{Esquema del cifrado y descifrado del modo ECB}
+			\label{desplazarymezclar}
+		\end{figure}
+		
 	\item \textbf{Cipher-Block Chaining}
 	\begin{itemize}
 		\item \textbf{\emph{Cifrado CBC}}
@@ -133,6 +145,13 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 			\item Devolvemos $m_{[1]}...m_{[{l}]}$
 		\end{description}
 	\end{itemize}
+\newpage
+		\begin{figure}[htb]
+			\centering
+			\includegraphics[scale=0.4]{imagenes/cbc.png} 
+			\caption{Esquema del cifrado y descifrado del modo CBC}
+			\label{desplazarymezclar}
+		\end{figure}
 
 	\item \textbf{Cipher FeedBack}
 	\begin{itemize}
@@ -160,6 +179,13 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 		\end{description}
 	\end{itemize}
 
+\newpage
+		\begin{figure}[htb]
+			\centering
+			\includegraphics[scale=0.4]{imagenes/cfb.png} 
+			\caption{Esquema del cifrado y descifrado del modo CFB}
+			\label{desplazarymezclar}
+		\end{figure}
 	\item \textbf{Output FeedBack}
 	\begin{itemize}
 		\item \textbf{\emph{Cifrado OFB}}
@@ -188,6 +214,14 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 	\end{itemize}
 \end{itemize}
 
+		\begin{figure}[htb]
+			\centering
+			\includegraphics[scale=0.4]{imagenes/ofb.png} 
+			\caption{Esquema del cifrado y descifrado del modo OFB}
+			\label{desplazarymezclar}
+		\end{figure}
+\newpage
+Las imágenes de los distintos modos de AES las he obtenido de \cite{cifradobloque}.
 \subsection{Estructura de AES}
 En el algoritmo AES se define cada ronda como una composición de cuatro funciones invertibles diferentes, formando tres \emph{capas}. Estas funciones tienen un propósito específico:
 \begin{itemize}
@@ -387,14 +421,15 @@ La función de expansión tiene dos versiones según el valor de $N_k$:
 	\end{algorithm}
 \end{itemize}
 
-La función \emph{Sub} devuelve el resultado de aplicar la s-caja de AES a cada uno de los bytes del registro de cuatro que se le pasa como parámetro, la función \emph{Rot} desplaza a la izquierda los bytes del registro y $RC(j)$ es una constante que se define como:
+La función \emph{Sub} devuelve el resultado de aplicar la s-caja de AES a cada uno de los bytes del registro de cuatro que se le pasa como parámetro, la función \emph{Rot} desplaza a la izquierda los bytes del registro y \emph{Rc(j)} es una constante que se define como:
 \begin{itemize}
 	\item $Rc(j)=(R(j),0,0,0)$
 	\item Cada $R(i)$ es el elemento de $GF(2^8)$ correspondiente al valor $x^{i-1}$ módulo $x^8+x^4+x^3+x+1$
 \end{itemize}
 
 \section{Criptosistema de Rivest-Shamir-Adleman, RSA}
-El criptosistema RSA llamado así en honor a sus creadores Ron Rivest, Adi Shamir y Loenard Adleman, fué desarrollado en 1977. Cabe a destacar que en 1973 se desarrolló en secreto un criptosistema similar por Clifford Cocks para la \emph{Government Communications Headquarters}, que es la agencia de inteligencia de señales británica, y fue desclasificado en 1997\cite{cliffordCocks}.\\
+En esta sección hablaré sobre el cifrado RSA y su funcionamiento, cifrado que como AES, está muy extendido y es utilizado por muchas aplicaciones para cifrar y validar los mensajes.\\
+RSA es llamado así en honor a sus creadores Ron Rivest, Adi Shamir y Loenard Adleman, fué desarrollado en 1977. Cabe a destacar que en 1973 se desarrolló en secreto un criptosistema similar por Clifford Cocks para la \emph{Government Communications Headquarters}, que es la agencia de inteligencia de señales británica, y fue desclasificado en 1997\cite{cliffordCocks}.\\
 Este criptosistema está basado en el \emph{Teorema de Euler} y en particular en la \emph{proposición 2.2}.
 \begin{teorema}
 	(Teorema de Euler) Sean a,n $\in \mathbb{Z}$ primos relativos entre sí, entonces $a^{\phi(n)}\equiv 1$ mod n.
