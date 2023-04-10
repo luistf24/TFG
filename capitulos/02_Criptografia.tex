@@ -76,7 +76,6 @@ Para que un criptosistema asimétrico sea seguro tenemos que garantizar:
 \subsection{Criptosistemas simétricos y asimétricos en las aplicaciones de mensajería}
 Ambos tipos de criptosistemas son muy utilizados en las aplicaciones de mensajería de manera complementaria, los simétricos debido a su velocidad de cifrado, su uso reducido de recursos y su mejor manejo de grandes cantidades de datos se suelen utilizar para cifrar los mensajes, pero como tienen el defecto de que si la clave es interceptada el criptosistema es vulnerado y se pierde tanto la confidencialidad como la autenticidad de los mensajes, se suele complementar con métodos más seguros para el intercambio de la clave como puede ser el \emph{intercambio de claves Diffie-Hellman} y los cifrados asimétricos para la firma y autentificación de los mensajes garantizando de esta manera la seguridad de la aplicación y una eficiencia mucho mayor que si se utilizara únicamente un criptosistema asimétrico.
 
-\newpage
 \section{El algoritmo Rijndael AES}
 En esta sección hablare sobre el cifrado Rijndael AES el cual es un cifrado de bloque simétrico muy utilizado actualmente por aplicaciones como \emph{Telegram}, \emph{WhatsApp} y \emph{FacebookChat} entre otras.\\
 El algoritmo Rijndael llamado así en honor a sus dos autores Joan Daemen y Vicent Rijmen, es un algoritmo de cifrado por bloques que fue adoptado en octubre de 2000 por el NIST(\emph{National Institute for Standards and Technology}) para su empleo en aplicaciones criptográficas no militares en sustitución del algoritmo \emph{DES} después de un proceso de más tres años en los que se buscaba un algoritmo que fuera potente, eficiente y fácil de implementar.\\
@@ -149,7 +148,7 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 			\item Devolvemos $m_{[1]}...m_{[{l}]}$
 		\end{description}
 	\end{itemize}
-\newpage
+%\newpage
 		\begin{figure}[htb]
 			\centering
 			\includegraphics[scale=0.4]{imagenes/cbc.png} 
@@ -183,7 +182,7 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 		\end{description}
 	\end{itemize}
 
-\newpage
+%\newpage
 		\begin{figure}[htb]
 			\centering
 			\includegraphics[scale=0.4]{imagenes/cfb.png} 
