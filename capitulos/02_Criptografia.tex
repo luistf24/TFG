@@ -4,8 +4,28 @@
 En este capítulo se introducirá la teoría sobre criptografía y curvas elípticas necesaria para entender la base detrás de los criptosistemas de las aplicaciones de mensajería.
 
 \section{Introducción a la criptografía}
-En este apartado voy a hacer una breve introducción a la criptografía simétrica y asimétrica y el uso de estas en las aplicaciones de mensajería, así como los objetivos de un criptosistema y los posibles ataques que nos servirán para entender los cifrados que utilizarán las distintas aplicaciones de mensajería y que se desarrollarán después de este.\\
-Mayormente la información de este apartado ha sido obtenida de \cite{GomezPardo2002b} para los criptosistemas simétricos y \cite{angelRiosMateos} para los cifrados asimétricos.
+En este apartado voy a hablar sobre los objetivos de un criptosistema y los posibles ataques que se le pueden hacer, así como una introducción a la criptografía simétrica y asimétrica y su uso en las aplicaciones de mensajería que nos ayudará a entender los distintos criptosistemas de los que se hablará después.
+Mayormente la información de este apartado ha sido obtenida de \cite{GomezPardo2002b} para los criptosistemas simétricos y \cite{angelRiosMateos} para los cifrados asimétricos.\\
+
+Los principales objetivos que debe cumplir todos los criptosistemas son:
+\begin{itemize}
+		\item \textbf{Confidencialidad:} La información solo puede ser accesible por las entidades autorizadas. 
+		\item \textbf{Integridad:} La información no ha sido alterada en el envío.
+		\item \textbf{Autenticidad:} La información proviene de quién afirma haberla enviado
+		\item \textbf{No repudio:} El emisario de una información no puede a posteriori negar que se realizado tal envío.
+\end{itemize}
+
+Para hablar de los ataques supondremos que se sigue el principio de \emph{Kerckhoffs} el cual establece que el adversario conoce todos los detalles del criptosistema excepto la clave empleada.\\
+Una vez visto esto los posibles ataques son:
+\begin{itemize}
+		\item \textbf{Criptograma:} El adversario conoce el criptograma.
+		\item \textbf{Mensaje Conocido:} El atacante conoce parejas mensaje/criptograma cifradas con una misma clave.
+		\item \textbf{Mensaje escogido:} El atacante puede generar criptogramas para mensajes de su elección. Una vez obtenidas dichas parejas, trata de averiguar el mensaje correspondiente a un criptograma desconocido.
+		\item \textbf{Mensaje escogido-adaptativo:} El atacante no solo puede generar pareas mensaje/criptograma a su elección, sino que puede hacerlo tantas veces como quiera realizando los análisis que considere oportunos.
+		\item \textbf{Criptograma escogido y escogido-adaptativo:} Similar a los anteriores pero partiendo del criptograma, teniendo acceso a descifrar los criptogramas que desee, inicialmente o a lo largo del proceso. Lo que se busca en este ataque es la clave.
+\end{itemize}
+
+Una vez visto los objetivos que tienen que cumplir los criptosistemas y los posibles ataques veamos que son los criptosistemas simétricos y asimétricos y su uso en las aplicaciones de mensajería.\\
 
 \subsection{Cifrado simétrico}
 Un criptosistema simétrico está formado por:
@@ -54,27 +74,8 @@ Para que un criptosistema asimétrico sea seguro tenemos que garantizar:
 \end{itemize}
 
 \subsection{Criptosistemas simétricos y asimétricos en las aplicaciones de mensajería}
-Ambos tipos de criptosistemas son muy utilizados en las aplicaciones de mensajería de manera complementaria, los simétricos debido a su velocidad de cifrado, su uso reducido de recursos y su mejor manejo de grandes cantidades de datos se suelen utilizar para cifrar los mensajes, pero como tienen el defecto de que si la clave es interceptada el criptosistema es vulnerado y se pierde tanto la confidencialidad como la autenticidad de los mensajes, se complementan con métodos más seguros para el intercambio de la clave como puede ser el \emph{intercambio de claves Diffie-Hellman} y los cifrados asimétricos para la firma y autentificación de los mensajes garantizando de esta manera la seguridad de la aplicación y una eficiencia mucho mayor.
+Ambos tipos de criptosistemas son muy utilizados en las aplicaciones de mensajería de manera complementaria, los simétricos debido a su velocidad de cifrado, su uso reducido de recursos y su mejor manejo de grandes cantidades de datos se suelen utilizar para cifrar los mensajes, pero como tienen el defecto de que si la clave es interceptada el criptosistema es vulnerado y se pierde tanto la confidencialidad como la autenticidad de los mensajes, se suele complementar con métodos más seguros para el intercambio de la clave como puede ser el \emph{intercambio de claves Diffie-Hellman} y los cifrados asimétricos para la firma y autentificación de los mensajes garantizando de esta manera la seguridad de la aplicación y una eficiencia mucho mayor que si se utilizara únicamente un criptosistema asimétrico.
 
-\subsection{Objetivos de la criptografía}
-Los principales objetivos que debe cumplir todos los criptosistemas son:
-\begin{itemize}
-		\item \textbf{Confidencialidad:} La información solo puede ser accesible por las entidades autorizadas. 
-		\item \textbf{Integridad:} La información no ha sido alterada en el envío.
-		\item \textbf{Autenticidad:} La información proviene de quién afirma haberla enviado
-		\item \textbf{No repudio:} El emisario de una información no puede a posteriori negar que se realizado tal envío.
-\end{itemize}
-
-\subsection{Ataques}
-En este apartado veremos los distintos ataques que se pueden plantear en un criptosistema, supondremos que se sigue el principio de \emph{Kerckhoffs} el cual establece que el adversario conoce todos los detalles del criptosistema excepto la clave empleada.\\
-Los posibles ataques son:
-\begin{itemize}
-		\item \textbf{Criptograma:} El adversario conoce el criptograma.
-		\item \textbf{Mensaje Conocido:} El atacante conoce parejas mensaje/criptograma cifradas con una misma clave.
-		\item \textbf{Mensaje escogido:} El atacante puede generar criptogramas para mensajes de su elección. Una vez obtenidas dichas parejas, trata de averiguar el mensaje correspondiente a un criptograma desconocido.
-		\item \textbf{Mensaje escogido-adaptativo:} El atacante no solo puede generar pareas mensaje/criptograma a su elección, sino que puede hacerlo tantas veces como quiera realizando los análisis que considere oportunos.
-		\item \textbf{Criptograma escogido y escogido-adaptativo:} Similar a los anteriores pero partiendo del criptograma, teniendo acceso a descifrar los criptogramas que desee, inicialmente o a lo largo del proceso. Lo que se busca en este ataque es la clave.
-\end{itemize}
 \newpage
 \section{El algoritmo Rijndael AES}
 En esta sección hablare sobre el cifrado Rijndael AES el cual es un cifrado de bloque simétrico muy utilizado actualmente por aplicaciones como \emph{Telegram}, \emph{WhatsApp} y \emph{FacebookChat} entre otras.\\
