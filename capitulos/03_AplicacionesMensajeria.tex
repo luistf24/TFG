@@ -8,7 +8,7 @@ MTProto es el protocolo de datos con el Telegram cifra sus mensajes. Fue desarro
 	\item \textbf{MTProto v1:} En esta versión los mensajes son cifrados con el algoritmo \emph{SHA-1} y en 2017 fue reemplazado ya que se encontró una vulnerabilidad en la intercepción de mensajes debido a \emph{SHA-1}.
 	\item \textbf{MTProto v2:} En 2017 se actualizó MTProto, en esta versión se cambió el cifrado \emph{SHA-1} por \emph{SHA-256} que es el que se utiliza actualmente y el que se desarrollará a continuación.
 \end{itemize}
-Referencias: \cite{Miculan2021} \cite{WebProto}
+La información técnica sobre MTProto que se desarrollará a continuación ha sido obtenida de \cite{Miculan2021} y \cite{WebProto}.
 
 \subsection{Descripción general y resumen de los componentes}
 MTProto 2.0 es una suite de protocolos criptográficos diseñados para implementar de manera rápida, escalable y segura intercambio de mensajes sin depositar esa responsabilidad en la seguridad del transporte debajo de dicho protocolo.
@@ -253,8 +253,42 @@ Los protocolos de transporte que están disponibles son:
 El protocolo \emph{TextSecure Protocol} también conocido como \emph{Signal} fue desarrollado por Trevor Perrin y Moxie Marilinspike que trabajaban en la empresa Open Whisper Systems en 2013. Se implementó inicialmente en la aplicación de mensajería homónima \emph{Signal} aunque posteriormente se introdujo en otras aplicaciones de mensajería como \emph{WhatsApp} y \emph{Facebook Menssenger}.\\
 Este protocolo ha tenido 3 versiones las cuales son:
 \begin{itemize}
-	\item \textbf{TextSecure v1:}
-	\item \textbf{TextSecure v2:}
-	\item \textbf{TextSecure v3:}
+	\item \textbf{TextSecure v1:} Es la primera versión del protocolo, que fue lanzada en 2013 y estaba basada en el protocolo \emph{Off-the-Record Messaging (OTR)}.
+	\item \textbf{TextSecure v2:} Es la segunda versión publicada el 24 de febrero de 2014. Esta versión extendió el protocolo con \emph{Double Ratchet Algorithm} el cual un intercambio de claves \emph{Diffie-Hellman} con una \emph{función de derivación de clave (KDF)} usando funciones hash, permitiendo extender las claves y aumentando la seguridad del protocolo.
+	\item \textbf{TextSecure v3:} Esta tercera versión fue lanzada en octubre de 2014 y añadió algunos cambios a las primitivas criptográficas y al protocolo de red.
 \end{itemize}
-La información técnica de este protocolo la he obtenido de \cite{November2021b}.
+Cabe a mencionar que aunque el protocolo originalmente el protocolo se llamaba \emph{TextSecure} en 2016 fue renombrado como \emph{Signal Protocol} que es como lo conocemos hoy en día.\\
+La información técnica de este protocolo que se va a desarrollar a continuación ha sido obtenida de \cite{November2021b}.
+
+\subsection{Descripción general y dispositivos}
+El protocolo \emph{Signal} es un protocolo diseñado para prevenir que aplicaciones como \emph{WhatsApp, Signal y Facebook Messenger} sean vulneradas de manera que se pueda acceder a la información intercambiada en los mensajes y las llamadas. Este protocolo permite que un usuario tener diversos dispositivos cada uno con su propias claves garantizando que si se obtiene alguna de ellas, los mensajes enviados por alguno de los otros dispositivos no puedan ser descifrados. Además también es usado en el caso de \emph{WhatsApp} para cifrar el historial de mensajes y enviarlo a un nuevo dispositivo del mismo usuario.\\
+Por comodidad voy a explicar el protocolo para WhatsApp dado que para el resto de aplicaciones que lo usan hacen un uso igual de este.\\
+
+\textbf{Tipo de dispositivos}\\
+Como he me mencionado anteriormente, el protocolo \emph{Signal} permite tener varios dispositivos asociados al usuario, si bien no todos los dispositivo son iguales:
+\begin{itemize}
+	\item \textbf{Dispositivo principal:} Dispositivo único utilizado para vincular una cuenta de \emph{WhatsApp} con un número de teléfono. Este dispositivo permite vincular dispositivos adicionales que serán los dispositivos compañeros.
+	\item \textbf{Dispositivo Compañero o Secundario:} Es un dispositivo vinculado a una cuenta existente de WhatsApp, a diferencia del dispositivo principal, este no tiene porque ser único.
+\end{itemize}
+Ciertas aplicaciones únicamente pueden ser usadas en dispositivos principales como pueden ser las aplicaciones para \emph{Android} y \emph{iOS}.
+
+\subsection{Descripción de las claves}
+En este apartado hablaré acerca de las distintas claves que se utilizan para cifrar y descifrar los datos.\\
+\begin{itemize}
+	\item \textbf{Claves públicas}
+		\begin{itemize}
+			\item \emph{Identity Key Pair}: Es un par de claves de largo plazo del tipo \emph{Curve25519} generadas en la instalación.
+			\item \emph{Signed Pre Key}: Es una clave de medio plazo del tipo \emph{Curve25519} generada durante la instalación y firmada por la \emp{Identity Key} que se va rotando de manera periódica a lo largo del tiempo.
+			\item \emph{One-Time Pre Keys}: Es una cola de pares de claves del tipo \emph{Curve25519} de un solo uso generadas en la instalación y siendo posible volver a generarlas en caso de ser necesario.
+		\end{itemize}
+	\item \textbf{Claves de Sesión}
+		\begin{itemize}
+			\item \emph{Root Key}: Clave de 32 bytes usada para generar \emph{Chain Key}.
+			\item \emph{Chain Key}: Clave de 32 bytes usada para generar \emph{Message Key}.
+			\item \emph{Message Key}: Clave de 80 bytes usada para cifrar los mensajes. Están formadas por 32 bytes usados para la clave \emph{AES256}, 32 bytes para la clave \emph{HMAC-SHA256} y 16 bytes para un \emph{IV}.
+		\end{itemize}
+	\item \textbf{Otras claves}
+		\begin{itemize}
+			\item \emph{Linking Secret Key}: Es una clave de 32 bytes generada en un \emph{dispositivo compañero} y que tiene que ser enviada por un canal seguro al \emph{dispositivo principal}. Se usa para verificar un \emph{HMAC} del intercambio durante la vinculación entre los dispositivos. Se envía escaneando un código QR.
+		\end{itemize}
+\end{itemize}
