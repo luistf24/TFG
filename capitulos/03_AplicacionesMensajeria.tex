@@ -292,3 +292,11 @@ En este apartado hablaré acerca de las distintas claves que se utilizan para ci
 			\item \emph{Linking Secret Key}: Es una clave de 32 bytes generada en un \emph{dispositivo compañero} y que tiene que ser enviada por un canal seguro al \emph{dispositivo principal}. Se usa para verificar un \emph{HMAC} del intercambio durante la vinculación entre los dispositivos. Se envía escaneando un código QR.
 		\end{itemize}
 \end{itemize}
+
+\subsection{Otros elementos relacionados con los dispositivos compañeros}
+\begin{itemize}
+	\item \emph{Linking Metadata}: cifrado de metadatos asignados a un dispositivo compañero durante la etapa de vinculación, se usa a la par que la \emph{Identity Key} para identificar un dispositivo compañero entre los dispositivos de WhatsApp.
+	\item \emph{Signed Device List Data}: Lista cifrada que identifica los dispositivos compañeros vinculados a la cuenta principal en el momento de la firma. Se firma con la \emph{Identity Key} del dispositivo principal usando 0x0602 como prefijo.
+	\item \emph{Account Signature}: Firma del tipo \emph{Curve25519} calculada a partir del prefijo 0x600, \emph{Linking Metadata} y la \emph{Identity Key} del dispositivo compañero usando la \emph{Identity Key} del dispositivo principal.
+	\item \emph{Device Signature}: Firma del tipo \emph{Curve25519} calculada a partir del prefijo 0x601, \emph{Linking Metadata}, la \emph{Identity Key} del dispositivo compañero y la \emph{Identity Key} del dispositivo principal usando la \emph{Identity Key} del dispositivo compañero. 
+\end{itemize}
