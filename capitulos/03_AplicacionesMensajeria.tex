@@ -300,3 +300,27 @@ En este apartado hablaré acerca de las distintas claves que se utilizan para ci
 	\item \emph{Account Signature}: Firma del tipo \emph{Curve25519} calculada a partir del prefijo 0x600, \emph{Linking Metadata} y la \emph{Identity Key} del dispositivo compañero usando la \emph{Identity Key} del dispositivo principal.
 	\item \emph{Device Signature}: Firma del tipo \emph{Curve25519} calculada a partir del prefijo 0x601, \emph{Linking Metadata}, la \emph{Identity Key} del dispositivo compañero y la \emph{Identity Key} del dispositivo principal usando la \emph{Identity Key} del dispositivo compañero. 
 \end{itemize}
+
+Una vez introducido la terminología que se va a usar el la descripción del protocolo \emph{Signal}, procederé a describir las etapas principales de este.\\
+
+\subsection{Registro de clientes}
+Etapa inicial consistente en añadir dispositivos asociados al cliente, como se ha visto anteriormente existen dos tipos de dispositivos: \emph{dispositivo principal} y \emph{dispositivos compañeros} y en función del tipo se registrarán de manera diferente.\\
+
+\begin{description}
+	\item \textbf{Dispositivo principal}\\
+	Durante el momento del registro, el cliente de WhatsApp envía al servidor su \emph{Identity Key}, su \emph{Signed Pre Key} con una firma y conjunto de \emph{One-Time Pre Keys}. Una vez enviadas el servidor de WhatsApp almacena estas estas claves públicas asociadas con el indentificador del usuario.
+
+	\item \textbf{Dispositivo compañero}\\
+	Para vincular un nuevo dispositivo a la cuenta de WhatsApp, el dispositivo principal del usuario crea al principio una firma de la cuenta firmando la \emph{Identity Key} del nuevo dispositivo, a su vez, el dispositivo compañero que se quiere introducir firmando la \emph{Identity Key} pública del dispositivo principal. Una vez que se han realizado ambas firmas, ya se puede iniciar las sesión con el dispositivo compañero usando un cifrado \emph{end-to-end}.\\Los pasos seguidos son:
+	\begin{enumerate}
+		\item El dispositivo muestra su \emph{Identity Key} ($I_{companion}$) y genera un una clave temporal para vincularse ($L_{companion}$) en un código QR. Esta clave nunca será enviada al servidor.
+		\item El dispositivo principal escanea el código QR y almacena $I_{companion}$ en el disco.
+		\item El dispositivo principal carga su propia \emph{Identity Key} como $I_{primary}$.
+		\item El dispositivo genera los metadatos de la vinculación ($L_{metadata}$) y actualiza la lista de datos de dispositivos para que contenga un nuevo dispositivo compañero como ($L_{istData}$).
+		\item El dispositivo principal genera una firma de la cuenta para el compañero, $A_{signature}=CURVE25519\textunderscore SIGN(I_{primary} || L_{metadata} || I_{companion})$.
+		\item El dispositivo principal genera una firma para la lista de dispositivos que permitirá actualizar la propia lista de dispositivos. $ListSignature = CURVE25519\textunderscore SIGN(I_{primary}, 0x0602 || ListData)$.
+		\item El dispositivo principal agrupa los datos de la vinculación en $L_{data}$, conteniendo este $L_{metadata}$, $I_{primary}$ y $A_{signature}$.
+		\item El dispositivo principal genera una \emph{HMAC} para la vinculación y una \emph{PHMAC} que será igual a $HMAC-SHA256(L_{companion}, L_{data})$. Una vez hecho esto enviará \emph{ListData}, \emph{ListSignature}, $L_{data}$ y la \emph{PHMAC} al servidor.
+		\item El servidor almacena \emph{ListData} y \emph{ListSignature} y reenvía $L_{data}$ y la \emph{PHMAC} al dispositivo compañero.
+	\end{enumerate}
+\end{description}
