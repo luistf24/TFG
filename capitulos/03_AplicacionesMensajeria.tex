@@ -279,7 +279,7 @@ En este apartado hablaré acerca de las distintas claves que se utilizan para ci
 		\begin{itemize}
 			\item \emph{Identity Key Pair}: Es un par de claves de largo plazo del tipo \emph{Curve25519} generadas en la instalación.
 			\item \emph{Signed Pre Key}: Es una clave de medio plazo del tipo \emph{Curve25519} generada durante la instalación y firmada por la \emp{Identity Key} que se va rotando de manera periódica a lo largo del tiempo.
-			\item \emph{One-Time Pre Keys}: Es una cola de pares de claves del tipo \emph{Curve25519} de un solo uso generadas en la instalación y siendo posible volver a generarlas en caso de ser necesario.
+			\item \emph{One-Time Pre Keys}: Es un lote de pares de claves del tipo \emph{Curve25519} de un solo uso generadas en la instalación y siendo posible volver a generarlas en caso de ser necesario.
 		\end{itemize}
 	\item \textbf{Claves de Sesión}
 		\begin{itemize}
@@ -322,5 +322,36 @@ Etapa inicial consistente en añadir dispositivos asociados al cliente, como se 
 		\item El dispositivo principal agrupa los datos de la vinculación en $L_{data}$, conteniendo este $L_{metadata}$, $I_{primary}$ y $A_{signature}$.
 		\item El dispositivo principal genera una \emph{HMAC} para la vinculación y una \emph{PHMAC} que será igual a $HMAC-SHA256(L_{companion}, L_{data})$. Una vez hecho esto enviará \emph{ListData}, \emph{ListSignature}, $L_{data}$ y la \emph{PHMAC} al servidor.
 		\item El servidor almacena \emph{ListData} y \emph{ListSignature} y reenvía $L_{data}$ y la \emph{PHMAC} al dispositivo compañero.
+		\item El dispositivo compañero  verfica la \emph{PHMAC}, decodifica \emph{Ldata} en \emph{Lmetadata}, \emph{Iprimary} y \emph{Asignature} verificando esta última.
+		\item El dispositivo compañero almacena $L_{metadata}$ e $I_{primary}$ en el disco.
+		\item A continuación este genera una firma del dispositivo por si mismo que es de la forma $D_{signature}=CURVE25519\textunderscore SIGN(I_{companion}, 0x0601\\ || L_{metadata} || I_{companion} || I_{primary})$.
+		\item El dispositivo compañero sube al servidor de WhatsApp $L_{metadata}$, $A_{signature}$, $D_{signature}$, $I_{companion}$, la \emph{Signed Pre Key} pública del dispositivo firmada y un lote de \emph{Pre Keys} de un solo uso
+		\item El servidor almacena los datos subidos asociados con la identificación del usuario combinados con el identificador especifico del dispositivo.
 	\end{enumerate}
 \end{description}
+
+\subsection{Inicio de sesión}
+Para que la comunicación entre usuarios sea segura y privada el emisor establece una conexión por pares con cada uno de los dispositivos del receptor. Una vez que la conexión entre emisor y receptor ha sido establecida, no es necesario volver a establecerla a no ser que la sesión se pierda.\\
+Lo pasos que se siguen para establecer una conexión son:
+\begin{enumerate}
+	\item El cliente que inicia la conexión solicita la \emph{identity key}, la \emph{Signed Pre key} y un lote de \emph{Pre keys} de un solo uso para cada dispositivo del receptor y los dispositivos adicionales que el mismo posee excluyendo el dispositivo desde el que se inicia la conexión. 
+	\item El servidor devuelve todo lo solicitado y elimina las \emph{Pre keys} enviadas ya que son de un solo uso. Sí el último lote de \emph{Pre keys} enviado es agotado y el receptor no los ha repuesto no se devuelve ninguna clave. Además, por cada dispositivo compañero que haya tanto del emisor como del receptor, el servidor devuelve $L_{metadata}$, $A_{signature}$ y $D_{signature}$ que fueron enviadas por el dispositivo compañero cuando se vinculó.
+	\item Por cada conjunto de claves devueltas, el emisor tiene que verificar \emph{Asignature} con $CURVE25519\textunderscore VERIFY \textunderscore SIGNATURE(I_{primary}, 0x0600\\ || L_{metadata} || I_{companion})$.\\
+	$D_{signature}$ es obtenida con $CURVE25519\textunderscore VERIFY\textunderscore SIGNATURE(I_{companion},\\ 0x0601 || L_{metadata} || I_{companion} || I_{primary}).$\\
+	Si en algún momento la verificación falla, el emisor termina la sesión de cifrado y no envía ningún mensaje al dispositivo que ha fallado.
+\end{enumerate}
+Una vez obtenidas las claves del servidor y se ha verificado la identidad, el emisor inicia la sesión de encriptación con cada dispositivo individualmente. Para ello se siguen los siguientes pasos:
+\begin{enumerate}
+	\item El emisor almacena la \emph{Identity Key} del receptor como $I_{recipient}$, la \emph{Signed Pre Key} como $S_{recipient}$ y la \emph{Pre Key} de un solo uso como $O_{recipient}$.
+	\item El emisor genera un par de pares de claves efímeras \emph{Curve25519} llamada $E_{initiator}$.
+	\item El emisor carga su propia \emph{Identity Key} como $I_{initiator}$.
+	\item El emisor calcula el \emph{master\textunderscore secret} como $master\textunderscore secret = ECDH(I_{initiator}, S_{recipient}) ||\\ ECDH(E_{initiator}, I_{recipient}) || ECDH(E_{initiator}, S_{recipient}) || ECDH(E_{initiator}, O_{recipient})$. Cabe a mencionar que \emph{ECDH} es el intercambio de claves \emph{Diffie-Hellman}.
+	\item El emisor usa \emph{HKDF} para crear una \emph{Root Key} y una \emph{Chain Key} de \emph{master\textunderscore secret}. Donde HKDF es una función de derivación de claves simple basada en el código de autenticación de mensajes \emph{HMAC}\cite{cekd}.
+\end{enumerate}
+
+\subsection{Intercambio de mensajes}
+Una vez que la sesión se ha establecido, los clientes intercambian los mensajes encriptados con \emph{Message Key} usando \emph{AES-256} con el modo \emph{CBC}[\ref{esquemahtb}] y para la autenticación \emph{HMAC-SHA256}. \emph{Message Key} cambia con cada mensaje que se envía y además es efímera para que esta no pueda ser reconstruida una vez que el mensaje sea transmitido y recibido. Esta clave se obtiene a partir de la \emph{Chain Key} del receptor que se regenera con cada intercambio de mensajes. 
+
+\subsection{Cálculo de \emph{Message Key} a partir de \emph{Chain Key}}
+
+\subsection{Cálculo de \emph{Chain Key} a partir de \emph{Root Key}}
