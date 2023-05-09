@@ -353,5 +353,16 @@ Una vez obtenidas las claves del servidor y se ha verificado la identidad, el em
 Una vez que la sesión se ha establecido, los clientes intercambian los mensajes encriptados con \emph{Message Key} usando \emph{AES-256} con el modo \emph{CBC}[\ref{esquemahtb}] y para la autenticación \emph{HMAC-SHA256}. \emph{Message Key} cambia con cada mensaje que se envía y además es efímera para que esta no pueda ser reconstruida una vez que el mensaje sea transmitido y recibido. Esta clave se obtiene a partir de la \emph{Chain Key} del receptor que se regenera con cada intercambio de mensajes. 
 
 \subsection{Cálculo de \emph{Message Key} a partir de \emph{Chain Key}}
+La \emph{Message Key} se genera:
+\begin{enumerate}
+	\item $Message Key = HMAC$-$SHA256(Chain Key, 0x01)$.
+	\item La \emph{Chain Key} es actualizada, $Chain Key = HMAC$-$SHA256(Chain Key, 0x02)$.
+\end{enumerate}
+Este último paso hace que la \emph{Chain key} cambie haciendo imposible que con una \emp{Message Key} antigua se obtenga la \emph{Chain Key} actual.
 
 \subsection{Cálculo de \emph{Chain Key} a partir de \emph{Root Key}}
+Cada vez que un mensaje es enviada una clave pública efímera \emph{Curve25519}. Una vez que la respuesta es definida se calcula una nueva \emph{Chain Key} y una nueva \emph{Root Key} de la siguiente forma:
+\begin{enumerate}
+	\item $ephemeral$\textunderscore $secret = ECDH(Ephemeral_{sender}, Ephemeral_{recipient})$.
+	\item $Chain$ $Key$, $Root$ $Key$ $= HKDF(Root$ $Key, ephemeral$\textunderscore$secret)$.
+\end{enumerate}
