@@ -121,7 +121,7 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 		\begin{figure}[htb]
 			\centering
 			\includegraphics[scale=0.4]{imagenes/ecb.png} 
-			\caption{Esquema del cifrado y descifrado del modo ECB}
+			\caption{Esquema del cifrado y descifrado del modo ECB \cite{cifradobloque}.}
 			\label{esquemaecb}
 		\end{figure}
 		
@@ -152,7 +152,7 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 		\begin{figure}[htb]
 			\centering
 			\includegraphics[scale=0.4]{imagenes/cbc.png} 
-			\caption{Esquema del cifrado y descifrado del modo CBC}
+			\caption{Esquema del cifrado y descifrado del modo CBC \cite{cifradobloque}.}
 			\label{esquemahtb}
 		\end{figure}
 
@@ -186,7 +186,7 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 		\begin{figure}[htb]
 			\centering
 			\includegraphics[scale=0.4]{imagenes/cfb.png} 
-			\caption{Esquema del cifrado y descifrado del modo CFB}
+			\caption{Esquema del cifrado y descifrado del modo CFB \cite{cifradobloque}.}
 			\label{esquemacfb}
 		\end{figure}
 
@@ -221,11 +221,11 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 		\begin{figure}[htb]
 			\centering
 			\includegraphics[scale=0.4]{imagenes/ofb.png} 
-			\caption{Esquema del cifrado y descifrado del modo OFB}
+			\caption{Esquema del cifrado y descifrado del modo OFB \cite{cifradobloque}.}
 			\label{esquemaofb}
 		\end{figure}
 \newpage
-Las imágenes de los distintos modos de AES las he obtenido de \cite{cifradobloque}.
+
 \subsection{Estructura de AES}
 En el algoritmo AES se define cada ronda como una composición de cuatro funciones invertibles diferentes, formando tres \emph{capas}. Estas funciones tienen un propósito específico:
 \begin{itemize}
@@ -378,7 +378,7 @@ En la última ronda se hacen solo los tres primeros pasos del algoritmo.
 		\begin{figure}[htb]
 			\centering
 			\includegraphics[scale=0.4]{imagenes/aesdesplazarmezclar.png} 
-			\caption{Esquema de las funciones $MezclarColumnas$ y $DesplazarFila$}
+			\caption{Esquema de las funciones $MezclarColumnas$ y $DesplazarFila$ \cite{En2011}}
 			\label{desplazarymezclar}
 		\end{figure}
 \newpage
@@ -531,6 +531,8 @@ Una vez hecho esto, B podría afirmar casi con total seguridad que el mensaje ha
 
 \newpage
 \section{Criptosistemas basados en el logaritmo discreto. Diffie-Hellman}
+Una vez visto RSA veremos a continuación una introducción a los criptosistemas basados en el problema del logaritmo discreto que nos permitirá definir el intercambio de claves \emph{Diffie-Hellman}, método muy utilizado en las aplicaciones de mensajería al inicio de las conexión. La información de este apartado sobre el logaritmo ha sido obtenida de \cite{angelRiosMateos} y la de \emph{Diffie-Hellman} ha sido obtenida de \cite{En2011}.\\
+El problema del logaritmo discreto es definido de la siguiente forma:
 \begin{definicion}
 	Sea S un semigrupo finito. El Problema del Logaritmo Discreto en el semigrupo S es el de resolver ecuaciones del tipo\\
 		$$
@@ -539,6 +541,45 @@ Una vez hecho esto, B podría afirmar casi con total seguridad que el mensaje ha
 	donde a y b son dos elementos dados de S.
 \end{definicion}
 
+La complejidad del problema del Logaritmo discreto depende en gran medida del semigrupo $S$ que se elija.
+Dado que si se eligiera como $S$ el grupo aditivo $\mathbb{Z}_n$ la solución se obtendría fácilmente resolviendo una ecuación de congruencias del tipo $aX \equiv b \mod n$ que equivaldría a resolver la ecuación diofántica $aX + nY = b$. Pero si ahora $S$ pasara a ser los semigrupos multiplicativos $\mathbb{Z}_n$ o $\mathbb{F}_q$ o sus grupos de unidades, el problema aumentaría su complejidad de manera significativa.\\
+Tenemos que $a^x = b$ tiene solución si y solamente si $b$ está en el semigrupo cíclico generado por $a$. Luego si $a$ es un elemento de orden finito de un grupo, se podría suponer en la práctica que $S$ es un grupo cíclico y por ello existiría un isomorfismo con ($\mathbb{Z}_n$, $+$). Luego la dificultad del problema no estaría en la estructura del grupo, sino en reconocer los elementos como potencias de enteros.\\
+Se cree que el problema de logaritmo discreto es $\mathbb{NP}$-completo, pero esta conjetura todavía no ha sido demostrada por lo que se considera un problema $\mathbb{NP}$-Intermedio, estos problemas son llamados así porque no están dentro de los problemas $\mathbb{P}$ ni en los problemas $\mathbb{NP}$-completo por ahora \cite{NP-intermedio}.\\
+Una vez visto el problema de logaritmo discreto, se explicará el intercambio de claves \emph{Diffie-Hellman}.
+\subsection{Intercambio de claves Diffie-Hellman}
+Antes de explicar el intercambio de claves \emph{Diffie-Hellman} se introducirá el problema de Diffie-Hellman ya que es la base de este.\\
+
+\begin{definicion}
+	Dado el conjunto $\mathbb{Z}^*_{p'}$ con p primo, diremos que $\alpha \in \mathbb{Z}^*_p$ es un generador de $\mathbb{Z}^*_{p'}$ si se cumple:\\
+	$$
+		\forall b \in \mathbb{Z}^*_{p'},\: \exists i\: tal \: que \: \alpha^i = b
+	$$
+\end{definicion}
+
+\begin{definicion}
+	\textbf{(El Problema Diffie-Hellman)} Dado un número primo p, un número $\alpha$ que sea un \emph{generador} de $\mathbb{Z}^*_{p'}$, $\alpha^a$ y $\alpha^b$, encontrar $\alpha^{ab} \mod p$.  
+\end{definicion}
+
+\textbf{Intercambio de claves \emph{Diffie-Hellman}}\\
+El intercambio de claves \emph{Diffie-Hellman} es un algoritmo asimétrico basado en el problema de \emph{Diffie-Hellman}, empleado para acordar una clave común en un canal inseguro. Los pasos que se siguen son:\\
+Sean $A$ y $B$ dos interlocutores que quieren compartir un valor $K$. Para ello se calcula un número primo $p$ y un generador \alpha de $\mathbb{Z}^*_{p'}$ con $2\leq \alpha \leq p-2$. Esta información es pública y conocida por ambos.
+\begin{enumerate}
+	\item $A$ escoge un número aleatorio $x$, comprendido entre 1 y $p-2$ y envía a $B$ el valor 
+		$$
+			\alpha^x \mod p
+		$$
+	\item Análogamente $B$ escoge un número aleatorio $y$, comprendido entre 1 y $p-2$ y envía a $A$ el valor 
+		$$
+			\alpha^y \mod p
+		$$
+
+	\item $B$ recoge $\alpha^x$ y calcula $K=(alpha^x)^y \mod p$
+	\item $A$ recoge $\alpha^y$ y calcula $K=(alpha^y)^x \mod p$
+\end{enumerate}
+Puesto que $x$ e $y$ son conocidos solamente por $A$ y $B$ respectivamente, tenemos que al final solamente $A$ y $B$ acaban conociendo el valor de $K$.
+
 \section{Curvas Elípticas}
 
 \section{Diffie-Hellman usando curvas elípticas}
+
+\section{Funciones Hash}
