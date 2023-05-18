@@ -9,25 +9,26 @@ Mayormente la información de este apartado ha sido obtenida de \cite{GomezPardo
 
 Los principales objetivos que debe cumplir todos los criptosistemas son:
 \begin{itemize}
-		\item \textbf{Confidencialidad:} La información solo puede ser accesible por las entidades autorizadas. 
-		\item \textbf{Integridad:} La información no ha sido alterada en el envío.
-		\item \textbf{Autenticidad:} La información proviene de quién afirma haberla enviado
-		\item \textbf{No repudio:} El emisario de una información no puede a posteriori negar que se realizado tal envío.
+		\item \textbf{Confidencialidad} la información solo puede ser accesible por las entidades autorizadas. 
+		\item \textbf{Integridad} la información no ha sido alterada en el envío.
+		\item \textbf{Autenticidad} la información proviene de quién afirma haberla enviado.
+		\item \textbf{No repudio} el emisario de una información no puede a posteriori negar que se realizado tal envío.
 \end{itemize}
 
-Para hablar de los ataques supondremos que se sigue el principio de \emph{Kerckhoffs} el cual establece que el adversario conoce todos los detalles del criptosistema excepto la clave empleada.\\
+Para hablar de los ataques supondremos que se sigue el principio de \emph{Kerckhoffs}, el cual establece que el adversario conoce todos los detalles del criptosistema excepto la clave empleada.\\
 Los posibles ataques son:
 \begin{itemize}
-		\item \textbf{Criptograma:} El adversario conoce el criptograma.
-		\item \textbf{Mensaje Conocido:} El atacante conoce parejas mensaje/criptograma cifradas con una misma clave.
-		\item \textbf{Mensaje escogido:} El atacante puede generar criptogramas para mensajes de su elección. Una vez obtenidas dichas parejas, trata de averiguar el mensaje correspondiente a un criptograma desconocido.
-		\item \textbf{Mensaje escogido-adaptativo:} El atacante no solo puede generar pareas mensaje/criptograma a su elección, sino que puede hacerlo tantas veces como quiera realizando los análisis que considere oportunos.
-		\item \textbf{Criptograma escogido y escogido-adaptativo:} Similar a los anteriores pero partiendo del criptograma, teniendo acceso a descifrar los criptogramas que desee, inicialmente o a lo largo del proceso. Lo que se busca en este ataque es la clave.
+		\item \textbf{Criptograma} el adversario conoce el criptograma, es decir, el mensaje cifrado o un fragmento de este.
+		\item \textbf{Mensaje Conocido} el atacante conoce parejas mensaje/criptograma cifradas con una misma clave.
+		\item \textbf{Mensaje escogido} el atacante puede generar criptogramas para mensajes de su elección. Una vez obtenidas dichas parejas, trata de averiguar el mensaje correspondiente a un criptograma desconocido.
+		\item \textbf{Mensaje escogido-adaptativo} el atacante no solo puede generar pareas mensaje/criptograma a su elección, sino que puede hacerlo tantas veces como quiera realizando los análisis que considere oportunos.
+		\item \textbf{Criptograma escogido y escogido-adaptativo} similar a los anteriores pero partiendo del criptograma, teniendo acceso a descifrar los criptogramas que desee, inicialmente o a lo largo del proceso. Lo que se busca en este ataque es la clave.
 \end{itemize}
 
-Una vez visto los objetivos que tienen que cumplir los criptosistemas y los posibles ataques veamos que son los criptosistemas simétricos y asimétricos y su uso en las aplicaciones de mensajería.\\
+Una vez vistos los objetivos que tienen que cumplir los criptosistemas y los posibles ataques veamos qué son los criptosistemas simétricos y asimétricos y su uso en las aplicaciones de mensajería.\\
 
 \subsection{Cifrado simétrico}
+Criptosistema en el cual se utiliza una sola clave para cifrar y descifrar un mensaje. Lo más importante para la seguridad de los criptosistemas es la propia clave mientras que el algoritmo en si mismo, no es tan importante como medida de seguridad. Es decir, lo importante es que el atacante no conozca la clave, mietras que conozca el algoritmo usado no lo es tanto.\\
 Un criptosistema simétrico está formado por:
 \begin{itemize}
 	\item $\mathcal{M}$ el conjunto de los mensajes.
@@ -41,47 +42,55 @@ tales que para cualquier clave $k_p \in \mathcal{K}_p$, existe una clave $k_s$ d
 $$
 \mathcal{D}(k_s,E(k_p,m))=m.
 $$
-Fijadas claves $k_p \in \mathcal{K}_p$ y sus correspondiente $k_s \in \mathcal{K}_s$ se definen las funciones de cifrado y descifrado como:
-$$
-	E_{k_p}:\mathcal{M}\rightarrow\mathcal{C},[E_{k_p}(m)=E(k_p,m)]
-$$
-$$
-	D_{k_p}:\mathcal{C}\rightarrow\mathcal{M},[D_{k_s}(c)=D(k_s,c)]
-$$
+Fijada la clave $k_p \in \mathcal{K}_p$ y su correspondiente $k_s \in \mathcal{K}_s$ se definen las funciones de cifrado y descifrado como:\\
+\begin{aligned}
+	\center
+	&$E_{k_p}:\mathcal{M}\rightarrow\mathcal{C}$\\
+	&$E_{k_p}(m)=E(k_p,m)$
+\end{aligned}
+\begin{aligned}
+	\center
+	&$D_{k_p}:\mathcal{C}\rightarrow\mathcal{M}$\\
+	&$D_{k_s}(c)=D(k_s,c)$
+\end{aligned}
 
 \subsection{Cifrado asimétrico}
+Criptosistema en el cual se utilizan dos claves, una para cifrar el mensaje y otra para descifrarlo. La clave para cifrar es la que se conoce como \emph{clave pública} mientras que la que se utiliza para descifrar es la \emph{clave privada}. Estos criptosistemas surgieron para paliar la debilidad de los criptosistemas simétricos, que es que la clave que cifra y descifra se tiene que compartir, pudiendo esta ser interceptada.  La seguridad de estos criptosistemas reside en que no se conozcla la clave privada.\\
 Un criptosistema asimétrico está formado por:
 \begin{itemize}
-	\item $\mathcal{M}$ es el conjunto de los mensajes
-	\item $\mathcal{C}$ es el conjunto de los criptogramas
+	\item $\mathcal{M}$ es el conjunto de los mensajes.
+	\item $\mathcal{C}$ es el conjunto de los criptogramas.
 	\item Una función $P:\mathcal{K}' \rightarrow \mathcal{K}$, que nos permitirá generar la clave pública.
 \end{itemize}
 Un criptosistema asimétrico viene definido por dos aplicaciones:
 $$E:\mathcal{K}\times\mathcal{M}\rightarrow\mathcal{C}$$
 $$\mathcal{D}:\mathcal{K}'\times\mathcal{C}\rightarrow\mathcal{M}$$
-tales que para cualquier clave privada $k' \in \mathcal{K}'$ obtenemos la clave pública como $P(k')=k$ y se definen las funciones de cifrado y descifrado como:
-$$
-	E_{k}:\mathcal{M}\rightarrow\mathcal{C},[E_{k}(m)=E(k,m)]
-$$
-$$
-	D_{k'}:\mathcal{C}\rightarrow\mathcal{M},[D_{k'}(c)=D(k',c)]
-$$
+tales que para cualquier clave privada $k' \in \mathcal{K}'$ obtenemos la clave pública como $P(k')=k$ y se definen las funciones de cifrado y descifrado como:\\
+\begin{aligned}
+	\center
+	&$E_{k}:\mathcal{M}\rightarrow\mathcal{C}$\\
+	&$E_{k}(m)=E(k,m)$
+\end{aligned}
+\begin{aligned}
+	\center
+	&$D_{k^{'}}:\mathcal{C}\rightarrow\mathcal{M}$\\
+	&$D_{k'}(c)=D(k',c)$
+\end{aligned}
+
 Para que un criptosistema asimétrico sea seguro tenemos que garantizar:
 \begin{itemize}
-	\item $P$ es una función de dirección única.
+	\item $P$ es una función de dirección única, es decir, que dado un elemento de su imagen no se puede calcular su imagen inversa fácilmente.
 	\item Para la mayoría de los $k \in \mathcal{K}$, la aplicación $E_k$ es de dirección única.
-	\item $\mathcal{D}_k'$ se puede calcular en un periodo corto de tiempo si se conoce $k'$ y que sea imposible o el periodo sea muy largo en caso de solo conocerse $k$.
+	\item $\mathcal{D}_{k'}$ se puede calcular en un periodo corto de tiempo si se conoce $k'$ y que sea imposible o el periodo sea muy largo en caso de solo conocerse $k$.
 \end{itemize}
 
 \subsection{Criptosistemas simétricos y asimétricos en las aplicaciones de mensajería}
-Ambos tipos de criptosistemas son muy utilizados en las aplicaciones de mensajería de manera complementaria, los simétricos debido a su velocidad de cifrado, su uso reducido de recursos y su mejor manejo de grandes cantidades de datos se suelen utilizar para cifrar los mensajes, pero como tienen el defecto de que si la clave es interceptada el criptosistema es vulnerado y se pierde tanto la confidencialidad como la autenticidad de los mensajes, se suele complementar con métodos más seguros para el intercambio de la clave como puede ser el \emph{intercambio de claves Diffie-Hellman} y los cifrados asimétricos para la firma y autentificación de los mensajes garantizando de esta manera la seguridad de la aplicación y una eficiencia mucho mayor que si se utilizara únicamente un criptosistema asimétrico.
-
-\section{El algoritmo Rijndael AES}
-En esta sección hablare sobre el cifrado Rijndael AES el cual es un cifrado de bloque simétrico muy utilizado actualmente por aplicaciones como \emph{Telegram}, \emph{WhatsApp} y \emph{FacebookChat} entre otras.\\
-El algoritmo Rijndael llamado así en honor a sus dos autores Joan Daemen y Vicent Rijmen, es un algoritmo de cifrado por bloques que fue adoptado en octubre de 2000 por el NIST(\emph{National Institute for Standards and Technology}) para su empleo en aplicaciones criptográficas no militares en sustitución del algoritmo \emph{DES} después de un proceso de más tres años en los que se buscaba un algoritmo que fuera potente, eficiente y fácil de implementar.\\
-Está diseñado para manejar longitudes de clave y de bloque variables entre los 128 y los 256 bits y aunque estos sean variables, en el estándar adoptado por el Gobierno de Estados Unidos en 2001 \cite{aesUsa} establece una longitud fija de bloque de 128 bits y una longitud de clave a escoger entre 128, 192 y 256 bits.\\
-La información para los siguientes apartados de AES la he obtenido de \cite{GomezPardo2002b} para el primero y \cite{En2011} para el resto.\\
-Como he mencionado anteriormente, AES es un cifrado de bloque, por lo que empezaré introduciendo que son los cifrados de bloque y los distintos modos de operación que tienen para así poder entender mejor el cifrado AES.
+Ambos tipos de criptosistemas son muy utilizados en las aplicaciones de mensajería de manera complementaria.\\ 
+Los criptosistemas simétricos debido a su velocidad de cifrado, su uso reducido de recursos y su mejor manejo de grandes cantidades de datos se suelen utilizar para cifrar los mensajes. 
+Pero como tienen el defecto de que si la clave es interceptada el criptosistema es vulnerado y se pierde tanto la confidencialidad como la autenticidad de los mensajes.\\ 
+Para evitar esto se suele complementar con métodos seguros para el intercambio de la clave como puede ser el \emph{intercambio de claves Diffie-Hellman}.\\
+Loss cifrados asimétricos son muy utilizados para la firma y autentificación de los mensajes, garantizando de esta manera la seguridad de la aplicación y una eficiencia mucho mayor que si se utilizara únicamente un criptosistema asimétrico.\\
+A continuación se introducirá los cifrados de bloque, necesarios para enteder el algoritmo \textbf{Rindael AES} que se explicará posteriormente.
 
 \subsection{Cifrados de bloque}
 Son criptosistemas de clave simétrica en los que la longitud de los bloques y claves es fija.\\
@@ -224,7 +233,15 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 			\caption{Esquema del cifrado y descifrado del modo OFB \cite{cifradobloque}.}
 			\label{esquemaofb}
 		\end{figure}
+
 \newpage
+\section{El algoritmo Rijndael AES}
+En esta sección hablare sobre el cifrado Rijndael AES el cual es un cifrado de bloque simétrico muy utilizado actualmente por aplicaciones como \emph{Telegram}, \emph{WhatsApp} y \emph{FacebookChat} entre otras.\\
+El algoritmo Rijndael llamado así en honor a sus dos autores Joan Daemen y Vicent Rijmen, es un algoritmo de cifrado por bloques que fue adoptado en octubre de 2000 por el NIST(\emph{National Institute for Standards and Technology}) para su empleo en aplicaciones criptográficas no militares en sustitución del algoritmo \emph{DES} después de un proceso de más tres años en los que se buscaba un algoritmo que fuera potente, eficiente y fácil de implementar.\\
+Está diseñado para manejar longitudes de clave y de bloque variables entre los 128 y los 256 bits y aunque estos sean variables, en el estándar adoptado por el Gobierno de Estados Unidos en 2001 \cite{aesUsa} establece una longitud fija de bloque de 128 bits y una longitud de clave a escoger entre 128, 192 y 256 bits.\\
+La información para los siguientes apartados de AES la he obtenido de \cite{GomezPardo2002b} para el primero y \cite{En2011} para el resto.\\
+Como he mencionado anteriormente, AES es un cifrado de bloque, por lo que empezaré introduciendo que son los cifrados de bloque y los distintos modos de operación que tienen para así poder entender mejor el cifrado AES.
+
 
 \subsection{Estructura de AES}
 En el algoritmo AES se define cada ronda como una composición de cuatro funciones invertibles diferentes, formando tres \emph{capas}. Estas funciones tienen un propósito específico:
