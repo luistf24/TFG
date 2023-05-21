@@ -236,7 +236,7 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 
 \newpage
 \section{El algoritmo Rijndael AES}
-En esta sección hablare sobre el cifrado Rijndael AES el cual es un cifrado de bloque simétrico muy utilizado actualmente por aplicaciones como \emph{Telegram}, \emph{WhatsApp} y \emph{FacebookChat} entre otras.\\
+En esta sección hablaré sobre el cifrado Rijndael AES el cual es un cifrado de bloque simétrico muy utilizado actualmente por aplicaciones como \emph{Telegram}, \emph{WhatsApp} y \emph{FacebookChat} entre otras.\\
 El algoritmo Rijndael llamado así en honor a sus dos autores Joan Daemen y Vicent Rijmen, es un algoritmo de cifrado por bloques que fue adoptado en octubre de 2000 por el NIST(\emph{National Institute for Standards and Technology}) para su empleo en aplicaciones criptográficas no militares en sustitución del algoritmo \emph{DES} después de un proceso de más tres años en los que se buscaba un algoritmo que fuera potente, eficiente y fácil de implementar.\\
 Está diseñado para manejar longitudes de clave y de bloque variables entre los 128 y los 256 bits y aunque estos sean variables, en el estándar adoptado por el Gobierno de Estados Unidos en 2001 \cite{aesUsa} establece una longitud fija de bloque de 128 bits y una longitud de clave a escoger entre 128, 192 y 256 bits.\\
 La información para los siguientes apartados de AES la he obtenido de \cite{GomezPardo2002b} para el primero y \cite{En2011} para el resto.\\
@@ -546,7 +546,6 @@ Para que B sepa que un mensaje \emph{m} ha sido enviado por A se siguen los sigu
 \end{enumerate}
 Una vez hecho esto, B podría afirmar casi con total seguridad que el mensaje ha sido enviado por A garantizando el no repudio del mensaje.
 
-\newpage
 \section{Criptosistemas basados en el logaritmo discreto. Diffie-Hellman}
 Una vez visto RSA veremos a continuación una introducción a los criptosistemas basados en el problema del logaritmo discreto que nos permitirá definir el intercambio de claves \emph{Diffie-Hellman}, método muy utilizado en las aplicaciones de mensajería al inicio de las conexión. La información de este apartado sobre el logaritmo ha sido obtenida de \cite{angelRiosMateos} y la de \emph{Diffie-Hellman} ha sido obtenida de \cite{En2011}.\\
 El problema del logaritmo discreto es definido de la siguiente forma:
@@ -593,10 +592,22 @@ Sean $A$ y $B$ dos interlocutores que quieren compartir un valor $K$. Para ello 
 	\item $B$ recoge $\alpha^x$ y calcula $K=(\alpha^x)^y \mod p$
 	\item $A$ recoge $\alpha^y$ y calcula $K=(\alpha^y)^x \mod p$
 \end{enumerate}
-Puesto que $x$ e $y$ son conocidos solamente por $A$ y $B$ respectivamente, tenemos que al final solamente $A$ y $B$ acaban conociendo el valor de $K$.
+Puesto que $x$ e $y$ son conocidos solamente por $A$ y $B$ respectivamente, tenemos que al final solamente $A$ y $B$ acaban conociendo el valor de $K$.\\
+A continuación se introducirá la teoría de curvas Elípticas ya que nos permitirá redefinir el intercambio de claves usando estas, generando un problema mucho más complejo y con mayor seguridad el cual es el que se utiliza en aplicaciones de mensajería como \textbf{WhatsApp} y \textbf{Telegram}.
 
-\section{Curvas Elípticas}
+\section{Curvas Elípticas en Criptografía}
+La criptografía en curvas Elípticas es considerada como uno de los campos de las matemáticas con más futuro en la criptografía asimétrica.
+Esto es debido a sus propiedades que dan lugar a problemas de una gran complejidad computacional análogos a los que presenta la aritmética modular. 
+Esto permite que sean utilizadas en algunos algoritmos asimétricos como puede ser el intercambio de claves \emph{Diffie-Hellman} que se verá más adelante. A priori su 
+estructura algebraica es más compleja que la de la aritmética modular sin embargo, al implementarlas suelen ser más eficientes y además, con claves más cortas alcanzan 
+el mismo nivel de seguridad.\\
+El uso de curvas elípticas en criptografía se presentó por primera vez en 1985 por Neal Koblitz y Víctor Miller de manera independiente.\\
+La información para esta sección se ha obtenido de \cite{En2011}.
 
-\section{Diffie-Hellman usando curvas elípticas}
+\subsection{Curvas Elípticas en $\mathbb{R}$}
+\subsection{Curvas Elípticas en $GF(n)$}
+\subsection{Curvas Elípticas en $GF(2^n)$}
+
+\section{Intercambio de claves Diffie-Hellman usando Curvas Elípticas}
 
 \section{Funciones Hash}
