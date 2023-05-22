@@ -673,10 +673,34 @@ Sean los puntos $r=(r_x,r_y),\: s=(s_x,s_y),\: p=(p_x,p_y),\: t=(t_x,t_y)\in E(G
 	\item Si $p_x = 0$ entonces $2p = \mathcal{O}$
 \end{itemize}
 
-\subsection{Curvas Elípticas en $GF(2^n)$}
+\subsection{El cuerpo de Galois $GF(2^n)$}
+
 Antes de desarrollar las Curvas Elípticas en $GF(2^n)$ introduciré el cuerpo $GF(2^n)$ el cual tiene una serie de propiedades que lo hacen muy interesante y justifican su uso tan extendido en criptografía.\\
-El conjunto $\mathbb{Z}_2[x]$ es el conjunto de polinomios con coeficientes en $\mathbb{Z}_2$ es decir, el el conjunto de polinomios cuyos coeficientes solo valen 0 o 1. Por lo que los polinomios pueden ser representados por una cadena de bits. Un ejemplo sería el polinomio $f(x)=x^4+x^3+x+1$ que quedaría representado como 11011.\\
-Escogiendo un polinomio irreducible en $\mathbb{Z}_2$ se puede generar 
+El conjunto $\mathbb{Z}_2[x]$ es el conjunto de polinomios con coeficientes en $\mathbb{Z}_2$ es decir, el el conjunto de polinomios cuyos coeficientes solo valen 0 o 1. Por lo que los polinomios pueden ser representados por una cadena de bits.
+ Un ejemplo sería el polinomio $f(x)=x^4+x^3+x+1$ que quedaría representado como 11011. 
+Además si lo sumamos con otro polinomio como puede ser $g(x)=x^2+x+1$ tenemos que $f(x)+g(x)=x^4+x^3+x^2$ que equivale a hacer la operación \emph{xor} entre 11011 y 00111, por lo que a nivel computacional, es muy fácil implementar estas operaciones.\\
+Escogiendo un polinomio irreducible en $\mathbb{Z}_2$ podemos generar un cuerpo de Galois. Este conjunto es representado como $GF(2^n)$, donde $n$ es el grado del polinomio irreducible que lo genera.\\
+Las principales ventajas que tiene trabajar con $GF(2^n)$ es que permite llevar a cabo implementaciones de una sencillez significativa respecto a la de los demás. Por lo que teniendo el mismo orden de complejidad, se multiplica significativamente la velocidad y además permite simplificar el diseño de los circuitos. Esto último hace que se obtengan sistemas con mejores prestaciones y mejor precio.
+
+\subsection{Curvas Elípticas en $GF(2^n)$}
+
+De manera análoga a $E(GF(n))$ definimos el conjunto $E(GF(2^n))$ con la diferencia debida a la estructura de $GF(2^n)$, la ecuación de curva elíptica es diferente.\\
+Dado un polinomio irreducible $p(x)$ de grado $n$, las curvas elípticas se definen como los puntos $(x,y)$ que cumplen la ecuación:
+$$
+	y^2+xy \equiv x^3+ax^2+b \mod (p(x))
+$$
+y para que se genere un grupo se tiene que verificar que $b\neq 0$.
+Los puntos de una curva serán pares de polinomios de grado $n-1$ y como hemos visto en el apartado anterior, podrán ser representados como cadenas de bits.\\
+
+\textbf{Operación $+$ en $E(GF(2^n))$}\\
+Sean los puntos $r=(r_x,r_y),\: s=(s_x,s_y),\: p=(p_x,p_y),\: t=(t_x,t_y)\in E(GF(n))$, definimos la operación $+$  como sigue:
+\begin{itemize}
+	\item $r+\mathcal{O}=\mathcal{O}+r=r,\; \forall r \in E(GF(2^n))$
+	\item Si $r_x=s_x$ y $r_y=s_x+s_y$, entoces se dice que $r$ es el opuesto de $s$, se nota como $r=-s$ y se verifica que $r+s=s+r=\mathcal{O}$.
+	\item Si $r\neq s$ y $r\neq-s$, $t=r+s$ se calcula como $d=\frac{s_y-r_y}{s_x-r_x},\; t_x=d^2+d+r_x+s_x+a,\; t_y=d(r_x+t_x)+t_x+r_y$.
+	\item Para $t=2p$ con $p_x\neq 0$ se calcula como $d=p_x+\frac{p_y}{p_x}, \: t_x=d^2+d+a, \: t_y=p_x^2+(d+1)t_x$.
+	\item Si $p_x=0$ tenemos que $2p=\mathcal{O}$
+\end{itemize}
 
 \subsection{El problema del logaritmo discreto usando curvas elípticas}
 
