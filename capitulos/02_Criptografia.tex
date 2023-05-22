@@ -606,7 +606,7 @@ La información para esta sección se ha obtenido de \cite{En2011}.
 
 \subsection{Curvas Elípticas en $\mathbb{R}$}
 \begin{definicion}
-	Una curva definida en $\mathbb{R}$ es el conjunto de puntos del plano (x,y) que cumplen la siguiente ecuacuación:
+	Una curva definida en $\mathbb{R}$ es el conjunto de puntos del plano (x,y) que cumplen la siguiente ecuación:
 $$
 	y^2=x^3+ax+b
 $$
@@ -634,7 +634,7 @@ Sean los puntos $r=(r_x,r_y)$, $s=(s_x,s_y)$, $p=(p_x,p_y)$, $t=(t_x,t_y)$ con $
 	\item Si $r_x = s_x$ y $r_y = -s_y$, entonces $r=-s$ y además $r+s=s+r=\mathcal{O}$.
 	\item Si $r\neq s$ y $r\neq -s$, $r+s=p$ donde $p$ será el opuesto del punto que corta la recta que une $r$ y $t$ con la curva.
 	\item Para sumar un punto $p$ con sigo mismo si $p_y\neq0$ se usa la tangente de la curva en $p$. Luego tendremos que $t=p+p$ sera el opuesto de ese punto. Si $p_y=0$ entonces la tangente de la curva será perpendicular al eje de abcisas, por lo que se podría considerar que corta la curva en el infinito, luego $p+p=\mathcal{O}$.
-	\item Para sumar $n$ veces un punto $p$ tenemos que si $p_y\neq 0$ entonces sumar $n$ veces p será equivalente a multiplicar $p$ por el escalar $n$ y se representará como $np$. Si $p_y=0$ entonces la suma será:
+	\item Para sumar $n$ veces un punto $p$ tenemos que si $p_y\neq 0$ entonces sumar $n$ veces $p$ será equivalente a multiplicar $p$ por el escalar $n$ y se representará como $np$. Si $p_y=0$ entonces la suma será:
 \end{itemize}
 \begin{aligned*}
 	\center
@@ -643,10 +643,43 @@ Sean los puntos $r=(r_x,r_y)$, $s=(s_x,s_y)$, $p=(p_x,p_y)$, $t=(t_x,t_y)$ con $
 	&$4r = 3r + r = r + r = \mathcal{O}$\\
 	&...\\
 \end{aligned}
+La suma de curvas elípticas de manera algebraica se define de la siguiente forma:\\
+Dados $r=(r_x,r_y)$ y $s=(s_x,s_y)$, tal que $r\noeq-s$, tenemos que $r+s=t$ donde $d=\frac{r_y-s_y}{r_x-s_x},\; t_x=d^2-r_x-s_x,\; t_y=-r_y+d(r_x-t_x)$.
+De manera gráfica quedaría de la siguiente manera:\\
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{imagenes/sumaCurva.png} 
+	\caption{Suma en la curva $y^2=x^3-4x+1$ con $r=(-2,-1),\: s=(0,1),\: -t=(3,4)\: y \: t=(3,-4)$ }
+	\label{esquemaecb}
+\end{figure}
+
+Una vez definidas las curvas elípticas en $\mathbb{R}$ definiremos las curvas en los cuerpos de Galois $GF(n)$ y $GF(2^n)$ cuyo uso esta muy extendido en la criptografía para redefinir el problema de logaritmo discreto.
 
 \subsection{Curvas Elípticas en $GF(n)$}
-\subsection{Curvas Elípticas en $GF(2^n)$}
+Un cuerpo de Galois $GF(n)$ es el grupo finito generado por un número primo $n$. En este conjunto todos los elementos tienen un inverso, menos el cero por lo que están permitidas las operaciones de suma, resta, multiplicación y división.\\
+De manera natural se define el conjunto $E(GF(n))$ como los puntos $(x,y)$ que verifican la siguiente ecuación: 
+$$
+	y^2\equiv x^3+ax+b \mod n
+$$
+Donde al igual que en $E(\mathbb{R})$, $a,b\in{1..n}$ definen de manera unívoca una curva elíptica.\\
 
-\section{Intercambio de claves Diffie-Hellman usando Curvas Elípticas}
+\newpage
+\textbf{Operación $+$ en $GF(n)$}\\
+Sean los puntos $r=(r_x,r_y),\: s=(s_x,s_y),\: p=(p_x,p_y),\: t=(t_x,t_y)\in E(GF(n))$, definimos la operación $+$  como sigue:
+\begin{itemize}
+	\item $r+\mathcal{O}=\mathcal{O}+r=r,\: \forall r \in GF(n)$.
+	\item Si $r_x=s_x$ y $r_y=s_x+s_y$, entoces se dice que $r$ es el opuesto de $s$, se nota como $r=-s$ y se verifica que $r+s=s+r=\mathcal{O}$.
+	\item Si $r\neq s$ y $r\neq-s$, $t=r+s$ se calcula como $d=\frac{s_y-r_y}{s_x-r_x}\mod n,\; t_x=d^2-r_x-s_x \mod n,\; t_y=-r_y+d(r_x-t_x) \mod n$
+	\item Si $p_x = 0$ entonces $2p = \mathcal{O}$
+\end{itemize}
+
+\subsection{Curvas Elípticas en $GF(2^n)$}
+Antes de desarrollar las Curvas Elípticas en $GF(2^n)$ introduciré el cuerpo $GF(2^n)$ el cual tiene una serie de propiedades que lo hacen muy interesante y justifican su uso tan extendido en criptografía.\\
+El conjunto $\mathbb{Z}_2[x]$ es el conjunto de polinomios con coeficientes en $\mathbb{Z}_2$ es decir, el el conjunto de polinomios cuyos coeficientes solo valen 0 o 1. Por lo que los polinomios pueden ser representados por una cadena de bits. Un ejemplo sería el polinomio $f(x)=x^4+x^3+x+1$ que quedaría representado como 11011.\\
+Escogiendo un polinomio irreducible en $\mathbb{Z}_2$ se puede generar 
+
+\subsection{El problema del logaritmo discreto usando curvas elípticas}
+
+\section{Diffie-Hellman usando Curvas Elípticas}
 
 \section{Funciones Hash}
