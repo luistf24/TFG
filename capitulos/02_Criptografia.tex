@@ -6,24 +6,27 @@ En este capítulo se introducirá la teoría sobre criptografía y curvas elípt
 \section{Introducción a la criptografía}
 En este apartado voy a hablar sobre los objetivos de un criptosistema y los posibles ataques que se le pueden hacer, así como una introducción a la criptografía simétrica y asimétrica y su uso en las aplicaciones de mensajería que nos ayudará a entender los distintos criptosistemas de los que se hablará después.
 Mayormente la información de este apartado ha sido obtenida de \cite{apuntesCriptografia} para los criptosistemas simétricos y \cite{angelRiosMateos} para los cifrados asimétricos.\\
-
 Los principales objetivos que debe cumplir todos los criptosistemas son:
-\begin{itemize}
-		\item \textbf{Confidencialidad} la información solo puede ser accesible por las entidades autorizadas. 
-		\item \textbf{Integridad} la información no ha sido alterada en el envío.
-		\item \textbf{Autenticidad} la información proviene de quién afirma haberla enviado.
-		\item \textbf{No repudio} el emisario de una información no puede a posteriori negar que se realizado tal envío.
-\end{itemize}
+\begin{description}
+	\item \textbf{Confidencialidad}\\ 
+		La información solo puede ser accesible por las entidades autorizadas. 
+	\item \textbf{Integridad}\\ 
+		La información no ha sido alterada en el envío.
+	\item \textbf{Autenticidad}\\ 
+		La información proviene de quién afirma haberla enviado.
+	\item \textbf{No repudio}\\ 
+		El emisario de una información no puede a posteriori negar que se realizado tal envío.
+\end{description}
 
 Para hablar de los ataques supondremos que se sigue el principio de \emph{Kerckhoffs}, el cual establece que el adversario conoce todos los detalles del criptosistema excepto la clave empleada.\\
 Los posibles ataques son:
-\begin{itemize}
-		\item \textbf{Criptograma} el adversario conoce el criptograma, es decir, el mensaje cifrado o un fragmento de este.
-		\item \textbf{Mensaje Conocido} el atacante conoce parejas mensaje/criptograma cifradas con una misma clave.
-		\item \textbf{Mensaje escogido} el atacante puede generar criptogramas para mensajes de su elección. Una vez obtenidas dichas parejas, trata de averiguar el mensaje correspondiente a un criptograma desconocido.
-		\item \textbf{Mensaje escogido-adaptativo} el atacante no solo puede generar pareas mensaje/criptograma a su elección, sino que puede hacerlo tantas veces como quiera realizando los análisis que considere oportunos.
-		\item \textbf{Criptograma escogido y escogido-adaptativo} similar a los anteriores pero partiendo del criptograma, teniendo acceso a descifrar los criptogramas que desee, inicialmente o a lo largo del proceso. Lo que se busca en este ataque es la clave.
-\end{itemize}
+\begin{description}
+		\item \textbf{Criptograma}\\ El adversario conoce el criptograma, es decir, el mensaje cifrado o un fragmento de este.
+		\item \textbf{Mensaje Conocido}\\ El atacante conoce parejas mensaje/criptograma cifradas con una misma clave.
+		\item \textbf{Mensaje escogido}\\ El atacante puede generar criptogramas para mensajes de su elección. Una vez obtenidas dichas parejas, trata de averiguar el mensaje correspondiente a un criptograma desconocido.
+		\item \textbf{Mensaje escogido-adaptativo}\\ El atacante no solo puede generar pareas mensaje/criptograma a su elección, sino que puede hacerlo tantas veces como quiera realizando los análisis que considere oportunos.
+		\item \textbf{Criptograma escogido y escogido-adaptativo}\\ Similar a los anteriores pero partiendo del criptograma, teniendo acceso a descifrar los criptogramas que desee, inicialmente o a lo largo del proceso. Lo que se busca en este ataque es la clave.
+\end{description}
 
 Una vez vistos los objetivos que tienen que cumplir los criptosistemas y los posibles ataques veamos qué son los criptosistemas simétricos y asimétricos y su uso en las aplicaciones de mensajería.\\
 
@@ -103,6 +106,7 @@ $$
 $$
 Donde N es el tamaño del bloque y K es el tamaño de la clave.\\
 Los cifrados tienen distintos modos de operación los cuales dependen solo del tamaño del bloque, estos son:\\
+
 \begin{itemize}
 	\item \textbf{Electronic CodeBook}
 	\begin{itemize}
@@ -126,7 +130,7 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 			\item Devolvemos $m_{[1]}...m_{[l]}$
 		\end{description}
 	\end{itemize}
-
+\newpage
 		\begin{figure}[htb]
 			\centering
 			\includegraphics[scale=0.4]{imagenes/ecb.png} 
@@ -157,7 +161,7 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 			\item Devolvemos $m_{[1]}...m_{[{l}]}$
 		\end{description}
 	\end{itemize}
-%\newpage
+\newpage
 		\begin{figure}[htb]
 			\centering
 			\includegraphics[scale=0.4]{imagenes/cbc.png} 
@@ -199,6 +203,7 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 			\label{esquemacfb}
 		\end{figure}
 
+\newpage
 	\item \textbf{Output FeedBack}
 	\begin{itemize}
 		\item \textbf{\emph{Cifrado OFB}}
@@ -226,7 +231,6 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 		\end{description}
 	\end{itemize}
 \end{itemize}
-
 		\begin{figure}[htb]
 			\centering
 			\includegraphics[scale=0.4]{imagenes/ofb.png} 
@@ -720,8 +724,8 @@ Dadas dos personas A y B que quieren realizar un intercambio de claves.
 	\item A y B se ponen de acuerdo en la curva elíptica $E$ y el punto $q\in E$.
 	\item A elige aleatoriamente un número $a\in(2,...,n-1)$ y le envía a B $p_a=aq$.
 	\item B elige aleatoriamente un número $b\in(2,...,n-1)$ y le envía a A $p_b=bq$.
-	\item A calcula a(p_b).
-	\item B calcula b(p_a).
+	\item A calcula $a(p_b)$.
+	\item B calcula $b(p_a)$.
 	\item La clave compartida es $(ab)q=a(p_b)=b(p_a)$
 \end{itemize}
 
