@@ -750,12 +750,13 @@ Visto esto, en general, una función hash funciona de la siguiente forma:
 	\item Se calcula el hash del siguiente bloque y se suma con el hash calculado previamente.
 	\item Se repite de manera análoga con el resto de bloques hasta que se recorren todos.
 \end{enumerate}
-Las hash que explicaré serán: \emph{MD5, SHA0} y \emph{SHA1} que son las funciones antecesoras de la función \emph{SHA256} que es la que se utiliza actualmente en las funciones de mensajería.\\
+Las hash que explicaré serán: \emph{MD5, SHA-0} y \emph{SHA-1} que son las funciones antecesoras de la función \emph{SHA-256} que es la que se utiliza mayoritariamente en las funciones de mensajería en la actualidad. Algunas también pueden utilizar SHA-1\\
 
 \subsection{MD5}
+La información ha sido obtenida de \cite{Wang2005}
 
 \subsection{SHA-0}
-SHA-0 es una función hash que apareció publicado en el Federal Information Processing Standard (FIPS-180) por el NIST en 1993 \cite{Penard2008}\cite{sha01}. Está basado en \emph{MD4} y \emph{MD5}. El algoritmo transforma un mensaje de cualquier tamaño hasta $2^{64}$ bits y los transforma en hashes de 160 bits.\\
+SHA-0 es una función hash que apareció publicado en el Federal Information Processing Standard (FIPS-180) por el NIST en 1993 \cite{Penard2008}. Está basado en \emph{MD4} y \emph{MD5}. El algoritmo transforma un mensaje de cualquier tamaño hasta $2^{64}$ bits y los transforma en hashes de 160 bits.\\
 El funcionamiento de SHA-0 es el siguiente \cite{sha0}:
 \begin{enumerate}
 	\item El mensaje se rellena con un único bit '1' seguido de 0-511 bits '0'. A continuación se añade una representación de 64 bits de la longitud del mensaje donde el número de ceros es elegido para asegurar que la longitud total del mensaje es un múltiplo de 512 bits. El mensaje se divide en bloques de 512 bits: $M_1,...,M_n$.
@@ -907,7 +908,7 @@ $$
 $$
 	\sigma_1(x) = (x\ggg17)\oplus (x\ggg19)\oplus (x\lll10)
 $$
-\newpage
+
 \begin{figure}[htb]
 	\centering
 	\includegraphics[scale=0.5]{imagenes/sha2.png} 
