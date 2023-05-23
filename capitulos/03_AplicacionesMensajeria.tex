@@ -107,7 +107,7 @@ En esta sección se describirán las distintas claves que entran en juego en el 
 
 \subsection{Creación de la \emph{Authorization Key}}
 Como hemos visto en el apartado anterior la \emph{Authorization Key} se genera durante el registro del usuario en la aplicación. El formato de las consultas usa \emph{Binary Data Serialization} ya que MTProto requiere que los tipos de datos estén en formato binario y \emph{TL Language} que sirve para describir el sistema utilizado de tipos y funciones.\\
-Los números de gran tamaño son transmitidos como cadenas que contienen la secuencias de bytes en formato \emph{big endian}, los números de menor tamaño como pueden ser los \emph{int, long int128...} usan normalmente el formato \emph{little endian} aunque si pertenecen al \emph{SHA1} los bytes no son reorganizado.\\
+Los números de gran tamaño son transmitidos como cadenas que contienen la secuencias de bytes en formato \emph{big endian}, los números de menor tamaño como pueden ser los \emph{int, long int128...} usan normalmente el formato \emph{little endian} aunque si pertenecen al \emph{SHA-1} los bytes no son reorganizado.\\
 Una vez introducido los formatos que seguirán las consultas y los números veamos los pasos que se siguen en la creación de la \emph{Authorization Key}.
 
 \begin{enumerate}
@@ -147,11 +147,11 @@ Una vez introducido los formatos que seguirán las consultas y los números veam
 			\item \emph{server\textunderscore nonce}
 			\item \emph{encrypted\textunderscore answer}: Respuesta cifrada que es del tipo \emph{string} y contiene:
 			\begin{itemize}
-				\item \emph{new\textunderscore nonce\textunderscore hash}: Son los 128 bits menos significativos de \emph{SHA1(new\textunderscore nonce)}.
+				\item \emph{new\textunderscore nonce\textunderscore hash}: Son los 128 bits menos significativos de \emph{SHA-1(new\textunderscore nonce)}.
 				\item \emph{answer}: Es una serialización de \emph{nonce}, \emph{server\textunderscore nonce}, \emph{g}, \emph{dh\textunderscore prime}, \emph{g\textunderscore a} y \emph{server\textunderscore time}.
-				\item \emph{answer\textunderscore with\textunderscore hash}: Es una generación con la función hash \emph{HASH1} quedando de la siguiente forma: \emph{SHA1(answer)+answer+(0-15 bytes aleatorios)} de manera que la longitud sea divisible por 16, es del tipo \emph{string}.
-				\item \emph{answer\textunderscore aes\textunderscore key}: \emph{SHA1(new\textunderscore nonce + server\textunderscore nonce) + substr(SHA1(server\textunderscore nonce + new\textunderscore nonce), 0, 12)} y es del tipo \emph{string}.
-				\item \emph{tmp\textunderscore aes\textunderscore iv}: \emph{substr(SHA1(server\textunderscore nonce + new\textunderscore nonce), 12, 8) + SHA1(new\textunderscore nonce + new\textunderscore nonce) + substr(new\textunderscore, 0, 4)}
+				\item \emph{answer\textunderscore with\textunderscore hash}: Es una generación con la función hash \emph{HASH1} quedando de la siguiente forma: \emph{SHA-1(answer)+answer+(0-15 bytes aleatorios)} de manera que la longitud sea divisible por 16, es del tipo \emph{string}.
+				\item \emph{answer\textunderscore aes\textunderscore key}: \emph{SHA-1(new\textunderscore nonce + server\textunderscore nonce) + substr(SHA-1(server\textunderscore nonce + new\textunderscore nonce), 0, 12)} y es del tipo \emph{string}.
+				\item \emph{tmp\textunderscore aes\textunderscore iv}: \emph{substr(SHA-1(server\textunderscore nonce + new\textunderscore nonce), 12, 8) + SHA-1(new\textunderscore nonce + new\textunderscore nonce) + substr(new\textunderscore, 0, 4)}
 				\item \emph{encrypted\textunderscore answer}: \emph{AES256\textunderscore ige\textunderscore encrypt(answer\textunderscore with\textunderscore hash, tmp\textunderscore aes\textunderscore key, tmp\textunderscore aes\textunderscore iv)} donde:
 				\begin{itemize}
 					\item \emph{tmp\textunderscore aes\textunderscore key}: Es una clave de 256 bits
@@ -178,12 +178,12 @@ Una vez introducido los formatos que seguirán las consultas y los números veam
 							\item \emph{retry\textunderscore id} que vale 0 en el primer intento y en caso contrario, vale \emph{auth\textunderscore key\textunderscore aux\textunderscore hash} del intento fallido anterior y es del tipo \emph{long}.
 							\item \emph{g\textunderscore b} que es del tipo \emph{string}.
 						\end{itemize}
-					\item \emph{data\textunderscore with\textunderscore hash} que es: \emph{SHA1(data)+data+(0-15 bytes aleatorios de manera que el tamaño sea divisible por 16)}.
+					\item \emph{data\textunderscore with\textunderscore hash} que es: \emph{SHA-1(data)+data+(0-15 bytes aleatorios de manera que el tamaño sea divisible por 16)}.
 					\item \emph{encrypted\textunderscore data} que es: \emph{AES256\textunderscore ige\textunderscore encrypt(data\textunderscore with\textunderscore hash, tmp\textunderscore aes\textunderscore key, tmp\textunderscore aes\textunderscore iv)}.
 				\end{itemize}
 		\end{itemize}
 	\item Una vez hecho los pasos previos tendríamos que \emph{auth\textunderscore key} vale $g^{ab}$ mod \emph{dh\textunderscore prime}, en el servidor se calcula como \emph{$g\textunderscore b^{a}$ mod \emph{dh\textunderscore prime}} y en el cliente se calcula como $g\textunderscore a^b$ mod \emph{dh\textunderscore prime}.
-	\item \emph{auth\textunderscore key\textunderscore hash} se calcula como los 64 bits de menor prioridad de \emph{SHA1(auth\textunderscore key)}. El servidor comprueba si existe alguna otra clave con el mismo \emph{auth\textunderscore hash} y responde de alguna de las siguientes tres formas
+	\item \emph{auth\textunderscore key\textunderscore hash} se calcula como los 64 bits de menor prioridad de \emph{SHA-1(auth\textunderscore key)}. El servidor comprueba si existe alguna otra clave con el mismo \emph{auth\textunderscore hash} y responde de alguna de las siguientes tres formas
 	\begin{enumerate}
 		\item Una serialización de: 
 			\begin{itemize}
@@ -204,8 +204,8 @@ Una vez introducido los formatos que seguirán las consultas y los números veam
 				\item \emph{new\textunderscore nonce\textunderscore hash3}
 			\end{itemize}
 	\end{enumerate}
-	Donde \emph{new\textunderscore nonce\textunderscore hash1}, \emph{new\textunderscore nonce\textunderscore hash2} y \emph{new\textunderscore nonce\textunderscore hash3} son los 128 bits menos significativos de SHA1 de la cadena de bytes obtenida al añadir a \emph{new\textunderscore nonce} un byte con el valor 1,2 o 3 respectivamente y seguido de \emph{auth\textunderscore key\textunderscore hash}.\\
-	\emph{Auth\textunderscore key\textunderscore aux\textunderscore hash} son los 64 bits más significativos de \emph{SHA1(auth\textunderscore key)}.
+	Donde \emph{new\textunderscore nonce\textunderscore hash1}, \emph{new\textunderscore nonce\textunderscore hash2} y \emph{new\textunderscore nonce\textunderscore hash3} son los 128 bits menos significativos de SHA-1 de la cadena de bytes obtenida al añadir a \emph{new\textunderscore nonce} un byte con el valor 1,2 o 3 respectivamente y seguido de \emph{auth\textunderscore key\textunderscore hash}.\\
+	\emph{Auth\textunderscore key\textunderscore aux\textunderscore hash} son los 64 bits más significativos de \emph{SHA-1(auth\textunderscore key)}.
 	Si algo falla durante estos pasos, el cliente volvería al paso 6 y generándose un nuevo \emph{b}. Al mismo tiempo se define \emph{server\textunderscore salt} como \emph{substr(new\textunderscore nonce, 0, 8)} XOR \emph{substr(server\textunderscore nonce, 0, 8)}.\\
 	
 \end{enumerate}
@@ -217,10 +217,10 @@ Si el cliente no obtiene alguna respuesta del servidor en un intervalo de tiempo
 En esta sección hablaré de como se generan la clave de autorización (\emph{auth\textunderscore key}) y de la clave del mensaje (\emph{msg\textunderscore key}) necesarias para calcular la clave de AES (\emph{aes\textunderscore key}) y el vector de inicialización de 256 bits (\emph{iv\textunderscore aes}) usados para cifrar los mensajes en MTProto 2.0.\\
 El algoritmo consiste en:
 \begin{enumerate}
-	\item Calculamos \emph{msg\textunderscore key\textunderscore large} como \emph{SHA256(substr(auth\textunderscore key, 88+x, 32)+plaintext+random\textunderscore padding)}.
+	\item Calculamos \emph{msg\textunderscore key\textunderscore large} como \emph{SHA-256(substr(auth\textunderscore key, 88+x, 32)+plaintext+random\textunderscore padding)}.
 	\item Calculamos \emph{msg\textunderscore key} como \emph{substr(msg\textunderscore key\textunderscore large, 8, 16)}.
-	\item Calculamos \emph{sha256\textunderscore a} como \emph{SHA256(msg\textunderscore key+substr(auth\textunderscore key, x, 36))}.
-	\item Calculamos \emph{sha256\textunderscore b} como \emph{SHA256(substr(auth\textunderscore key, 40+x, 36)+msg\textunderscore key)}
+	\item Calculamos \emph{sha256\textunderscore a} como \emph{SHA-256(msg\textunderscore key+substr(auth\textunderscore key, x, 36))}.
+	\item Calculamos \emph{sha256\textunderscore b} como \emph{SHA-256(substr(auth\textunderscore key, 40+x, 36)+msg\textunderscore key)}
 \end{enumerate}
 Y una vez hechos estos pasos, ya podemos calcular la clave para AES y el vector de inicialización.
 \begin{itemize}
