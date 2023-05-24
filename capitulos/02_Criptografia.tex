@@ -753,13 +753,63 @@ Visto esto, en general, una función hash funciona de la siguiente forma:
 Las hash que explicaré serán: \emph{MD5, SHA-0} y \emph{SHA-1} que son las funciones antecesoras de la función \emph{SHA-256} que es la que se utiliza mayoritariamente en las funciones de mensajería en la actualidad. Algunas también pueden utilizar SHA-1\\
 
 \subsection{MD5}
-La información ha sido obtenida de \cite{Wang2005}
+MD5 fue diseñada en 1992 por Ron Rivest como una mejora de la función MD4. Es una de las funciones más usadas hasta la fecha aunque su uso esta disminuyendo debido a que se han encontrado algunas debilidades en esta. Uno de los motivos por los que es tan importante es que sirvió como base para desarrollar las funciones SHA-0, SHA-1 y la familia de funciones SHA-2.
+La información ha sido obtenida de \cite{Wang2005}.\\
+En MD5 el mensaje inicial se fragmenta en bloques de 512 bits y la salida es un hash de 128 bits, el proceso de generación de este es el siguiente:
+
+\begin{enumerate}
+	\item El mensaje se rellena con un único bit '1' seguido de 0-511 bits '0'. A continuación se añade una representación de 64 bits de la longitud del mensaje donde el número de ceros es elegido para asegurar que la longitud total del mensaje es un múltiplo de 512 bits. El mensaje se divide en bloques de 512 bits: $M_1,...,M_n$.
+	\item Para la primera iteración se utiliza un buffer predefinido:
+	$$
+		h_0=(67452301_x, EFCDAB89_x, 98BADCFE_x, 10325476_x, C3D2E1F0_x).
+	$$
+	\item Cada bloque $M_j$ es pasado por la función de compresión junto con el valor actual de $h_{j-1}$, la salida es el nuevo valor de $h_j$, la operación se puede resumir en:
+	$$
+		h_j=compresión(M_{j-1},h_{j-1}).
+	$$
+	\item $h_n$ es la salida de la función hash.
+\end{enumerate}
+Donde la función hash funciona de la siguiente manera:
+\begin{enumerate}
+	\item Se divide el bloque $M_j$ de 512 bits en bloques 16 bloques de 32 bits $m_0,m_1,...,m_{15}$. 
+\item Divide $h_{j-1}$ en 4 registros \emph{A, B, C} y \emph{D} como:
+	$$
+		h_{j-1} = (A_0, B_0, C_0, D_0, E_0)
+	$$
+	\item Para $i=0,...,63$ hacemos:
+	$$
+		A_{i+1}=B_i+((A_i+\Phi_i(B_i,C_i,D_i)+W_i+T_i)\lll S_i),
+	$$
+	$$
+		D_{i+1}=A_{i+1}+((D_i+\Phi_{i+1}(A_{i+1},B_i,C_i)+W_{i+1}+T_{i+1})\lll S_{i+1}),
+	$$
+	$$
+		C_{i+1}=D_{i+1}+((C_i+\Phi_{i+2}(D_{i+1},A_{i+1},B_i)+W_{i+2}+T_{i+2})\lll S_{i+2}),
+	$$
+	$$
+		B_{i+1}=C_{i+1}+((B_i+\Phi_{i+3}(C_{i+1},D_{i+1},A_{i+1})+W_{i+3}+T_{i+3})\lll S_{i+3})
+	$$
+	Donde la operación $+$ es la operación ADD $\mod 32$, $T_{i+j}$ y $S_{i+j}\; (j=0,1,2,3)$ son constantes dependientes de la iteración y $W_i$ son palabras del mensaje.\\
+	En cada ronda se utiliza una función $\Phi_i(X,Y,Z)$ que depende de la iteración:
+	\begin{description}
+		\item $\Phi_i(X,Y,Z)=(X\wedge Y)\vee (\overline{X}\wedge Z),\; 0\leq i\leq 15,$
+		\item $\Phi_i(X,Y,Z)=(X\wedge Z)\vee (Y\wedge \overline{Z}),\; 16\leq i\leq 31,$
+		\item $\Phi_i(X,Y,Z)=X\oplus Y\oplus Z,\; 32\leq i\leq 47,$
+		\item $\Phi_i(X,Y,Z)=Y\oplus (X\vee \overline(Z)),\; 48\leq i\leq 63$
+	\end{description}
+\end{enumerate}
+En la imagen siguiente se puede ver un esquema del proceso de generación del hash usando MD5.
+\begin{figure}[htb]
+	\centering
+	\includegraphics[scale=0.5]{imagenes/md5.png} 
+	\caption{Esquema de los pasos seguidos en MD5 \cite{fotosmd5}.}
+\end{figure}
 
 \subsection{SHA-0}
 SHA-0 es una función hash que apareció publicado en el Federal Information Processing Standard (FIPS-180) por el NIST en 1993 \cite{Penard2008}. Está basado en \emph{MD4} y \emph{MD5}. El algoritmo transforma un mensaje de cualquier tamaño hasta $2^{64}$ bits y los transforma en hashes de 160 bits.\\
 El funcionamiento de SHA-0 es el siguiente \cite{sha0}:
 \begin{enumerate}
-	\item El mensaje se rellena con un único bit '1' seguido de 0-511 bits '0'. A continuación se añade una representación de 64 bits de la longitud del mensaje donde el número de ceros es elegido para asegurar que la longitud total del mensaje es un múltiplo de 512 bits. El mensaje se divide en bloques de 512 bits: $M_1,...,M_n$.
+	\item Al igual que en MD5, el mensaje se rellena con un único bit '1' seguido de 0-511 bits '0'. A continuación se añade una representación de 64 bits de la longitud del mensaje donde el número de ceros es elegido para asegurar que la longitud total del mensaje es un múltiplo de 512 bits. El mensaje se divide en bloques de 512 bits: $M_1,...,M_n$.
 	\item Para la primera iteración se utiliza un buffer predefinido:
 	$$
 		h_0=(67452301_x, EFCDAB89_x, 98BADCFE_x, 10325476_x, C3D2E1F0_x).
@@ -789,10 +839,10 @@ Los pasos seguidos en la función de compresión son:
 	$$
 		B_{i+1}=A_i,\: C_{i+1}=(B_i\lll30),\: D_{i+1}=C_i,\: E_{i+1}=D_i.
 	$$
-	Donde las funciones y las constantes están definidas en la taba \ref{tablasha0}.
+	Donde las funciones y las constantes están definidas en la tabla \ref{tablasha0}.
 	\item La salida de la función sería:
 	$$
-		h_j=(A_0+A_{80}, B_0+B_{80}, C_0+C_{80}, D_0+D_{80}, E_0+E_{80}).
+		h_n=(A_0+A_{80}, B_0+B_{80}, C_0+C_{80}, D_0+D_{80}, E_0+E_{80}).
 	$$
 \end{enumerate}
 
@@ -883,7 +933,7 @@ Los pasos seguidos en la función de compresión son:
 	$$
 		E_{i+1}=D_i+H_i+\Sigma_1(E_i)+Ch(E_i,F_i,G_i)+K_j+W_j.
 	$$
-	Donde las funciones y las constantes están definidas en la taba \ref{tablasha0}.
+	Donde las funciones y las constantes están definidas en la tabla \ref{tablasha0}.
 	\item La salida de la función sería:
 	$$
 		h_j=(A_0+A_{63}, B_0+B_{63}, C_0+C_{63}, D_0+D_{63}, E_0+E_{63}, F_0+F_{63}, G_0+G_{63}, H_0+H_{63}).
