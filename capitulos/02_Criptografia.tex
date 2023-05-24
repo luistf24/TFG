@@ -846,7 +846,7 @@ Los pasos seguidos en la función de compresión son:
 	$$
 \end{enumerate}
 
-\begin{table}[htb]
+\begin{table}[H]
 	\begin{center}
 		\begin{tabular}{| l | l | l |}
 				\hline
@@ -880,13 +880,11 @@ Su funcionamiento es muy similar al de la función SHA-0 variando en las funcion
 \end{table}
 
 En siguiente imagen se puede observar un esquema del proceso para obtener un el hash seguido por las funciones  SHA-0 y SHA-1 donde \textbf{F} será la función de compresión.
-
 \begin{figure}[htb]
 	\centering
 	\includegraphics[scale=0.5]{imagenes/sha0-1.png} 
 	\caption{Esquema de los pasos seguidos en SHA-0 y SHA-1 \cite{fotosha10}.}
 \end{figure}
-\newpage
 
 \subsection{SHA-256}
 La función SHA-256 pertenece a la familia SHA-2 que es un conjunto de funciones hash diseñadas por la NSA en 2001 \cite{Penard2008}. Esta familia está compuesta por las funciones SHA-224, SHA-256, SHA-384 y SHA-512 donde el número del final indica el tamaño de bloque en el que se dividirá el mensaje. Nos centraremos en la función SHA-256 que como he comentado anteriormente es la que se utiliza en las aplicaciones de mensajería actualmente.\\
@@ -959,6 +957,8 @@ $$
 	\sigma_1(x) = (x\ggg17)\oplus (x\ggg19)\oplus (x\lll10)
 $$
 
+\newpage
+En la siguiente imagen podemos ver un esquema de los pasos seguidos en las funciones SHA-2.\\
 \begin{figure}[htb]
 	\centering
 	\includegraphics[scale=0.5]{imagenes/sha2.png} 
