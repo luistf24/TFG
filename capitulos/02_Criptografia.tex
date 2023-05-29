@@ -28,9 +28,16 @@ Los posibles ataques son:
 		\item \textbf{Criptograma escogido y escogido-adaptativo}\\ Similar a los anteriores pero partiendo del criptograma, teniendo acceso a descifrar los criptogramas que desee, inicialmente o a lo largo del proceso. Lo que se busca en este ataque es la clave.
 \end{description}
 
-Una vez vistos los objetivos que tienen que cumplir los criptosistemas y los posibles ataques veamos qué son los criptosistemas simétricos y asimétricos y su uso en las aplicaciones de mensajería.\\
+Una vez vistos los objetivos que tienen que cumplir los criptosistemas y los posibles ataques veamos qué el uso de los criptosistemas simétricos y asimétricos en las aplicaciones de mensajería y posteriormente una introducción más técnica de estos.\\
 
-\subsection{Cifrado simétrico}
+\subsection{Criptosistemas simétricos y asimétricos en las aplicaciones de mensajería}
+Los criptosistemas simétricos y asimétricos conforman una parte fundamental de las aplicaciones de mensajería, ambos son usados a la par de manera complementaria.\\
+Los criptosistemas simétricos debido a su velocidad de cifrado, su uso reducido de recursos y su mejor manejo de grandes cantidades de datos se suelen utilizar para cifrar los mensajes. 
+Pero como tienen el defecto de que si la clave es interceptada el criptosistema es vulnerado y se pierde tanto la confidencialidad como la autenticidad de los mensajes.\\ 
+Para evitar esto se suele complementar con métodos seguros para el intercambio de la clave como puede ser el \emph{intercambio de claves Diffie-Hellman}.\\
+Loss cifrados asimétricos son muy utilizados para la firma y autentificación de los mensajes, garantizando de esta manera la seguridad de la aplicación y una eficiencia mucho mayor que si se utilizara únicamente un criptosistema asimétrico.\\
+
+\subsection{Criptosistema simétrico}
 Criptosistema en el cual se utiliza una sola clave para cifrar y descifrar un mensaje. Lo más importante para la seguridad de los criptosistemas es la propia clave mientras que el algoritmo en si mismo, no es tan importante como medida de seguridad. Es decir, lo importante es que el atacante no conozca la clave, mietras que conozca el algoritmo usado no lo es tanto.\\
 Un criptosistema simétrico está formado por:
 \begin{itemize}
@@ -57,7 +64,7 @@ Fijada la clave $k_p \in \mathcal{K}_p$ y su correspondiente $k_s \in \mathcal{K
 	&$D_{k_s}(c)=D(k_s,c)$
 \end{aligned}
 
-\subsection{Cifrado asimétrico}
+\subsection{Criptosistema asimétrico}
 Criptosistema en el cual se utilizan dos claves, una para cifrar el mensaje y otra para descifrarlo. La clave para cifrar es la que se conoce como \emph{clave pública} mientras que la que se utiliza para descifrar es la \emph{clave privada}. Estos criptosistemas surgieron para paliar la debilidad de los criptosistemas simétricos, que es que la clave que cifra y descifra se tiene que compartir, pudiendo esta ser interceptada.  La seguridad de estos criptosistemas reside en que no se conozcla la clave privada.\\
 Un criptosistema asimétrico está formado por:
 \begin{itemize}
@@ -87,12 +94,6 @@ Para que un criptosistema asimétrico sea seguro tenemos que garantizar:
 	\item $\mathcal{D}_{k'}$ se puede calcular en un periodo corto de tiempo si se conoce $k'$ y que sea imposible o el periodo sea muy largo en caso de solo conocerse $k$.
 \end{itemize}
 
-\subsection{Criptosistemas simétricos y asimétricos en las aplicaciones de mensajería}
-Ambos tipos de criptosistemas son muy utilizados en las aplicaciones de mensajería de manera complementaria.\\ 
-Los criptosistemas simétricos debido a su velocidad de cifrado, su uso reducido de recursos y su mejor manejo de grandes cantidades de datos se suelen utilizar para cifrar los mensajes. 
-Pero como tienen el defecto de que si la clave es interceptada el criptosistema es vulnerado y se pierde tanto la confidencialidad como la autenticidad de los mensajes.\\ 
-Para evitar esto se suele complementar con métodos seguros para el intercambio de la clave como puede ser el \emph{intercambio de claves Diffie-Hellman}.\\
-Loss cifrados asimétricos son muy utilizados para la firma y autentificación de los mensajes, garantizando de esta manera la seguridad de la aplicación y una eficiencia mucho mayor que si se utilizara únicamente un criptosistema asimétrico.\\
 A continuación se introducirá los cifrados de bloque, necesarios para enteder el algoritmo \textbf{Rindael AES} que se explicará posteriormente. La información ha sido obtenida de \cite{apuntesCriptografia}.
 
 \subsection{Cifrados de bloque}
