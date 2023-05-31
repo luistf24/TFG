@@ -303,9 +303,9 @@ Como las funciones usadas en cada ronda son invertibles, para descifrar aplicare
 		\begin{tabular}{| l | l | l | l |}
 				\hline
 				& $N_b = 4$(128 bits) & $N_b = 6$(192 bits)& $N_b = 8$(256 bits)\\ \hline
-				$N_b = 4$(128 bits)& 10 & 12 & 14\\ \hline
-				$N_b = 6$(128 bits)& 12 & 12 & 14\\ \hline
-				$N_b = 8$(128 bits)& 14 & 14 & 14\\ \hline
+				$N_k = 4$(128 bits)& 10 & 12 & 14\\ \hline
+				$N_k = 6$(128 bits)& 12 & 12 & 14\\ \hline
+				$N_k = 8$(128 bits)& 14 & 14 & 14\\ \hline
 		\end{tabular}
 		\caption{Número de rodas en función del tamaño de la clave y bloque}
 		\label{rondas_aes}
@@ -462,35 +462,41 @@ La función \emph{Sub} devuelve el resultado de aplicar la s-caja de AES a cada 
 \section{Criptosistema de Rivest-Shamir-Adleman, RSA}
 En esta sección hablaré sobre el cifrado RSA y su funcionamiento, cifrado que como AES, está muy extendido y es utilizado por muchas aplicaciones para cifrar y validar los mensajes.\\
 RSA es llamado así en honor a sus creadores Ron Rivest, Adi Shamir y Loenard Adleman, fué desarrollado en 1977. Cabe a destacar que en 1973 se desarrolló en secreto un criptosistema similar por Clifford Cocks para la \emph{Government Communications Headquarters}, que es la agencia de inteligencia de señales británica, y fue desclasificado en 1997\cite{cliffordCocks}.\\
-Este criptosistema está basado en el \emph{Teorema de Euler} y en particular en la \emph{proposición 2.2}.
+Este criptosistema está basado en el \emph{Teorema de Euler} y en particular en la \emph{Proposición 2.2}.\\
+
+AÑADIR TEOREMA DE FERMAT CON SU DEMOSTRACIÓN\\
+
 \begin{teorema}
 	(Teorema de Euler) Sean a,n $\in \mathbb{Z}$ primos relativos entre sí, entonces $a^{\phi(n)}\equiv 1 \mod n$.
 \end{teorema}
-Donde $\phi(n)$ es la \emph{funclón de Euler} definida como $\phi(n)=|\mathbb{Z}^*_n|$ y se puede calcular de la siguiente forma $$\phi(n)=n\prod_{p_i|n}(1-\frac{1}{p_i})$$
 
+DEMOSTRAR EL TEOREMA DE EULER\\
+
+Donde $\phi(n)$ es la \emph{funclón de Euler} definida como $\phi(n)=|\mathbb{Z}^*_n|$ y se puede calcular de la siguiente forma $$\phi(n)=n\prod_{p_i|n}\left(1-\frac{1}{p_i}\right)$$.
+
+DAR TEOREMA CHINO DEL RESTO\\
 
 \begin{proposicion}
-	Sea $n = pq$, donde p y q son dos primos distintos. Si $x\equiv 1 \mod \phi(n)$, entonces $a^x\equiv a\mod n$ $\forall a \n \in \mathbb{Z}$.\\
+	Sea $n = pq$, donde p y q son dos primos distintos. Si $x\equiv 1 \mod \phi(n)$, entonces $a^x\equiv a\mod n$ $\forall a \n \in \mathbb{Z}$.
+\end{proposicion}\vspace*{-10mm}
 	\begin{proof}
-		\textbf{Demostración.}\\
 		Si a es múltiplo de n, entonces se cumple que $a^x \equiv 0 \equiv a \mod n$. Si a y n son coprimos, $mcm(a,n) = 1$ entonces tendríamos que $a^x \equiv a \mod n$ por el Teorema de Euler.\\
-		Nos quedaría ver ocurre en el caso de a sea múltiplo de p o de q, pero no de ambos. Por simetría supondremos que a es múltiplo de p, pero no de q. En este caso tenemos que $a^x \equiv 0 \equiv a \mod p$  y $a^x \equiv a \mod q$ por el Teorema de Fermat, como p y q son coprimos entre sí, aplicando el Teorema Chino de los Restos se deduce que $a^x \equiv a \mod n$. \blacksquare
+		Nos quedaría ver ocurre en el caso de a sea múltiplo de p o de q, pero no de ambos. Por simetría supondremos que a es múltiplo de p, pero no de q. En este caso tenemos que $a^x \equiv 0 \equiv a \mod p$  y $a^x \equiv a \mod q$ por el Teorema de Fermat, como p y q son coprimos entre sí, aplicando el Teorema Chino de los Restos se deduce que $a^x \equiv a \mod n$.
 	\end{proof}
-\end{proposicion}
 
 \subsection{Descripción de RSA}
-El funcionamiento de RSA lo he obtenido de \cite{angelRiosMateos} y es el siguiente:\\
+El contenido de esta sección se basa en \cite{angelRiosMateos}. El funcionamiento de RSA es el siguiente.\\
 El usuario elige dos números primos distintos \emph{p} y \emph{q} de buen tamaño ya que mientras más grandes sean más seguro será el cifrado.
-Se calcula $n = pq$ y $\phi(n) = (p-1)(q-1)$, a continuación se elige un elemento $c \in \mathbb{Z}_{\phi(n)}^*$ y se calcula el inverso \emph{d}, de \emph{c} en $\mathbb{Z}_{\phi(n)}$. La clave pública será $k=(n,c)$ y la clave privada $k'=(n,d)$.\\
+Se calcula $n = pq$ y por tanto tenemos que $\phi(n) = (p-1)(q-1)$. A continuación se elige un elemento $c$ coprimo con $\phi(n)$ y se calcula el inverso $d = c^{-1}\mod \phi(n)$. La clave pública será $k=(n,c)$ y la clave privada $k'=(n,d)$.\\
 En un principio se consideraba que un tamaño de $n$ de 1024 bits era lo suficientemente grande para que fuera seguro, pero en 2003 Tromer y Shamir mostraron que es posible factorizar números de 1024 bits \cite{1024RSA} por lo que en la actualidad se considera 2048 bits como un tamaño seguro.\\
-El conjunto de los mensajes sin cifrar es $\mathcal{M}$, el de los mensajes cifrados será $\mathcal{C}$ y se verifica que $\mathcal{M} = \mathcal{C} = \mathbb{Z}_n$ y las funciones de cifrado y descifrado serán respectivamente:
+El conjunto de los mensajes sin cifrar es $\mathcal{M}$, el de los mensajes cifrados será $\mathcal{C}$ y se verifica que $\mathcal{M} = \mathcal{C} = \mathbb{Z}_n$. Las funciones de cifrado y descifrado son respectivamente:
 \begin{align*}
-	E_{k}:\mathcal{M}\rightarrow\mathcal{C}\\
-	a \rightarrow a^c
+	E_{k}:\mathcal{M}\rightarrow\mathcal{C},\\
+	a \rightarrow a^c,
 \end{align*}
 \begin{align*}
-	D_{k'}:\mathcal{C}\rightarrow\mathcal{M}\\
-	a \rightarrow a^d
+	D_{k'}:\mathcal{C}\rightarrow\mathcal{M},\\
+	a \rightarrow a^d.
 \end{align*}
 
 \subsection{Ataques}
@@ -502,27 +508,27 @@ Como hemos visto anteriormente RSA puede ser vulnerable en función de los núme
 		c_1 = m^{e_1} \mod n\\
 		c_2 = m^{e_2} \mod n
 	\end{align*}
-	Si $(c_1,n) \neq 1$, podemos factorizar $n$ y romper la clave, por lo que podemos suponer que $c_1 \in \mathcal{U}(\mathbb{Z}_n)$. Calculamos $c_1^{-1}$ con el algoritmo extendido de Euclídes tenemos que :
+	Si $(c_1,n) \neq 1$, podemos factorizar $n$ y romper la clave, por lo que podemos suponer que $c_1 \in \mathcal{U}(\mathbb{Z}_n)$. Calculamos $c_1^{-1}$ con el algoritmo extendido de Euclídes tenemos que:
 	\begin{align*}
-			(c^{-1})^{-r}c_2^s \equiv (m^{e_1})^r(m^{e_2})^s \equiv m^{e_1r+e_2s} = m \mod n
+			(c^{-1})^{-r}c_2^s \equiv (m^{e_1})^r(m^{e_2})^s \equiv m^{e_1r+e_2s} = m \mod n.
 	\end{align*}
 
 	\subsubsection{Ataque por exponente pequeño.}
-	Este ataque se puede hacer cuando se elige un exponente muy pequeño y se cifra el mismo mensaje con distinto módulo. En este caso se puede resolver aplicando el Teorema Chino del Resto. Supongamos a varios receptores con claves públicas $(n_i, e)$, con $1\leq i \leq r$, tal que mcm$(n_i, n_j) = 1$ si $i\neq j$ ya que en caso contrario, se podría factorizar el módulo correspondiente mediante el cálculo del MCD.\\
+	Este ataque se puede hacer cuando se elige un exponente muy pequeño y se cifra el mismo mensaje con distinto módulo. En este caso se puede recuperar el mensaje principal aplicando el Teorema Chino del Resto. Supongamos a varios receptores con claves públicas $(n_i, e)$, con $1\leq i \leq r$, tal que mcd$(n_i, n_j) = 1$ si $i\neq j$ ya que en caso contrario, se podría factorizar el módulo correspondiente mediante el cálculo del MCD.\\
 	Llamamos $c_i = m^e \mod n_i$ para cada $1\leq i \leq r$. Seleccionamos $\{i_1,...,i_e \}\subseteq \{1,...,r\}$ y empleando el inverso del isomorfismo de anillos
 	\begin{align*}
-		\chi:\mathbb{Z}_{n_{i_1}...n_{i_e}}\rightarrow \mathbb{Z}_{n_{i_1}}\times ... \times \mathbb{Z}_{n_{i_e}}
+		\chi:\mathbb{Z}_{n_{i_1}\dots n_{i_e}}\rightarrow \mathbb{Z}_{n_{i_1}}\times \dots \times \mathbb{Z}_{n_{i_e}}
 	\end{align*}
 	obtenido gracias al Teorema Chino del Resto, se puede calcular
 	\begin{align*}
-		\chi^{-1}(c_{i_1},...,c_{i_e}) = m^e \mod n_{i_1},....n_{i_e}
+		\chi^{-1}(c_{i_1},\dots,c_{i_e}) = m^e \mod n_{i_1},\dots,n_{i_e}
 	\end{align*}
-	Dado $m^e$\textless $n_{i_1}...n_{i_e}$, se puede obtener $m$ calculando la raíz $e$-ésima en $\mathbb{Z} \subseteq \mathbb{R}$, siempre y cuando $e$ no sea muy grande.
+	Dado $m^e$\textless $n_{i_1}\dots n_{i_e}$, se puede obtener $m$ calculando la raíz $e$-ésima en $\mathbb{Z} \subseteq \mathbb{R}$, siempre y cuando $e$ no sea muy grande.
 
 	\subsubsection{Ataque con primos muy próximos.}
-	Este ataque se da cuando se eligen dos primos muy próximos entre sí. Dado $n=pq$ con $p$\textless $q$ tenemos que  
+	Este ataque se da cuando se eligen dos primos muy próximos entre sí. Dado $n=pq$, con $p$\textless $q$, tenemos que  
 	\begin{align*}
-			n=\left (\frac{p+q}{2}\right )^2-\left (\frac{p-q}{2}\right )^2
+			n=\left (\frac{p+q}{2}\right )^2-\left (\frac{p-q}{2}\right )^2.
 	\end{align*}
 	Si $p$ y $q$ son cercanos, $s=\frac{p-q}{2}$ es pequeño y $t=\frac{p+q}{2}$ es un entero ligeramente mayor que $\sqrt{n}$ tal que $t^2 - n^2$ es un cuadrado perfecto. Probando sucesivamente con valores mayores que $\sqrt{n}$ hasta encontrar una descomposición $n=t^2-s^2$, tenemos que $p=t+s$ y $q=t-s$.
 
@@ -556,7 +562,7 @@ Para que B sepa que un mensaje \emph{m} ha sido enviado por A se siguen los sigu
 Una vez hecho esto, B podría afirmar casi con total seguridad que el mensaje ha sido enviado por A garantizando el no repudio del mensaje.
 
 \section{El Problema del Logaritmo Discreto. Diffie-Hellman}
-El intercambio de claves \emph{Diffie-Hellman}, método muy utilizado en las aplicaciones de mensajería al inicio de las conexión. La información de este apartado sobre el logaritmo ha sido obtenida de \cite{angelRiosMateos} y la de \emph{Diffie-Hellman} ha sido obtenida de \cite{En2011}.\\
+El intercambio de claves \emph{Diffie-Hellman} es un método basado en el Problema del Logaritmo Discreto muy utilizado en las aplicaciones de mensajería al iniciar una conexión. La información de este apartado sobre el logaritmo ha sido obtenida de \cite{angelRiosMateos} y la de \emph{Diffie-Hellman} ha sido obtenida de \cite{En2011}.\\
 El Problema del Logaritmo Discreto es definido de la siguiente forma:
 \begin{definicion}
 	Sea S un semigrupo finito. El Problema del Logaritmo Discreto en el semigrupo S es el de resolver ecuaciones del tipo\\
@@ -582,10 +588,10 @@ Antes de explicar el intercambio de claves \emph{Diffie-Hellman} se introducirá
 \end{definicion}
 
 \begin{definicion}
-	\textbf{(El Problema Diffie-Hellman)} Dado un número primo p, un número $\alpha$ que sea un \emph{generador} de $\mathbb{Z}^*_{p'}$, $\alpha^a$ y $\alpha^b$, encontrar $\alpha^{ab} \mod p$.  
+	(El Problema Diffie-Hellman)\\ Dado un número primo p, un número $\alpha$ que sea un \emph{generador} de $\mathbb{Z}^*_{p'}$, $\alpha^a$ y $\alpha^b$, encontrar $\alpha^{ab} \mod p$.  
 \end{definicion}
 
-\textbf{Intercambio de claves \emph{Diffie-Hellman}}\\
+\subsubsection{Intercambio de claves \emph{Diffie-Hellman}}
 El intercambio de claves \emph{Diffie-Hellman} es un algoritmo asimétrico basado en el problema de \emph{Diffie-Hellman}, empleado para acordar una clave común en un canal inseguro. Los pasos que se siguen son:\\
 Sean $A$ y $B$ dos interlocutores que quieren compartir un valor $K$. Para ello se calcula un número primo $p$ y un generador \alpha de $\mathbb{Z}^*_{p'}$ con $2\leq \alpha \leq p-2$. Esta información es pública y conocida por ambos.
 \begin{enumerate}
@@ -672,8 +678,8 @@ $$
 $$
 Donde al igual que en $E(\mathbb{R})$, $a,b\in{1..n}$ definen de manera unívoca una curva elíptica.\\
 
-\newpage
-\textbf{Operación $+$ en $\operatorname{GF}(n)$}\\
+%\newpage
+\subsubsection{Operación $+$ en $\operatorname{GF}(n)$}
 Sean los puntos $r=(r_x,r_y),\: s=(s_x,s_y),\: p=(p_x,p_y),\: t=(t_x,t_y)\in E(\operatorname{GF}(n))$, definimos la operación $+$  como sigue:
 \begin{itemize}
 	\item $r+\mathcal{O}=\mathcal{O}+r=r,\: \forall r \in \operatorname{GF}(n)$.
@@ -701,7 +707,7 @@ $$
 y para que se genere un grupo se tiene que verificar que $b\neq 0$.
 Los puntos de una curva serán pares de polinomios de grado $n-1$ y como hemos visto en el apartado anterior, podrán ser representados como cadenas de bits.\\
 
-\textbf{Operación $+$ en $E(\operatorname{GF}(2^n))$}\\
+\subsubsection{Operación $+$ en $E(\operatorname{GF}(2^n))$}
 Sean los puntos $r=(r_x,r_y),\: s=(s_x,s_y),\: p=(p_x,p_y),\: t=(t_x,t_y)\in E(\operatorname{GF}(n))$, definimos la operación $+$  como sigue:
 \begin{itemize}
 	\item $r+\mathcal{O}=\mathcal{O}+r=r,\; \forall r \in E(\operatorname{GF}(2^n))$
@@ -738,7 +744,7 @@ Dadas dos personas A y B que quieren realizar un intercambio de claves.
 
 \section{Funciones Hash}
 Una función resumen o función hash es un proceso en el cual se transforma un conjunto arbitrario de datos en una nueva serie de caracteres con una longitud fija independiente del tamaño de los datos de entrada, la información para esta sección la he obtenido \cite{aepd}.\\
-Las propiedades esperadas de una función hash son:\\
+Las propiedades esperadas de una función hash son:
 \begin{itemize}
 	\item Se tiene que poder utilizar en contenido digital de cualquier tamaño y formato.
 	\item Independientemente del tamaño de la entrada y del tipo, se produce una salida numérica de tamaño fijo.
