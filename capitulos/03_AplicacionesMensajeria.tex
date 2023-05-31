@@ -179,7 +179,7 @@ Una vez introducido los formatos que seguirán las consultas y los números veam
 							\item \emph{g\textunderscore b} que es del tipo \emph{string}.
 						\end{itemize}
 					\item \emph{data\textunderscore with\textunderscore hash} que es: \emph{SHA-1(data)+data+(0-15 bytes aleatorios de manera que el tamaño sea divisible por 16)}.
-					\item \emph{encrypted\textunderscore data} que es: \emph{AES256\textunderscore ige\textunderscore encrypt(data\textunderscore with\textunderscore hash, tmp\textunderscore aes\textunderscore key, tmp\textunderscore aes\textunderscore iv)}.
+					\item \emph{encrypted\textunderscore data} que es: \emph{AES256\textunderscore ige\textunderscore encrypt(data\textunderscore with\textunderscore hash, tmp\textunderscore aes\textunderscore key, tmp\textunderscore aes\textunderscore iv)}. Donde el modo IGE es una variación de modo CBC [\ref{esquemacbc}] de los cifrados de bloque. En este modo se garantiza que si un bloque del mensaje encriptado es cambiado, no se pueda desencriptar correctamente el mensaje completo.
 				\end{itemize}
 		\end{itemize}
 	\item Una vez hecho los pasos previos tendríamos que \emph{auth\textunderscore key} vale $g^{ab}$ mod \emph{dh\textunderscore prime}, en el servidor se calcula como \emph{$g\textunderscore b^{a}$ mod \emph{dh\textunderscore prime}} y en el cliente se calcula como $g\textunderscore a^b$ mod \emph{dh\textunderscore prime}.
@@ -228,8 +228,8 @@ Y una vez hechos estos pasos, ya podemos calcular la clave para AES y el vector 
 	\item \textbf{\emph{aes\textunderscore iv}}: \emph{substr(sha256\textunderscore b, 0, 8) + substr(sha256\textunderscore a, 8 16)+substr(sha256\textunderscore b, 24, 8)}.
 \end{itemize}
 \emph{x} vale 0 cuando los mensajes van del cliente al servidor y 8 cuando los mensajes van del servidor al cliente.\\
-Los 1024 bits menos significativos de la \emph{auth\textunderscore key} no se utilizan para el cálculo ya que estos se usan para cifrar la copia local de los datos recibidos del servidor además, los 512 bits menos significativos no se almacenan en el servidor por lo que si el cliente pierde la clave o la contraseña del dispositivo, no se podrán descifrar los datos locales. Un esquema del proceso se puede ver en \ref{mtproto2}
-\newpage
+Los 1024 bits menos significativos de la \emph{auth\textunderscore key} no se utilizan para el cálculo ya que estos se usan para cifrar la copia local de los datos recibidos del servidor además, los 512 bits menos significativos no se almacenan en el servidor por lo que si el cliente pierde la clave o la contraseña del dispositivo, no se podrán descifrar los datos locales. Un esquema del proceso se puede ver en \ref{mtproto2}.
+%\newpage
 \begin{figure}[htb]
 	\centering
 	\includegraphics[scale=0.4]{imagenes/diagramaMTProto.jpg} 
@@ -358,7 +358,7 @@ Una vez obtenidas las claves del servidor y se ha verificado la identidad, el em
 \end{enumerate}
 
 \subsection{Intercambio de mensajes}
-Una vez que la sesión se ha establecido, los clientes intercambian los mensajes encriptados con \emph{Message Key} usando \emph{AES-256} con el modo \emph{CBC}[\ref{esquemahtb}] y para la autenticación \emph{HMAC-SHA256}. \emph{Message Key} cambia con cada mensaje que se envía y además es efímera para que esta no pueda ser reconstruida una vez que el mensaje sea transmitido y recibido. Esta clave se obtiene a partir de la \emph{Chain Key} del receptor que se regenera con cada intercambio de mensajes. 
+Una vez que la sesión se ha establecido, los clientes intercambian los mensajes encriptados con \emph{Message Key} usando \emph{AES-256} con el modo \emph{CBC}[\ref{esquemacbc}] y para la autenticación \emph{HMAC-SHA256}. \emph{Message Key} cambia con cada mensaje que se envía y además es efímera para que esta no pueda ser reconstruida una vez que el mensaje sea transmitido y recibido. Esta clave se obtiene a partir de la \emph{Chain Key} del receptor que se regenera con cada intercambio de mensajes. 
 
 \subsection{Cálculo de \emph{Message Key} a partir de \emph{Chain Key}}
 La \emph{Message Key} se genera:

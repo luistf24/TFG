@@ -1,9 +1,9 @@
-\chapter{Criptografía y Curvas Elípticas:}
+\chapter{Criptografía y Curvas Elípticas}
 %\noindent\rule[-1ex]{\textwidth}{2pt}\\[4.5ex]
 
 En este capítulo se introducirá la teoría sobre criptografía y curvas elípticas necesaria para entender la base detrás de los criptosistemas usados en las aplicaciones de mensajería más populares.
 
-\section{Introducción a la criptografía}
+\section{Objetivos de la criptografía}
 En este apartado voy a hablar sobre los objetivos de un criptosistema y los posibles ataques que se le pueden hacer, así como una introducción a la criptografía simétrica y asimétrica y su uso en las aplicaciones de mensajería que nos ayudará a entender los distintos criptosistemas de los que se hablará después.
 Mayormente la información de este apartado ha sido obtenida de \cite{apuntesCriptografia} para los criptosistemas simétricos y \cite{angelRiosMateos} para los cifrados asimétricos.\\
 Los principales objetivos que debe cumplir todos los criptosistemas son:
@@ -35,19 +35,19 @@ Los criptosistemas simétricos y asimétricos conforman una parte fundamental de
 Los criptosistemas simétricos debido a su velocidad de cifrado, su uso reducido de recursos y su mejor manejo de grandes cantidades de datos se suelen utilizar para cifrar los mensajes. 
 Pero como tienen el defecto de que si la clave es interceptada el criptosistema es vulnerado y se pierde tanto la confidencialidad como la autenticidad de los mensajes.\\ 
 Para evitar esto se suele complementar con métodos seguros para el intercambio de la clave como puede ser el \emph{intercambio de claves Diffie-Hellman}.\\
-Loss cifrados asimétricos son muy utilizados para la firma y autentificación de los mensajes, garantizando de esta manera la seguridad de la aplicación y una eficiencia mucho mayor que si se utilizara únicamente un criptosistema asimétrico.\\
+Los cifrados asimétricos son muy utilizados para la firma y autentificación de los mensajes, garantizando de esta manera la seguridad de la aplicación y se complementan con cifrados simétricos a la hora de cifrar los mensajes para garantizar de esta forma una eficiencia mucho mayor. Ya que uno de los principales problemas que tienen es su complejidad algorítmica a la hora de cifrar y descifrar los mensajes.\\
 
 \subsection{Criptosistema simétrico}
-Criptosistema en el cual se utiliza una sola clave para cifrar y descifrar un mensaje. Lo más importante para la seguridad de los criptosistemas es la propia clave mientras que el algoritmo en si mismo, no es tan importante como medida de seguridad. Es decir, lo importante es que el atacante no conozca la clave, mietras que conozca el algoritmo usado no lo es tanto.\\
+Un criptosistema simétrico es un criptosistema en el cual se utiliza una sola clave para cifrar y descifrar un mensaje. La importancia para garantizar la seguridad de los criptosistemas simétricos reside en el secreto de la clave mientras que el conocer el algoritmo utilizado no es tan importante como medida de seguridad. Es decir, lo importante es que el atacante no conozca la clave, mientras que conozca el algoritmo usado no lo es tanto.\\
 Un criptosistema simétrico está formado por:
 \begin{itemize}
-	\item $\mathcal{M}$ el conjunto de los mensajes.
-	\item $\mathcal{C}$ el conjunto de los criptogramas.
-	\item $\mathcal{K} \subseteq \mathcal{K}_p\times\mathcal{K}_s$ el espacio de las claves. 
+	\item $\mathcal{M}$ el conjunto de los mensajes, elementos candidatos a ser encriptados.
+	\item $\mathcal{C}$ el conjunto de los criptogramas o mensajes obtenido después del proceso de encriptar.
+	\item $\mathcal{K} \subseteq \mathcal{K}_p\times\mathcal{K}_s$ el espacio de las claves, elementos que se utilizan para encriptar y desencriptar los mensajes. 
 \end{itemize}
 Un criptosistema simétrico viene definido por dos aplicaciones
-$$E:\mathcal{K}_p\times\mathcal{M}\rightarrow\mathcal{C}$$
-$$\mathcal{D}:\mathcal{K}_s\times\mathcal{C}\rightarrow\mathcal{M}$$
+$$E:\mathcal{K}_p\times\mathcal{M}\rightarrow\mathcal{C},$$
+$$\mathcal{D}:\mathcal{K}_s\times\mathcal{C}\rightarrow\mathcal{M}.$$
 tales que para cualquier clave $k_p \in \mathcal{K}_p$, existe una clave $k_s$ de manera que dato cualquier mensaje $m \in \mathcal{M}$,
 $$
 \mathcal{D}(k_s,E(k_p,m))=m.
@@ -55,17 +55,17 @@ $$
 Fijada la clave $k_p \in \mathcal{K}_p$ y su correspondiente $k_s \in \mathcal{K}_s$ se definen las funciones de cifrado y descifrado como:\\
 \begin{aligned}
 	\center
-	&$E_{k_p}:\mathcal{M}\rightarrow\mathcal{C}$\\
-	&$E_{k_p}(m)=E(k_p,m)$
+	&$E_{k_p}:\mathcal{M}\rightarrow\mathcal{C},$\\
+	&$E_{k_p}(m)=E(k_p,m),$
 \end{aligned}
 \begin{aligned}
 	\center
-	&$D_{k_p}:\mathcal{C}\rightarrow\mathcal{M}$\\
-	&$D_{k_s}(c)=D(k_s,c)$
+	&$D_{k_p}:\mathcal{C}\rightarrow\mathcal{M},$\\
+	&$D_{k_s}(c)=D(k_s,c).$
 \end{aligned}
 
 \subsection{Criptosistema asimétrico}
-Criptosistema en el cual se utilizan dos claves, una para cifrar el mensaje y otra para descifrarlo. La clave para cifrar es la que se conoce como \emph{clave pública} mientras que la que se utiliza para descifrar es la \emph{clave privada}. Estos criptosistemas surgieron para paliar la debilidad de los criptosistemas simétricos, que es que la clave que cifra y descifra se tiene que compartir, pudiendo esta ser interceptada.  La seguridad de estos criptosistemas reside en que no se conozcla la clave privada.\\
+Un criptosistema asimétrico es un criptosistema en el cual se utilizan dos claves, una para cifrar el mensaje y otra para descifrarlo. La clave para cifrar es la que se conoce como \emph{clave pública}, mientras que la que se utiliza para descifrar es la \emph{clave privada}. Estos criptosistemas surgieron para paliar la debilidad de los criptosistemas simétricos, que es que la clave que cifra y descifra se tiene que compartir, pudiendo esta ser interceptada.  La seguridad de estos criptosistemas reside en que no se conozcla la clave privada.\\
 Un criptosistema asimétrico está formado por:
 \begin{itemize}
 	\item $\mathcal{M}$ es el conjunto de los mensajes.
@@ -73,18 +73,18 @@ Un criptosistema asimétrico está formado por:
 	\item Una función $P:\mathcal{K}' \rightarrow \mathcal{K}$, que nos permitirá generar la clave pública.
 \end{itemize}
 Un criptosistema asimétrico viene definido por dos aplicaciones:
-$$E:\mathcal{K}\times\mathcal{M}\rightarrow\mathcal{C}$$
-$$\mathcal{D}:\mathcal{K}'\times\mathcal{C}\rightarrow\mathcal{M}$$
+$$E:\mathcal{K}\times\mathcal{M}\rightarrow\mathcal{C},$$
+$$\mathcal{D}:\mathcal{K}'\times\mathcal{C}\rightarrow\mathcal{M},$$
 tales que para cualquier clave privada $k' \in \mathcal{K}'$ obtenemos la clave pública como $P(k')=k$ y se definen las funciones de cifrado y descifrado como:\\
 \begin{aligned}
 	\center
-	&$E_{k}:\mathcal{M}\rightarrow\mathcal{C}$\\
-	&$E_{k}(m)=E(k,m)$
+	&$E_{k}:\mathcal{M}\rightarrow\mathcal{C},$\\
+	&$E_{k}(m)=E(k,m),$
 \end{aligned}
 \begin{aligned}
 	\center
-	&$D_{k^{'}}:\mathcal{C}\rightarrow\mathcal{M}$\\
-	&$D_{k'}(c)=D(k',c)$
+	&$D_{k^{'}}:\mathcal{C}\rightarrow\mathcal{M},$\\
+	&$D_{k'}(c)=D(k',c).$
 \end{aligned}
 
 Para que un criptosistema asimétrico sea seguro tenemos que garantizar:
@@ -94,10 +94,9 @@ Para que un criptosistema asimétrico sea seguro tenemos que garantizar:
 	\item $\mathcal{D}_{k'}$ se puede calcular en un periodo corto de tiempo si se conoce $k'$ y que sea imposible o el periodo sea muy largo en caso de solo conocerse $k$.
 \end{itemize}
 
-A continuación se introducirá los cifrados de bloque, necesarios para enteder el algoritmo \textbf{Rindael AES} que se explicará posteriormente. La información ha sido obtenida de \cite{apuntesCriptografia}.
-
 \subsection{Cifrados de bloque}
-Son criptosistemas de clave simétrica en los que la longitud de los bloques y claves es fija.\\
+A continuación se introducirá los cifrados de bloque, necesarios para entender el algoritmo \textbf{Rindael AES} que se explicará posteriormente. La información ha sido obtenida de \cite{apuntesCriptografia}.\\
+Los cifrados de bloque son criptosistemas de clave simétrica en los que la longitud de los bloques y claves es fija.\\
 Este criptosistema se define
 $$
 	E:\mathbb{B}^K\times\mathbb{B}^N\rightarrow \mathbb{B}^N,
@@ -106,29 +105,30 @@ $$
 	D:\mathbb{B}^K\times\mathbb{B}^N\rightarrow \mathbb{B}^N,
 $$
 Donde N es el tamaño del bloque y K es el tamaño de la clave.\\
-Los cifrados tienen distintos modos de operación los cuales dependen solo del tamaño del bloque, estos son:\\
-
+Los cifrados tienen distintos modos de operación los cuales dependen solo del tamaño del bloque. Estos modos permiten garantizar la confidencialidad de los mensajes, si bien, no garantizan su integridad. La información para describir los modos la he complementado con \cite{bloquenuevo}.\\ 
+Los distintos modos usados en los cifrados de bloque son:\\
 \begin{itemize}
-	\item \textbf{Electronic CodeBook}
+	\item \textbf{Electronic CodeBook}\\
+	Modo en el cual para una clave dada, se le asigna un bloque de texto fijo cifrado por cada bloque de texto plano. Los pasos que se siguen para encriptar y desencriptar son:
 	\begin{itemize}
 		\item \textbf{\emph{Cifrado ECB}}
 		\begin{description}
-			\item Dividimos m en $m_{[1]}...m_{[l]}$ con $m_{[i]} \in \mathbb{B}^N$
-			\item Para i=1,...,l hacer
+			\item Dividimos m en $m_{[1]}\dots m_{[l]}$ con $m_{[i]} \in \mathbb{B}^N$
+			\item Para $i\in \{1,\dots,l\}$ hacer
 			\begin{description}
 				\item $c_{[i]} = E_k(m_{[i]})$
 			\end{description}
-			\item Devolvemos $c_{[1]}...c_{[l]}$
+			\item Devolvemos $c_{[1]}\dots c_{[l]}$
 		\end{description}
 
 		\item \textbf{\emph{Descifrado ECB}}
 		\begin{description}
-			\item Dividimos c en $c_{[1]}...c_{[l]}$ con $c_{[i]} \in \mathbb{B}^N$
-			\item Para i=1,...,l hacer
+			\item Dividimos c en $c_{[1]}\dots c_{[l]}$ con $c_{[i]} \in \mathbb{B}^N$
+			\item Para $i\in\{1,\dots,l\}$ hacer
 			\begin{description}
 				\item $m_{[i]} = D_k(c_{[i]})$
 			\end{description}
-			\item Devolvemos $m_{[1]}...m_{[l]}$
+			\item Devolvemos $m_{[1]}\dots m_{[l]}$
 		\end{description}
 	\end{itemize}
 \newpage
@@ -139,27 +139,28 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 			\label{esquemaecb}
 		\end{figure}
 		
-	\item \textbf{Cipher-Block Chaining}
+	\item \textbf{Cipher-Block Chaining}\\
+	En este modo se combina los bloques de texto plano con los bloques de texto cifrados anteriormente. Para cifrar el primer bloque será necesario un bloque inicial, $c_{[0]}$, el cual no tiene necesariamente que ser secreto. Los pasos seguidos para encriptar y desencriptar son:
 	\begin{itemize}
 		\item \textbf{\emph{Cifrado CBC}}
 		\begin{description}
 			\item $c_{[0]} \in \mathbb{B}^*$
-			\item Dividimos m en $m_{[1]}...m_{[l]}$ con $m_{[i]} \in \mathbb{B}^N$
-			\item Para i=1,...,l hacer
+			\item Dividimos m en $m_{[1]}\dots m_{[l]}$ con $m_{[i]} \in \mathbb{B}^N$
+			\item Para $i\in\{1,\dots,l\}$ hacer
 			\begin{description}
 				\item $c_{[i]} = E_k(m_{[i]}\oplus c_{[i-1]})$
 			\end{description}
-			\item Devolvemos $c_{[1]}...c_{[l]}$
+			\item Devolvemos $c_{[1]}\dots c_{[l]}$
 		\end{description}
 
 		\item \textbf{\emph{Descifrado CBC}}
 		\begin{description}
-			\item Dividimos c en $c_{[0]}...c_{[l]}$ con $c_{[i]} \in \mathbb{B}^N$
-			\item Para i=1,...,l hacer
+			\item Dividimos c en $c_{[0]}\dots c_{[l]}$ con $c_{[i]} \in \mathbb{B}^N$
+			\item Para $i\in\{1,\dots,l\}$ hacer
 			\begin{description}
 				\item $m_{[i]} = D_k(c_{[i]})\oplus c_{[i]}$
 			\end{description}
-			\item Devolvemos $m_{[1]}...m_{[{l}]}$
+			\item Devolvemos $m_{[1]}\dots m_{[{l}]}$
 		\end{description}
 	\end{itemize}
 \newpage
@@ -167,32 +168,33 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 			\centering
 			\includegraphics[scale=0.4]{imagenes/cbc.png} 
 			\caption{Esquema del cifrado y descifrado del modo CBC \cite{cifradobloque}.}
-			\label{esquemahtb}
+			\label{esquemacbc}
 		\end{figure}
 
-	\item \textbf{Cipher FeedBack}
+	\item \textbf{Cipher FeedBack}\\
+	Modo en el cual se combina cada bloque de texto plano del mensaje consigo mismo encriptado, los pasos que se siguen son:
 	\begin{itemize}
 		\item \textbf{\emph{Cifrado CFB}}
 		\begin{description}
 			\item $x_{[0]} \in \mathbb{B}^r$
-			\item Dividimos m en $m_{[1]}...m_{[l]}$ con $m_{[i]} \in \mathbb{B}^N$
-			\item Para i=1,...,l hacer
+			\item Dividimos m en $m_{[1]}\dots m_{[l]}$ con $m_{[i]} \in \mathbb{B}^N$
+			\item Para $i\in\{1,\dots,l\}$ hacer
 			\begin{description}
 				\item $c_{[i]} = m_{[i]}\oplus msb_r(E_k(m_{[i]}))$
 				\item $x_{[i+1]} = lsb_{N-r}(x_i)||c_{[i]$
 			\end{description}
-			\item Devolvemos $c_{[1]}...c_{[l]}$
+			\item Devolvemos $c_{[1]}\dots c_{[l]}$
 		\end{description}
 
 		\item \textbf{\emph{Descifrado CFB}}
 		\begin{description}
-			\item Dividimos c en $c_{[1]}...c_{[l]}$ con $c_{[i]} \in \mathbb{B}^r$
-			\item Para i=1,...,l hacer
+			\item Dividimos c en $c_{[1]}\dots c_{[l]}$ con $c_{[i]} \in \mathbb{B}^r$
+			\item Para $i\in\{1,\dots,l\}$ hacer
 			\begin{description}
 				\item $m_{[i]} = c_{[i]}\oplus msb_r(E_k(x_{[i]}))$
 				\item $x_{[i+1]} = lsb_{N-r}(x_i)||c_{[i]$
 			\end{description}
-			\item Devolvemos $m_{[1]}...m_{[l]}$
+			\item Devolvemos $m_{[1]}\dots m_{[l]}$
 		\end{description}
 	\end{itemize}
 
@@ -205,41 +207,43 @@ Los cifrados tienen distintos modos de operación los cuales dependen solo del t
 		\end{figure}
 
 \newpage
-	\item \textbf{Output FeedBack}
+	\item \textbf{Output FeedBack}\\
+	Modo en el cual se parte de un bloque inicial $x_{[0]}$ único y secreto. En cada iteración se encripta este y se combina con un bloque del mensaje sin cifrar de manera recursiva. Los pasos seguidos para encriptar y desencriptar son:
 	\begin{itemize}
 		\item \textbf{\emph{Cifrado OFB}}
 		\begin{description}
 			\item $x_{[0]} \in \mathbb{B}^N$
-			\item Dividimos m en $m_{[1]}...m_{[l]}$ con $m_{[i]} \in \mathbb{B}^N$
-			\item Para i=1,...,l hacer
+			\item Dividimos m en $m_{[1]}\dots m_{[l]}$ con $m_{[i]} \in \mathbb{B}^N$
+			\item Para $i\in\{1,\dots,l\}$ hacer
 			\begin{description}
 				\item $x_{[i]} = E_k(x_{[i-1]})$
 				\item $c_{[i]} = m_{[i]}\oplus x_{[i]}$
 			\end{description}
-			\item Devolvemos $c_{[1]}...c_{[l]}$
+			\item Devolvemos $c_{[1]}\dots c_{[l]}$
 		\end{description}
 
 %\newpage
 		\item \textbf{\emph{Descifrado OFB}}
 		\begin{description}
-			\item Dividimos c en $c_{[1]}...c_{[l]}$ con $c_{[i]} \in \mathbb{B}^N$
-			\item Para i=1,...,l hacer
+			\item Dividimos c en $c_{[1]}\dots c_{[l]}$ con $c_{[i]} \in \mathbb{B}^N$
+			\item Para $i\in\{1,\dots,l\}$ hacer
 			\begin{description}
 				\item $x_{[i]} = E_k(x_{[i-1]})$
 				\item $m_{[i]} = c_{[i]}\oplus x_{[i]}$
 			\end{description}
-			\item Devolvemos $m_{[1]}...m_{[l]}$
+			\item Devolvemos $m_{[1]}\dots m_{[l]}$
 		\end{description}
 	\end{itemize}
-\end{itemize}
 		\begin{figure}[htb]
 			\centering
 			\includegraphics[scale=0.4]{imagenes/ofb.png} 
 			\caption{Esquema del cifrado y descifrado del modo OFB \cite{cifradobloque}.}
 			\label{esquemaofb}
 		\end{figure}
-
+\end{itemize}
 \newpage
+Como podemos ver, el más sencillo es ECB ya que lo único que hace es fragmentar el mensaje en bloques y encriptar individualmente cada bloque. 
+Actualmente el más utilizado en las aplicaciones de mensajería es el modo CBC. Esto es debido a que es relativamente fácil de implementar y además permite encriptar en paralelo.
 \section{El algoritmo Rijndael AES}
 En esta sección hablaré sobre el cifrado Rijndael AES el cual es un cifrado de bloque simétrico muy utilizado actualmente por aplicaciones como \emph{Telegram}, \emph{WhatsApp} y \emph{FacebookChat} entre otras.\\
 El algoritmo Rijndael llamado así en honor a sus dos autores Joan Daemen y Vicent Rijmen, es un algoritmo de cifrado por bloques que fue adoptado en octubre de 2000 por el NIST(\emph{National Institute for Standards and Technology}) para su empleo en aplicaciones criptográficas no militares en sustitución del algoritmo \emph{DES} después de un proceso de más tres años en los que se buscaba un algoritmo que fuera potente, eficiente y fácil de implementar.\\
