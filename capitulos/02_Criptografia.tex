@@ -180,7 +180,7 @@ Los distintos modos usados en los cifrados de bloque son:\\
 			\item Dividimos m en $m_{[1]}\dots m_{[l]}$ con $m_{[i]} \in \mathbb{B}^N$
 			\item Para $i\in\{1,\dots,l\}$ hacer
 			\begin{description}
-				\item $c_{[i]} = m_{[i]}\oplus msb_r(E_k(m_{[i]}))$
+				\item $c_{[i]} = m_{[i]}\oplus msb_r(E_k(x_{[i]}))$
 				\item $x_{[i+1]} = lsb_{N-r}(x_i)||c_{[i]$
 			\end{description}
 			\item Devolvemos $c_{[1]}\dots c_{[l]}$
@@ -242,25 +242,21 @@ Los distintos modos usados en los cifrados de bloque son:\\
 		\end{figure}
 \end{itemize}
 \newpage
-Como podemos ver, el más sencillo es ECB ya que lo único que hace es fragmentar el mensaje en bloques y encriptar individualmente cada bloque. 
+Como podemos ver, el más sencillo es ECB ya que lo único que hace es fragmentar el mensaje en bloques y encriptar individualmente cada bloque. En CBC, CFB y OFB se parte de un bloque inicial y se generan bloques nuevos de manera recursiva operando con ellos de manera disinta en fución de cada modo.\\ 
+En CBC se realiza la operación $\oplus$ de cada bloque generado encriptandose el bloque cifrado previo a esta con un bloque del mensaje, los nuevos bloques son los resultados de la operación anterior.\\
+En CFB se coge el bit menos significativo de resultado de encriptar el bloque generado previo y se hace la operación $\oplus$ con cada bloque del mensaje. Para generar un nuevo bloque se combina el mensaje cifrado previo con el bit menos significativo del conjunto de bits $N-r$ del bloque generado anterior con la operación $||$.\\
+Y en OFB se realiza la operación $\oplus$ de el resultado de encriptar el bloque generado previo con un bloque del mensaje.\\
 Actualmente el más utilizado en las aplicaciones de mensajería es el modo CBC. Esto es debido a que es relativamente fácil de implementar y además permite encriptar en paralelo.
 \section{El algoritmo Rijndael AES}
 En esta sección hablaré sobre el cifrado Rijndael AES el cual es un cifrado de bloque simétrico muy utilizado actualmente por aplicaciones como \emph{Telegram}, \emph{WhatsApp} y \emph{FacebookChat} entre otras.\\
-El algoritmo Rijndael llamado así en honor a sus dos autores Joan Daemen y Vicent Rijmen, es un algoritmo de cifrado por bloques que fue adoptado en octubre de 2000 por el NIST(\emph{National Institute for Standards and Technology}) para su empleo en aplicaciones criptográficas no militares en sustitución del algoritmo \emph{DES} después de un proceso de más tres años en los que se buscaba un algoritmo que fuera potente, eficiente y fácil de implementar.\\
+El algoritmo Rijndael llamado así en honor a sus dos autores Joan Daemen y Vicent Rijmen, es un algoritmo de cifrado por bloques que fue adoptado en octubre de 2000 por el NIST (\emph{National Institute for Standards and Technology}) para su empleo en aplicaciones criptográficas no militares en sustitución del algoritmo \emph{DES} después de un proceso de más tres años en los que se buscaba un algoritmo que fuera potente, eficiente y fácil de implementar.\\
 Está diseñado para manejar longitudes de clave y de bloque variables entre los 128 y los 256 bits y aunque estos sean variables, en el estándar adoptado por el Gobierno de Estados Unidos en 2001 \cite{aesUsa} establece una longitud fija de bloque de 128 bits y una longitud de clave a escoger entre 128, 192 y 256 bits.\\
 La información para los siguientes apartados de AES la he obtenido de \cite{En2011}.\\
 
 \subsection{Estructura de AES}
-En el algoritmo AES se define cada ronda como una composición de cuatro funciones invertibles diferentes, formando tres \emph{capas}. Estas funciones tienen un propósito específico:
-\begin{itemize}
-	\item \textbf{Capa de mezcla lineal:} Formada por las funciones \emph{DesplazarFila} y \emph{MezclarColumnas} y permite obtener un alto nivel de difusión a lo largo de varias rondas.
-	\item \textbf{Capa no lineal:} Formada por la función \emph{ByteSub} y es la aplicación paralela de s-cajas con propiedades óptimas de no linealidad.
-	\item \textbf{Capa de adición de clave:} Es un simple \emph{or-exclusivo} entre el estado intermedio y la subclave correspondiente a cada ronda.
-\end{itemize}
-
-\subsection{Elementos de AES}
+%\subsection{Elementos de AES}
 AES es un algoritmo que se basa en aplicar un número determinado de rodas a un valor intermedio denominado \emph{estado} que puede ser representado por una matriz rectangular que posee cuatro filas y $N_{b}$ columnas. Análogamente la clave tiene la misma estructura, una matriz de cuatro filas y $N_{k}$.
-El bloque ha cifrar o descifrar se traslada directamente byte a byte sobre la matriz de estado de columna en columna($a_{0,0}, a_{1,0}, a_{2,0}, a_{3,0}, a_{0,1} ...$)
+El bloque a cifrar o descifrar se traslada directamente byte a byte sobre la matriz de estado de columna en columna($a_{0,0}, a_{1,0}, a_{2,0}, a_{3,0}, a_{0,1} ...$)
 
 \begin{table}[htb]
 	\begin{center}
@@ -290,7 +286,7 @@ El bloque ha cifrar o descifrar se traslada directamente byte a byte sobre la ma
 
 En otros casos el bloque y la clave pueden ser representados como vectores de registro de 32 bits donde cada registro esta compuesto por los bytes de la columna correspondiente ordenados en orden descendiente.\\
 
-Siendo $B$ el bloque que queremos cifrar y $S$ la matriz de estado, el algoritmo AES con $n$ quedaría:
+Siendo $B$ el bloque que queremos cifrar y $S$ la matriz de estado, el algoritmo AES con $n$ rondas quedaría:
 
 \begin{enumerate}
 	\item Calcular $K_0, K_1,...,K_n$ subclaves a partar de la clave $K$.
@@ -316,8 +312,16 @@ Como las funciones usadas en cada ronda son invertibles, para descifrar aplicare
 	\end{center}
 \end{table}
 
+
+En el algoritmo AES se define cada ronda como una composición de cuatro funciones invertibles diferentes, formando tres \emph{capas}. Estas funciones tienen un propósito específico:
+\begin{itemize}
+	\item \textbf{Capa de mezcla lineal:} Formada por las funciones \emph{DesplazarFila} y \emph{MezclarColumnas} y permite obtener un alto nivel de difusión a lo largo de varias rondas.
+	\item \textbf{Capa no lineal:} Formada por la función \emph{ByteSub} y es la aplicación paralela de s-cajas con propiedades óptimas de no linealidad.
+	\item \textbf{Capa de adición de clave:} Es un simple \emph{or-exclusivo} entre el estado intermedio y la subclave correspondiente a cada ronda.
+\end{itemize}
+
 \subsection{Las Rondas de AES}
-Dado que el algoritmo AES puede aplicarse para longitudes diferentes de bloque y clave, el número de rondas es variables, como se ha visto en \ref{rondas_aes}.\\
+Dado que el algoritmo AES puede aplicarse para longitudes diferentes de bloque y clave, el número de rondas es variable, como se ha visto en \ref{rondas_aes}.\\
 Siendo $S$ la matriz de estado y $K_i$ la subclave correspondiente a la ronda $i$-ésima, cada ronda posee esta estructura:
 \begin{enumerate}
 	\item $S \leftarrow ByteSub(S)$
@@ -331,8 +335,8 @@ En la última ronda se hacen solo los tres primeros pasos del algoritmo.
 	\item \textbf{ByteSub}\\
 		La función \emph{ByteSub} es una sustitución no lineal que se aplica a cada byte de la matriz de estado mediante una s-caja 8\texttimes8. Se obtiene componiendo dos transformaciones:
 		\begin{enumerate}
-			\item Cada byte se considera como un elemento del $GF(2^8)$ generado por el polinomio irreducible $m(x)=x^8+x^4+x^3+x+1$ y es sustituido por su inversa multiplicativa quedando el valor cero inalterado. 
-			\item A continuación se aplica la siguiente transformación afín en $GF(2)$ siendo $x_0, x_1,...,x_7$ los bits del byte correspondiente e $y_0, y_1,...,y_7$ los del resultado:
+			\item Cada byte se considera como un elemento del $\operatorname{GF}(2^8)$ generado por el polinomio irreducible $m(x)=x^8+x^4+x^3+x+1$ y es sustituido por su inversa multiplicativa quedando el valor cero inalterado. 
+			\item A continuación se aplica la siguiente transformación afín en $\operatorname{GF}(2)$ siendo $x_0, x_1,...,x_7$ los bits del byte correspondiente e $y_0, y_1,...,y_7$ los del resultado:
 
 				\begin{equation*} 
 					\begin{bmatrix} 
@@ -407,8 +411,8 @@ En la última ronda se hacen solo los tres primeros pasos del algoritmo.
 		\end{figure}
 \newpage
 	\item \textbf{MezclarColumnas}\\
-		Durante la aplicación de esta función se considera cada columna del vector de estado se considera un polinomio cuyos coeficientes pertenecen a $GF(2^8)$ y se multiplica módulo $x^4+1$ por: $c(x)=03x^3+01x^2+01x+02$ donde 03 es el valor hexadecimal que se obtiene concatenado los coeficientes binarios del polinomio correspondiente en $GF(2^8)$, en este caso sería 00000011 y por tanto $x+1$ análogamente se haría con los demás.\\
-		La inversa de $MezclarColumnas$ se obtiene multiplicando cada columna de la matriz de estado por el polinomio: $d(x)=0Bx^3+0Dx^2+09x+0E$
+		Durante la aplicación de esta función se considera cada columna del vector de estado se considera un polinomio cuyos coeficientes pertenecen a $\operatorname{GF}(2^8)$ y se multiplica módulo $x^4+1$ por: $c(x)=03x^3+01x^2+01x+02$ donde 03 es el valor hexadecimal que se obtiene concatenado los coeficientes binarios del polinomio correspondiente en $\operatorname{GF}(2^8)$, en este caso sería 00000011 y por tanto $x+1$ análogamente se haría con los demás.\\
+		La inversa de $MezclarColumnas$ se obtiene multiplicando cada columna de la matriz de estado por el polinomio: $d(x)=0Bx^3+0Dx^2+09x+0E$.
 
 \end{description}
 
@@ -428,7 +432,7 @@ La función de expansión tiene dos versiones según el valor de $N_k$:
 		\end{description}
 		Para $i$ desde $N_k$ hasta $N_{b}·(n+1)$ hacer:\\
 			\hspace*{20}$tmp\leftarrow W(i-1)$\\
-			\hspace*{20}Si $i$ $mod N_k == 0$\\
+			\hspace*{20}Si $i$ $mod N_k = 0$\\
 			\hspace*{40}$tmp\leftarrow Sub(Rot(tmp))\oplus Rc(i/N_k)$\\
 			\hspace*{20}$W(i)\leftarrow W(i-N_k)\oplus tmp$
 	\end{algorithm}
@@ -441,9 +445,9 @@ La función de expansión tiene dos versiones según el valor de $N_k$:
 		\end{description}
 		Para $i$ desde $N_k$ hasta $N_{b}·(n+1)$ hacer:\\
 			\hspace*{20}$tmp\leftarrow W(i-1)$\\
-			\hspace*{20}Si $i$ $mod N_k == 0$\\
+			\hspace*{20}Si $i$ $mod N_k = 0$\\
 			\hspace*{40}$tmp\leftarrow Sub(Rot(tmp))\oplus Rc(i/N_k)$\\
-			\hspace*{20}Si $i$ $mod N_k == 4$\\
+			\hspace*{20}Si $i$ $mod N_k = 4$\\
 			\hspace*{40}$tmp\leftarrow Sub(tmp)$\\
 			\hspace*{20}$W(i)\leftarrow W(i-N_k)\oplus tmp$
 	\end{algorithm}
@@ -451,8 +455,8 @@ La función de expansión tiene dos versiones según el valor de $N_k$:
 
 La función \emph{Sub} devuelve el resultado de aplicar la s-caja de AES a cada uno de los bytes del registro de cuatro que se le pasa como parámetro, la función \emph{Rot} desplaza a la izquierda los bytes del registro y \emph{Rc(j)} es una constante que se define como:
 \begin{itemize}
-	\item $Rc(j)=(R(j),0,0,0)$
-	\item Cada $R(i)$ es el elemento de $GF(2^8)$ correspondiente al valor $x^{i-1}$ módulo $x^8+x^4+x^3+x+1$
+	\item $Rc(j)=(R(j),0,0,0)$.
+	\item Cada $R(i)$ es el elemento de $\operatorname{GF}(2^8)$ correspondiente al valor $x^{i-1}$ módulo $x^8+x^4+x^3+x+1$.
 \end{itemize}
 
 \section{Criptosistema de Rivest-Shamir-Adleman, RSA}
@@ -460,17 +464,17 @@ En esta sección hablaré sobre el cifrado RSA y su funcionamiento, cifrado que 
 RSA es llamado así en honor a sus creadores Ron Rivest, Adi Shamir y Loenard Adleman, fué desarrollado en 1977. Cabe a destacar que en 1973 se desarrolló en secreto un criptosistema similar por Clifford Cocks para la \emph{Government Communications Headquarters}, que es la agencia de inteligencia de señales británica, y fue desclasificado en 1997\cite{cliffordCocks}.\\
 Este criptosistema está basado en el \emph{Teorema de Euler} y en particular en la \emph{proposición 2.2}.
 \begin{teorema}
-	(Teorema de Euler) Sean a,n $\in \mathbb{Z}$ primos relativos entre sí, entonces $a^{\phi(n)}\equiv 1$ mod n.
+	(Teorema de Euler) Sean a,n $\in \mathbb{Z}$ primos relativos entre sí, entonces $a^{\phi(n)}\equiv 1 \mod n$.
 \end{teorema}
 Donde $\phi(n)$ es la \emph{funclón de Euler} definida como $\phi(n)=|\mathbb{Z}^*_n|$ y se puede calcular de la siguiente forma $$\phi(n)=n\prod_{p_i|n}(1-\frac{1}{p_i})$$
 
 
 \begin{proposicion}
-	Sea $n = pq$, donde p y q son dos primos distintos. Si $x\equiv 1$ mod $\phi(n)$, entonces $a^x\equiv a$ mod n $\forall a \n \in \mathbb{Z}$.\\
+	Sea $n = pq$, donde p y q son dos primos distintos. Si $x\equiv 1 \mod \phi(n)$, entonces $a^x\equiv a\mod n$ $\forall a \n \in \mathbb{Z}$.\\
 	\begin{proof}
 		\textbf{Demostración.}\\
-		Si a es múltiplo de n, entonces se cumple que $a^x \equiv 0 \equiv a$ mod n. Si a y n son coprimos, $mcm(a,n) = 1$ entonces tendríamos que $a^x \equiv a$ mod n por el Teorema de Euler.\\
-		Nos quedaría ver ocurre en el caso de a sea múltiplo de p o de q, pero no de ambos. Por simetría supondremos que a es múltiplo de p, pero no de q. En este caso tenemos que $a^x \equiv 0 \equiv a$ mod p  y $a^x \equiv a$ mod q por el Teorema de Fermat, como p y q son coprimos entre sí, aplicando el Teorema Chino de los Restos se deduce que $a^x \equiv a$ mod n. \blacksquare
+		Si a es múltiplo de n, entonces se cumple que $a^x \equiv 0 \equiv a \mod n$. Si a y n son coprimos, $mcm(a,n) = 1$ entonces tendríamos que $a^x \equiv a \mod n$ por el Teorema de Euler.\\
+		Nos quedaría ver ocurre en el caso de a sea múltiplo de p o de q, pero no de ambos. Por simetría supondremos que a es múltiplo de p, pero no de q. En este caso tenemos que $a^x \equiv 0 \equiv a \mod p$  y $a^x \equiv a \mod q$ por el Teorema de Fermat, como p y q son coprimos entre sí, aplicando el Teorema Chino de los Restos se deduce que $a^x \equiv a \mod n$. \blacksquare
 	\end{proof}
 \end{proposicion}
 
@@ -491,8 +495,7 @@ El conjunto de los mensajes sin cifrar es $\mathcal{M}$, el de los mensajes cifr
 
 \subsection{Ataques}
 Como hemos visto anteriormente RSA puede ser vulnerable en función de los números primos que se elijan y el tamaño de estos. En este apartado veremos algunos posibles ataques que se podrían llevar a cabo \cite{apuntesCriptografia}.
-\begin{description}
-	\item \textbf{Ataque por módulo común.}\\
+	\subsubsection{Ataque por módulo común.}
 	Este ataque se da cuando hay una mala elección de las claves, típicamente cuando se tienen que generar múltiples claves para varios usuarios y para optimizar, se utiliza el mismo módulo $n$ para todos. Mientras el exponente sea distinto, la clave sigue siendo segura, pero si se da que se cifra el mismo mensaje con los distintos exponentes pero el mismo módulo, se puede descifrar el mensaje original.\\
 	Supongamos que tenemos dos claves públicas con el mismo módulo, $(n, e_1)$ y $(n, e_2)$ y además ser verifica que  $mcm(e_1,e_2)$. Supongamos que $re_1+se_2=1$ con $r$\textless $0$\textless $s$. Como se ha visto el mensaje cifrado respectivamente será:
 	\begin{align*}
@@ -504,7 +507,7 @@ Como hemos visto anteriormente RSA puede ser vulnerable en función de los núme
 			(c^{-1})^{-r}c_2^s \equiv (m^{e_1})^r(m^{e_2})^s \equiv m^{e_1r+e_2s} = m \mod n
 	\end{align*}
 
-	\item \textbf{Ataque por exponente pequeño.}\\
+	\subsubsection{Ataque por exponente pequeño.}
 	Este ataque se puede hacer cuando se elige un exponente muy pequeño y se cifra el mismo mensaje con distinto módulo. En este caso se puede resolver aplicando el Teorema Chino del Resto. Supongamos a varios receptores con claves públicas $(n_i, e)$, con $1\leq i \leq r$, tal que mcm$(n_i, n_j) = 1$ si $i\neq j$ ya que en caso contrario, se podría factorizar el módulo correspondiente mediante el cálculo del MCD.\\
 	Llamamos $c_i = m^e \mod n_i$ para cada $1\leq i \leq r$. Seleccionamos $\{i_1,...,i_e \}\subseteq \{1,...,r\}$ y empleando el inverso del isomorfismo de anillos
 	\begin{align*}
@@ -516,55 +519,54 @@ Como hemos visto anteriormente RSA puede ser vulnerable en función de los núme
 	\end{align*}
 	Dado $m^e$\textless $n_{i_1}...n_{i_e}$, se puede obtener $m$ calculando la raíz $e$-ésima en $\mathbb{Z} \subseteq \mathbb{R}$, siempre y cuando $e$ no sea muy grande.
 
-	\item \textbf{Ataque con primos muy próximos.}\\
+	\subsubsection{Ataque con primos muy próximos.}
 	Este ataque se da cuando se eligen dos primos muy próximos entre sí. Dado $n=pq$ con $p$\textless $q$ tenemos que  
 	\begin{align*}
 			n=\left (\frac{p+q}{2}\right )^2-\left (\frac{p-q}{2}\right )^2
 	\end{align*}
 	Si $p$ y $q$ son cercanos, $s=\frac{p-q}{2}$ es pequeño y $t=\frac{p+q}{2}$ es un entero ligeramente mayor que $\sqrt{n}$ tal que $t^2 - n^2$ es un cuadrado perfecto. Probando sucesivamente con valores mayores que $\sqrt{n}$ hasta encontrar una descomposición $n=t^2-s^2$, tenemos que $p=t+s$ y $q=t-s$.
-\end{description}
 
 \subsection{Firma digital RSA}
-Una vez explicado RSA se introducirá la firma digital con RSA, herramienta muy utilizada en las aplicaciones de mensajería para garantizar el no repudio de los mensajes.
+La firma digital con RSA, es una herramienta muy utilizada en las aplicaciones de mensajería para garantizar el no repudio de los mensajes.
 Dados dos interlocutores A y B cada uno con sus claves públicas:
 \begin{itemize}
-	\item Para A tenemos $n_A$, $d_A$ y $e_A$   
-	\item Para B tenemos $n_B$, $d_B$ y $e_B$   
+	\item para A tenemos $n_A$, $d_A$ y $e_A$,  
+	\item para B tenemos $n_B$, $d_B$ y $e_B$.  
 \end{itemize}
 Para que B sepa que un mensaje \emph{m} ha sido enviado por A se siguen los siguientes pasos:
 \begin{enumerate}
-	\item A cifra el mensaje \emph{m} usando su clave secreta.
+	\item A cifra el mensaje \emph{m} usando su clave secreta:
 		$$
-			S=D_A(m)=m^{d_A} \mod n_A
+			S=D_A(m)=m^{d_A} \mod n_A.
 		$$
-	\item A continuación encripta el mensaje firmado con la clave pública de B.
+	\item A continuación encripta el mensaje firmado con la clave pública de B:
 		$$
-			C_B(S)=S\mod n_B
+			C_B(S)=S\mod n_B.
 		$$
-		Y se lo envía.
-	\item B recibe $C_B(S)=S^{e_B}$ y lo desencripta. 
+		y se lo envía a B.
+	\item B recibe $C_B(S)=S^{e_B}$ y lo desencripta: 
 		$$
-			D_B(S^{e_B})=S \mod n_B
+			D_B(S^{e_B})=S \mod n_B.
 		$$
-	\item Una vez desencriptado la primera parte, B desencripta S con la clave pública de A.
+	\item Una vez desencriptado la primera parte, B desencripta S con la clave pública de A:
 		$$
-			C_A(S)=C_A(D_A(m))=(m^{d_A})^{e_A}=m^{d_Ae_B}=m^{1+k\phi(n_A)}\equiv m \mod n_A
+			C_A(S)=C_A(D_A(m))=(m^{d_A})^{e_A}=m^{d_Ae_B}=m^{1+k\phi(n_A)}\equiv m \mod n_A.
 		$$
 \end{enumerate}
 Una vez hecho esto, B podría afirmar casi con total seguridad que el mensaje ha sido enviado por A garantizando el no repudio del mensaje.
 
-\section{Criptosistemas basados en el logaritmo discreto. Diffie-Hellman}
-Una vez visto RSA veremos a continuación una introducción a los criptosistemas basados en el problema del logaritmo discreto que nos permitirá definir el intercambio de claves \emph{Diffie-Hellman}, método muy utilizado en las aplicaciones de mensajería al inicio de las conexión. La información de este apartado sobre el logaritmo ha sido obtenida de \cite{angelRiosMateos} y la de \emph{Diffie-Hellman} ha sido obtenida de \cite{En2011}.\\
-El problema del logaritmo discreto es definido de la siguiente forma:
+\section{El Problema del Logaritmo Discreto. Diffie-Hellman}
+El intercambio de claves \emph{Diffie-Hellman}, método muy utilizado en las aplicaciones de mensajería al inicio de las conexión. La información de este apartado sobre el logaritmo ha sido obtenida de \cite{angelRiosMateos} y la de \emph{Diffie-Hellman} ha sido obtenida de \cite{En2011}.\\
+El Problema del Logaritmo Discreto es definido de la siguiente forma:
 \begin{definicion}
 	Sea S un semigrupo finito. El Problema del Logaritmo Discreto en el semigrupo S es el de resolver ecuaciones del tipo\\
 		$$
-			a^X\!=b\;(x\in \mathbb{N})
+			a^x\!=b\;(x\in \mathbb{N}).
 		$$
 	donde a y b son dos elementos dados de S.
 \end{definicion}
 
-La complejidad del problema del Logaritmo discreto depende en gran medida del semigrupo $S$ que se elija.
+La complejidad del Problema del Logaritmo Discreto depende en gran medida del semigrupo $S$ que se elija.
 Dado que si se eligiera como $S$ el grupo aditivo $\mathbb{Z}_n$ la solución se obtendría fácilmente resolviendo una ecuación de congruencias del tipo $aX \equiv b \mod n$ que equivaldría a resolver la ecuación diofántica $aX + nY = b$. Pero si ahora $S$ pasara a ser los semigrupos multiplicativos $\mathbb{Z}_n$ o $\mathbb{F}_q$ o sus grupos de unidades, el problema aumentaría su complejidad de manera significativa.\\
 Tenemos que $a^x = b$ tiene solución si y solamente si $b$ está en el semigrupo cíclico generado por $a$. Luego si $a$ es un elemento de orden finito de un grupo, se podría suponer en la práctica que $S$ es un grupo cíclico y por ello existiría un isomorfismo con ($\mathbb{Z}_n$, $+$). Luego la dificultad del problema no estaría en la estructura del grupo, sino en reconocer los elementos como potencias de enteros.\\
 Se cree que el problema de logaritmo discreto es $\mathbb{NP}$-completo, pero esta conjetura todavía no ha sido demostrada por lo que se considera un problema $\mathbb{NP}$-Intermedio, estos problemas son llamados así porque no están dentro de los problemas $\mathbb{P}$ ni en los problemas $\mathbb{NP}$-completo por ahora \cite{NP-intermedio}.\\
@@ -660,38 +662,38 @@ De manera gráfica quedaría de la siguiente manera:\\
 	\label{esquemaecb}
 \end{figure}
 
-Una vez definidas las curvas elípticas en $\mathbb{R}$ definiremos las curvas en los cuerpos de Galois $GF(n)$ y $GF(2^n)$ cuyo uso esta muy extendido en la criptografía para redefinir el problema de logaritmo discreto.
+Una vez definidas las curvas elípticas en $\mathbb{R}$ definiremos las curvas en los cuerpos de Galois $\operatorname{GF}(n)$ y $\operatorname{GF}(2^n)$ cuyo uso esta muy extendido en la criptografía para redefinir el problema de logaritmo discreto.
 
-\subsection{Curvas Elípticas en $GF(n)$}
-Un cuerpo de Galois $GF(n)$ es el grupo finito generado por un número primo $n$. En este conjunto todos los elementos tienen un inverso, menos el cero por lo que están permitidas las operaciones de suma, resta, multiplicación y división.\\
-De manera natural se define el conjunto $E(GF(n))$ como los puntos $(x,y)$ que verifican la siguiente ecuación: 
+\subsection{Curvas Elípticas en $\operatorname{GF}(n)$}
+Un cuerpo de Galois $\operatorname{GF}(n)$ es el grupo finito generado por un número primo $n$. En este conjunto todos los elementos tienen un inverso, menos el cero por lo que están permitidas las operaciones de suma, resta, multiplicación y división.\\
+De manera natural se define el conjunto $E(\operatorname{GF}(n))$ como los puntos $(x,y)$ que verifican la siguiente ecuación: 
 $$
 	y^2\equiv x^3+ax+b \mod n
 $$
 Donde al igual que en $E(\mathbb{R})$, $a,b\in{1..n}$ definen de manera unívoca una curva elíptica.\\
 
 \newpage
-\textbf{Operación $+$ en $GF(n)$}\\
-Sean los puntos $r=(r_x,r_y),\: s=(s_x,s_y),\: p=(p_x,p_y),\: t=(t_x,t_y)\in E(GF(n))$, definimos la operación $+$  como sigue:
+\textbf{Operación $+$ en $\operatorname{GF}(n)$}\\
+Sean los puntos $r=(r_x,r_y),\: s=(s_x,s_y),\: p=(p_x,p_y),\: t=(t_x,t_y)\in E(\operatorname{GF}(n))$, definimos la operación $+$  como sigue:
 \begin{itemize}
-	\item $r+\mathcal{O}=\mathcal{O}+r=r,\: \forall r \in GF(n)$.
+	\item $r+\mathcal{O}=\mathcal{O}+r=r,\: \forall r \in \operatorname{GF}(n)$.
 	\item Si $r_x=s_x$ y $r_y=s_x+s_y$, entoces se dice que $r$ es el opuesto de $s$, se nota como $r=-s$ y se verifica que $r+s=s+r=\mathcal{O}$.
 	\item Si $r\neq s$ y $r\neq-s$, $t=r+s$ se calcula como $d=\frac{s_y-r_y}{s_x-r_x}\mod n,\; t_x=d^2-r_x-s_x \mod n,\; t_y=-r_y+d(r_x-t_x) \mod n$
 	\item Si $p_x = 0$ entonces $2p = \mathcal{O}$
 \end{itemize}
 
-\subsection{El cuerpo de Galois $GF(2^n)$}
+\subsection{El cuerpo de Galois $\operatorname{GF}(2^n)$}
 
-Antes de desarrollar las Curvas Elípticas en $GF(2^n)$ introduciré el cuerpo $GF(2^n)$ el cual tiene una serie de propiedades que lo hacen muy interesante y justifican su uso tan extendido en criptografía.\\
+Antes de desarrollar las Curvas Elípticas en $\operatorname{GF}(2^n)$ introduciré el cuerpo $\operatorname{GF}(2^n)$ el cual tiene una serie de propiedades que lo hacen muy interesante y justifican su uso tan extendido en criptografía.\\
 El conjunto $\mathbb{Z}_2[x]$ es el conjunto de polinomios con coeficientes en $\mathbb{Z}_2$ es decir, el el conjunto de polinomios cuyos coeficientes solo valen 0 o 1. Por lo que los polinomios pueden ser representados por una cadena de bits.
  Un ejemplo sería el polinomio $f(x)=x^4+x^3+x+1$ que quedaría representado como 11011. 
 Además si lo sumamos con otro polinomio como puede ser $g(x)=x^2+x+1$ tenemos que $f(x)+g(x)=x^4+x^3+x^2$ que equivale a hacer la operación \emph{xor} entre 11011 y 00111, por lo que a nivel computacional, es muy fácil implementar estas operaciones.\\
-Escogiendo un polinomio irreducible en $\mathbb{Z}_2$ podemos generar un cuerpo de Galois. Este conjunto es representado como $GF(2^n)$, donde $n$ es el grado del polinomio irreducible que lo genera.\\
-Las principales ventajas que tiene trabajar con $GF(2^n)$ es que permite llevar a cabo implementaciones de una sencillez significativa respecto a la de los demás. Por lo que teniendo el mismo orden de complejidad, se multiplica significativamente la velocidad y además permite simplificar el diseño de los circuitos. Esto último hace que se obtengan sistemas con mejores prestaciones y mejor precio.
+Escogiendo un polinomio irreducible en $\mathbb{Z}_2$ podemos generar un cuerpo de Galois. Este conjunto es representado como $\operatorname{GF}(2^n)$, donde $n$ es el grado del polinomio irreducible que lo genera.\\
+Las principales ventajas que tiene trabajar con $\operatorname{GF}(2^n)$ es que permite llevar a cabo implementaciones de una sencillez significativa respecto a la de los demás. Por lo que teniendo el mismo orden de complejidad, se multiplica significativamente la velocidad y además permite simplificar el diseño de los circuitos. Esto último hace que se obtengan sistemas con mejores prestaciones y mejor precio.
 
-\subsection{Curvas Elípticas en $GF(2^n)$}
+\subsection{Curvas Elípticas en $\operatorname{GF}(2^n)$}
 
-De manera análoga a $E(GF(n))$ definimos el conjunto $E(GF(2^n))$ con la diferencia debida a la estructura de $GF(2^n)$, la ecuación de curva elíptica es diferente.\\
+De manera análoga a $E(\operatorname{GF}(n))$ definimos el conjunto $E(\operatorname{GF}(2^n))$ con la diferencia debida a la estructura de $\operatorname{GF}(2^n)$, la ecuación de curva elíptica es diferente.\\
 Dado un polinomio irreducible $p(x)$ de grado $n$, las curvas elípticas se definen como los puntos $(x,y)$ que cumplen la ecuación:
 $$
 	y^2+xy \equiv x^3+ax^2+b \mod (p(x))
@@ -699,10 +701,10 @@ $$
 y para que se genere un grupo se tiene que verificar que $b\neq 0$.
 Los puntos de una curva serán pares de polinomios de grado $n-1$ y como hemos visto en el apartado anterior, podrán ser representados como cadenas de bits.\\
 
-\textbf{Operación $+$ en $E(GF(2^n))$}\\
-Sean los puntos $r=(r_x,r_y),\: s=(s_x,s_y),\: p=(p_x,p_y),\: t=(t_x,t_y)\in E(GF(n))$, definimos la operación $+$  como sigue:
+\textbf{Operación $+$ en $E(\operatorname{GF}(2^n))$}\\
+Sean los puntos $r=(r_x,r_y),\: s=(s_x,s_y),\: p=(p_x,p_y),\: t=(t_x,t_y)\in E(\operatorname{GF}(n))$, definimos la operación $+$  como sigue:
 \begin{itemize}
-	\item $r+\mathcal{O}=\mathcal{O}+r=r,\; \forall r \in E(GF(2^n))$
+	\item $r+\mathcal{O}=\mathcal{O}+r=r,\; \forall r \in E(\operatorname{GF}(2^n))$
 	\item Si $r_x=s_x$ y $r_y=s_x+s_y$, entoces se dice que $r$ es el opuesto de $s$, se nota como $r=-s$ y se verifica que $r+s=s+r=\mathcal{O}$.
 	\item Si $r\neq s$ y $r\neq-s$, $t=r+s$ se calcula como $d=\frac{s_y-r_y}{s_x-r_x},\; t_x=d^2+d+r_x+s_x+a,\; t_y=d(r_x+t_x)+t_x+r_y$.
 	\item Para $t=2p$ con $p_x\neq 0$ se calcula como $d=p_x+\frac{p_y}{p_x}, \: t_x=d^2+d+a, \: t_y=p_x^2+(d+1)t_x$.
@@ -714,7 +716,7 @@ En esta sección se hablará sobre el análogo del problema del logaritmo discre
 
 \subsection{El problema del logaritmo discreto en curvas elípticas}
 Para todo punto $p$ definido en una curva elíptica, se define $\langle p\rangle$ al conjunto $\{\mathcal{O}, p, 2p, ... \}$.
-En $E(GF(n))$ y $E(GF(2^n))$ los conjutos como los que se han definido, tienen que ser finitos ya que los puntos de las curvas son finitos. Luego para todo punto $q\in \langle p\rangle$ tiene que existir un númer $k \in \mathbb{Z}$ que verifique que $kp=q$.\\
+En $E(\operatorname{GF}(n))$ y $E(\operatorname{GF}(2^n))$ los conjutos como los que se han definido, tienen que ser finitos ya que los puntos de las curvas son finitos. Luego para todo punto $q\in \langle p\rangle$ tiene que existir un númer $k \in \mathbb{Z}$ que verifique que $kp=q$.\\
 Por lo tanto, el problema del logaritmo discreto en curvas elípticas consiste en hallar dicho número $k$ a partir de $p$ y $q$.
 \subsection{Intercambio de claves \emph{Diffie-Hellman} en curvas elípticas}
 Una vez visto el problema del logaritmo discreto en curvas elípticas, se explicará el intercambio de claves $Diffie-Hellman$ usando curvas elípticas. Para ello se explicará previamente la conjetura \emph{Diffie-Hellman}. La información de este apartado la he obtenido de \cite{apuntesCriptografia}.\\
