@@ -464,24 +464,83 @@ En esta sección hablaré sobre el cifrado RSA y su funcionamiento, cifrado que 
 RSA es llamado así en honor a sus creadores Ron Rivest, Adi Shamir y Loenard Adleman, fué desarrollado en 1977. Cabe a destacar que en 1973 se desarrolló en secreto un criptosistema similar por Clifford Cocks para la \emph{Government Communications Headquarters}, que es la agencia de inteligencia de señales británica, y fue desclasificado en 1997\cite{cliffordCocks}.\\
 Este criptosistema está basado en el \emph{Teorema de Euler} y en particular en la \emph{Proposición 2.2}.\\
 
-AÑADIR TEOREMA DE FERMAT CON SU DEMOSTRACIÓN\\
+\begin{teorema}
+	(Teorema pequeño de Fermat) Sea $a \in \mathbb{Z}$ y $p$ un número primo tal que $mcd(a,p)=1$. Entonces
+	$$
+		a^{p-1} \equiv 1 \mod p.
+	$$
+\end{teorema}\vspace*{-10mm}
+\begin{proof}
+		Sea $a \in \mathbb{Z}$. Tomamos los $p-1$ primeros múltiplos positivos de $a$ que serán de la forma $a, 2a,\dots,(p-1)a$. El resto resultante de dividir los $p-1$ múltiplos positivos de $a$ por $p$ corresponden a 1,2,3,$\dots,p-1$.\\
+	Multiplicando ahora todas las congruencias obtenemos 
+	$$
+		a^{p-1}·(p-1)! \equiv (p-1)! \mod p.
+	$$
+	Como tenemos que $p\nmid (p-1)!$ se cumple que $mcd(p,p-1)=1$ y por tanto cancelando en la expresión anterior obtenemos
+	$$
+		a^{p-1} \equiv 1 \mod p.
+	$$
+\end{proof}
 
 \begin{teorema}
 	(Teorema de Euler) Sean a,n $\in \mathbb{Z}$ primos relativos entre sí, entonces $a^{\phi(n)}\equiv 1 \mod n$.
-\end{teorema}
-
-DEMOSTRAR EL TEOREMA DE EULER\\
-
+\end{teorema}\vspace*{-10mm}
+\begin{proof}
+		Sea $n\in \mathbb{Z^+}$ que verifica que $mcd(a,n)=1$ y definimos $S$ como el conjunto de las unidades modulo $n$, $S=\{u_1,u_2,\dots,u_{\phi(n)}\}$ donde $1\leq u_i\leq n-1$, $mcd(u_i,n)=1$ y $u_i\neq u_j$ $\forall i,j \in \{1,\dots,\phi(n)\}$ con $ i\neq j$.\\
+	Multiplicando  los elementos de $S$ por $a$ obtenemos 
+	$$
+		aS=\{au_1,au_2,\dots,au_{\phi(n)}\}
+	$$
+	Como $mcd(a,n)=1$ entonces $a\mod n$ es una unidad y por tanto $aS$ será el conjunto de las unidades módulo $n$. Y dado que los elementos de $S$ y los de $aS$ coinciden módulo $n$, el producto de estos será el mismo módulo $n$ por lo que obtenemos 
+	$$
+		u_1u_2\dots u_{\phi(n)} \equiv (au_1)(au_2)\dots (au_{\phi(n)})\mod n.
+	$$
+	Sacando como factor común $a$ tenemos 
+	$$
+		u_1u_2\dots u_{\phi(n)} \equiv a^{\phi(n)}u_1u_2\dots u_{\phi(n)}\mod n.
+	$$
+\end{proof}\\
 Donde $\phi(n)$ es la \emph{funclón de Euler} definida como $\phi(n)=|\mathbb{Z}^*_n|$ y se puede calcular de la siguiente forma $$\phi(n)=n\prod_{p_i|n}\left(1-\frac{1}{p_i}\right)$$.
 
-DAR TEOREMA CHINO DEL RESTO\\
+\begin{teorema}
+		(Teorema Chino del Resto) Sean $a_i\in \mathbb{Z}$ y $n_i \in \mathbb{N}$ tales que $mcd(n_j,n_k)$ con $j\neq k$ e $i \in \{1,2,\dots,l\}$. Entonces el sistema
+		$$
+			x\equiv a_1 \mod n_1
+		$$\vspace*{-10mm}
+
+		$$
+			x\equiv a_2 \mod n_2
+		$$\vspace*{-10mm}
+
+		$$
+			\vdots
+		$$\vspace*{-10mm}
+
+		$$
+			x\equiv a_l \mod n_l
+		$$
+	tiene solución única módulo $N=n1\cdot n_2\cdot\cdot\cdot n_l$. Además, la solución está dada por
+	$$
+		x\equiv a_1\cdot c_1\cdot d_1 +a_2\cdot c_2\cdot d_2 +\dots+a_l\cdot c_l\cdot d_l,
+	$$
+	donde $c_i$ cumple
+	$$
+		c_i=\frac{N}{n_i},
+	$$
+	y $d_i$ verifica
+	$$
+		c_i\cdot d_i \equiv 1 \mod n_i,
+	$$
+	para todo $1\leq i\leq l$.
+	
+\end{teorema}
 
 \begin{proposicion}
-	Sea $n = pq$, donde p y q son dos primos distintos. Si $x\equiv 1 \mod \phi(n)$, entonces $a^x\equiv a\mod n$ $\forall a \n \in \mathbb{Z}$.
+	Sea $n = pq$, donde p y q son dos primos distintos. Si $x\equiv 1 \mod \phi(n)$, entonces $a^x\equiv a\mod n$ para todo $ a \n \in \mathbb{Z}$.
 \end{proposicion}\vspace*{-10mm}
 	\begin{proof}
-		Si a es múltiplo de n, entonces se cumple que $a^x \equiv 0 \equiv a \mod n$. Si a y n son coprimos, $mcm(a,n) = 1$ entonces tendríamos que $a^x \equiv a \mod n$ por el Teorema de Euler.\\
-		Nos quedaría ver ocurre en el caso de a sea múltiplo de p o de q, pero no de ambos. Por simetría supondremos que a es múltiplo de p, pero no de q. En este caso tenemos que $a^x \equiv 0 \equiv a \mod p$  y $a^x \equiv a \mod q$ por el Teorema de Fermat, como p y q son coprimos entre sí, aplicando el Teorema Chino de los Restos se deduce que $a^x \equiv a \mod n$.
+		Si $a$ es múltiplo de $n$, entonces se cumple que $a^x \equiv 0 \equiv a \mod n$. Si $a$ y $n$ son coprimos, $mcm(a,n) = 1$. Entonces tendríamos que $a^x \equiv a \mod n$ por el Teorema de Euler.\\
+		Nos quedaría ver ocurre en el caso de $a$ sea múltiplo de $p$ o de $q$, pero no de ambos. Por simetría supondremos que a es múltiplo de $p$, pero no de $q$. En este caso tenemos que $a^x \equiv 0 \equiv a \mod p$  y $a^x \equiv a \mod q$ por el Teorema de Fermat. Como $p$ y $q$ son coprimos entre sí, aplicando el Teorema Chino del Resto se deduce que $a^x \equiv a \mod n$.
 	\end{proof}
 
 \subsection{Descripción de RSA}
