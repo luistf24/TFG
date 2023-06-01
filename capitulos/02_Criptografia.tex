@@ -503,35 +503,33 @@ Este criptosistema está basado en el \emph{Teorema de Euler} y en particular en
 Donde $\phi(n)$ es la \emph{funclón de Euler} definida como $\phi(n)=|\mathbb{Z}^*_n|$ y se puede calcular de la siguiente forma $$\phi(n)=n\prod_{p_i|n}\left(1-\frac{1}{p_i}\right)$$.
 
 \begin{teorema}
-		(Teorema Chino del Resto) Sean $a_i\in \mathbb{Z}$ y $n_i \in \mathbb{N}$ tales que $mcd(n_j,n_k)$ con $j\neq k$ e $i \in \{1,2,\dots,l\}$. Entonces el sistema
+		(Teorema Chino del Resto) Sean $a_i\in \mathbb{Z}$ y $p,q \in \mathbb{N}$ tales que $mcd(p,q)$ con $i = 1,2$. Entonces el sistema
 		$$
-			x\equiv a_1 \mod n_1
+			x\equiv a_1 \mod p,
 		$$\vspace*{-10mm}
 
 		$$
-			x\equiv a_2 \mod n_2
-		$$\vspace*{-10mm}
+			x\equiv a_2 \mod q,
+		$$
 
-		$$
-			\vdots
-		$$\vspace*{-10mm}
-
-		$$
-			x\equiv a_l \mod n_l
-		$$
-	tiene solución única módulo $N=n1\cdot n_2\cdot\cdot\cdot n_l$. Además, la solución está dada por
+	tiene solución única módulo $n=pq$. Además, la solución está dada por
 	$$
-		x\equiv a_1\cdot c_1\cdot d_1 +a_2\cdot c_2\cdot d_2 +\dots+a_l\cdot c_l\cdot d_l,
+		x\equiv a_1\cdot c_1\cdot d_1 +a_2\cdot c_2\cdot d_2,
 	$$
-	donde $c_i$ cumple
+	donde se cumple
 	$$
-		c_i=\frac{N}{n_i},
+		c_1=\frac{n}{p},
 	$$
-	y $d_i$ verifica
 	$$
-		c_i\cdot d_i \equiv 1 \mod n_i,
+		c_2=\frac{n}{q},
 	$$
-	para todo $1\leq i\leq l$.
+		y
+	$$
+		c_1\cdot d_1 \equiv 1 \mod p,
+	$$
+	$$
+		c_2\cdot d_2 \equiv 1 \mod q.
+	$$
 	
 \end{teorema}
 
