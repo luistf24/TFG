@@ -320,6 +320,14 @@ En el algoritmo AES se define cada ronda como una composición de cuatro funcion
 	\item \textbf{Capa de adición de clave:} Es un simple \emph{or-exclusivo} entre el estado intermedio y la subclave correspondiente a cada ronda.
 \end{itemize}
 
+\subsection{El cuerpo de Galois $\operatorname{GF}(2^n)$}
+Antes de desarrollar las rondas de AES y posteriormente la teoría de Curvas Elípticas en $\operatorname{GF}(2^n)$ introduciré el cuerpo $\operatorname{GF}(2^n)$ el cual tiene una serie de propiedades que lo hacen muy interesante y justifican su uso tan extendido en criptografía.\\
+El conjunto $\mathbb{Z}_2[x]$ es el conjunto de polinomios con coeficientes en $\mathbb{Z}_2$ es decir, el el conjunto de polinomios cuyos coeficientes solo valen 0 o 1. Por lo que los polinomios pueden ser representados por una cadena de bits.
+ Un ejemplo sería el polinomio $f(x)=x^4+x^3+x+1$ que quedaría representado como 11011. 
+Además si lo sumamos con otro polinomio como puede ser $g(x)=x^2+x+1$ tenemos que $f(x)+g(x)=x^4+x^3+x^2$ que equivale a hacer la operación \emph{xor} entre 11011 y 00111, por lo que a nivel computacional, es muy fácil implementar estas operaciones.\\
+Escogiendo un polinomio irreducible en $\mathbb{Z}_2$ podemos generar un cuerpo de Galois. Este conjunto es representado como $\operatorname{GF}(2^n)$, donde $n$ es el grado del polinomio irreducible que lo genera.\\
+Las principales ventajas que tiene trabajar con $\operatorname{GF}(2^n)$ es que permite llevar a cabo implementaciones de una sencillez significativa respecto a la de los demás. Por lo que teniendo el mismo orden de complejidad, se multiplica significativamente la velocidad y además permite simplificar el diseño de los circuitos. Esto último hace que se obtengan sistemas con mejores prestaciones y mejor precio.
+
 \subsection{Las Rondas de AES}
 Dado que el algoritmo AES puede aplicarse para longitudes diferentes de bloque y clave, el número de rondas es variable, como se ha visto en \ref{rondas_aes}.\\
 Siendo $S$ la matriz de estado y $K_i$ la subclave correspondiente a la ronda $i$-ésima, cada ronda posee esta estructura:
@@ -409,7 +417,7 @@ En la última ronda se hacen solo los tres primeros pasos del algoritmo.
 			\caption{Esquema de las funciones $MezclarColumnas$ y $DesplazarFila$ \cite{En2011}}
 			\label{desplazarymezclar}
 		\end{figure}
-\newpage
+%\newpage
 	\item \textbf{MezclarColumnas}\\
 		Durante la aplicación de esta función se considera cada columna del vector de estado se considera un polinomio cuyos coeficientes pertenecen a $\operatorname{GF}(2^8)$ y se multiplica módulo $x^4+1$ por: $c(x)=03x^3+01x^2+01x+02$ donde 03 es el valor hexadecimal que se obtiene concatenado los coeficientes binarios del polinomio correspondiente en $\operatorname{GF}(2^8)$, en este caso sería 00000011 y por tanto $x+1$ análogamente se haría con los demás.\\
 		La inversa de $MezclarColumnas$ se obtiene multiplicando cada columna de la matriz de estado por el polinomio: $d(x)=0Bx^3+0Dx^2+09x+0E$.
@@ -745,15 +753,6 @@ Sean los puntos $r=(r_x,r_y),\: s=(s_x,s_y),\: p=(p_x,p_y),\: t=(t_x,t_y)\in E(\
 	\item Si $p_x = 0$ entonces $2p = \mathcal{O}$
 \end{itemize}
 
-\subsection{El cuerpo de Galois $\operatorname{GF}(2^n)$}
-
-Antes de desarrollar las Curvas Elípticas en $\operatorname{GF}(2^n)$ introduciré el cuerpo $\operatorname{GF}(2^n)$ el cual tiene una serie de propiedades que lo hacen muy interesante y justifican su uso tan extendido en criptografía.\\
-El conjunto $\mathbb{Z}_2[x]$ es el conjunto de polinomios con coeficientes en $\mathbb{Z}_2$ es decir, el el conjunto de polinomios cuyos coeficientes solo valen 0 o 1. Por lo que los polinomios pueden ser representados por una cadena de bits.
- Un ejemplo sería el polinomio $f(x)=x^4+x^3+x+1$ que quedaría representado como 11011. 
-Además si lo sumamos con otro polinomio como puede ser $g(x)=x^2+x+1$ tenemos que $f(x)+g(x)=x^4+x^3+x^2$ que equivale a hacer la operación \emph{xor} entre 11011 y 00111, por lo que a nivel computacional, es muy fácil implementar estas operaciones.\\
-Escogiendo un polinomio irreducible en $\mathbb{Z}_2$ podemos generar un cuerpo de Galois. Este conjunto es representado como $\operatorname{GF}(2^n)$, donde $n$ es el grado del polinomio irreducible que lo genera.\\
-Las principales ventajas que tiene trabajar con $\operatorname{GF}(2^n)$ es que permite llevar a cabo implementaciones de una sencillez significativa respecto a la de los demás. Por lo que teniendo el mismo orden de complejidad, se multiplica significativamente la velocidad y además permite simplificar el diseño de los circuitos. Esto último hace que se obtengan sistemas con mejores prestaciones y mejor precio.
-
 \subsection{Curvas Elípticas en $\operatorname{GF}(2^n)$}
 
 De manera análoga a $E(\operatorname{GF}(n))$ definimos el conjunto $E(\operatorname{GF}(2^n))$ con la diferencia debida a la estructura de $\operatorname{GF}(2^n)$, la ecuación de curva elíptica es diferente.\\
@@ -1027,7 +1026,7 @@ $$
 	\sigma_1(x) = (x\ggg17)\oplus (x\ggg19)\oplus (x\lll10)
 $$
 
-\newpage
+%\newpage
 En la siguiente imagen podemos ver un esquema de los pasos seguidos en las funciones SHA-2.\\
 \begin{figure}[htb]
 	\centering
