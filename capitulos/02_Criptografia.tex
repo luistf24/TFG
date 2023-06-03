@@ -251,7 +251,7 @@ Actualmente el más utilizado en las aplicaciones de mensajería es el modo CBC.
 En esta sección hablaré sobre el cifrado Rijndael AES el cual es un cifrado de bloque simétrico muy utilizado actualmente por aplicaciones como \emph{Telegram}, \emph{WhatsApp} y \emph{FacebookChat} entre otras.\\
 El algoritmo Rijndael llamado así en honor a sus dos autores Joan Daemen y Vicent Rijmen, es un algoritmo de cifrado por bloques que fue adoptado en octubre de 2000 por el NIST (\emph{National Institute for Standards and Technology}) para su empleo en aplicaciones criptográficas no militares en sustitución del algoritmo \emph{DES} después de un proceso de más tres años en los que se buscaba un algoritmo que fuera potente, eficiente y fácil de implementar.\\
 Está diseñado para manejar longitudes de clave y de bloque variables entre los 128 y los 256 bits y aunque estos sean variables, en el estándar adoptado por el Gobierno de Estados Unidos en 2001 \cite{aesUsa} establece una longitud fija de bloque de 128 bits y una longitud de clave a escoger entre 128, 192 y 256 bits.\\
-La información para los siguientes apartados de AES la he obtenido de \cite{En2011}.\\
+La información para los siguientes apartados de AES la he obtenido de \cite{En2011} y de \cite{criptografia}.\\
 
 \subsection{Estructura de AES}
 %\subsection{Elementos de AES}
@@ -324,10 +324,41 @@ En el algoritmo AES se define cada ronda como una composición de cuatro funcion
 Antes de desarrollar las rondas de AES y posteriormente la teoría de Curvas Elípticas en $\operatorname{GF}(2^n)$ introduciré el cuerpo $\operatorname{GF}(2^n)$ el cual tiene una serie de propiedades que lo hacen muy interesante y justifican su uso tan extendido en criptografía.\\
 El conjunto $\mathbb{Z}_2[x]$ es el conjunto de polinomios con coeficientes en $\mathbb{Z}_2$ es decir, el el conjunto de polinomios cuyos coeficientes solo valen 0 o 1. Por lo que los polinomios pueden ser representados por una cadena de bits.
  Un ejemplo sería el polinomio $f(x)=x^4+x^3+x+1$ que quedaría representado como 11011. 
-Además si lo sumamos con otro polinomio como puede ser $g(x)=x^2+x+1$ tenemos que $f(x)+g(x)=x^4+x^3+x^2$ que equivale a hacer la operación \emph{xor} entre 11011 y 00111, por lo que a nivel computacional, es muy fácil implementar estas operaciones.\\
+Además si lo sumamos con otro polinomio como puede ser $g(x)=x^2+x+1$ tenemos que $f(x)+g(x)=x^4+x^3+x^2$ que equivale a hacer la operación XOR entre 11011 y 00111, por lo que a nivel computacional, es muy fácil implementar estas operaciones.\\
 Escogiendo un polinomio irreducible en $\mathbb{Z}_2$ podemos generar un cuerpo de Galois. Este conjunto es representado como $\operatorname{GF}(2^n)$, donde $n$ es el grado del polinomio irreducible que lo genera.\\
-Las principales ventajas que tiene trabajar con $\operatorname{GF}(2^n)$ es que permite llevar a cabo implementaciones de una sencillez significativa respecto a la de los demás. Por lo que teniendo el mismo orden de complejidad, se multiplica significativamente la velocidad y además permite simplificar el diseño de los circuitos. Esto último hace que se obtengan sistemas con mejores prestaciones y mejor precio.
+Las principales ventajas que tiene trabajar con $\operatorname{GF}(2^n)$ es que permite llevar a cabo implementaciones de una sencillez significativa respecto a la de los demás. Por lo que teniendo el mismo orden de complejidad, se multiplica significativamente la velocidad y además permite simplificar el diseño de los circuitos. Esto último hace que se obtengan sistemas con mejores prestaciones y mejor precio.\\
+A continuación presentaré el cuerpo $\operatorname{GF}(2^8)$ ya que será necesario para entender adecuadamente las operaciones utilizadas en AES. La información ha sido obtenida de \cite{criptografiaa}.\\
+Tenemos que $\operatorname{GF}(2^8)=\mathbb{F}_{256}$ por lo que por comodidad trabajaremos con este último.\\
+Por definición tenemos que para $p$ número primo y $n$ se define el cuerpo $\mathbb{F}_{p^n}$ al único cuerpo existente con $p^n$ elementos. En particular para trabajar con $\mathbb{F}_{256}$ $p=2$ y $n=8$.\\
+Para construir $\mathbb{F}_{256}$ necesitamos un polinomio de grado 8, con coeficientes en $\mathbb{Z}_2$ y que sea irreducible. En total hay 30 polinomios done algunos de ellos son 
+$x^8+x^4+x^3+x+1$, $\:x^8+x^4+x^3+x^2+1$, $x^8+x^5+x^3+x+1$, $x^8+x^5+x^3+x^2+1$, $x^8+x^5+x^4+x^3+1$, $x^8+x^5+x^4+x^3+x^2+x+1$ y $x^8+x^6+x^3+x^2+1$ entre otros.\\ 
+Cabe a destacar que cualquiera de los polinomios serviría para definir $\mathbb{F}_{256}$ y además no habría ninguna diferencia en la seguridad en los criptosistemas que lo utilicen. Para AES se tomó el polinomio $x^8+x^4+x^3+x+1$, por lo que a partir de ahora trabajaremos con $\mathbb{Z}_{2_{x^8+x^4+x^3+x+1}}$.\\
+Los elementos que conformaran al cuerpo serán clases de equivalencia de polinomios  de grado menor que 8. Cada elemento podrá ser representado de tres formas distintas además de la forma polinomial, como número binario, número hexadecimal y número decimal. Por ejemplo el polinomio $x^5+x+1$ quedaría representado como $00100011$ de manera decimal, $23$ en hexadecimal y $35$ en decimal.\\
+Al ser $\mathbb{F}_{256}$ un cuerpo tenemos que tiene dos operaciones, la operación suma que representaremos como $+$ y la operación producto que representaremos como $\cdot$.\\
+La operación $+$ equivale a la suma en $\mathbb{Z}_2$ y usando la notación en binario, tendríamos que equivaldría con la operación XOR como ya he mencionado anteriormente. El opuesto para la suma de un elemento equivalente a sí mismo por lo que no habría diferencia entre sumar por un número o por su apuesto, luego tendríamos que la suma es la misma operación que la resta.\\
+La operación $\cdot$  es mucho más compleja ya que en principio habría que realizar la operación en notación polinomial y luego dividir por $x^8+x^4+x^3+x+1$. Para calcular el inverso tendríamos que utilizar el algoritmo extendido de Euclídes. Ambos algoritmos tienen una complejidad computacional muy elevada por lo que tendremos que buscar algún método basado en los resultados de cuerpos finitos para intentar disminuirla.\\
+\begin{definicion}
+	Sea $K=\mathbb{F}_q$ un cuerpo finito $(q=p^n)$. Un elemento primitivo de $K$ es un elemento $\alpha$ que tiene $q-1$ potencias distintas.
+\end{definicion}
+Por lo que si $\alpha$ es un elemento primitivo de $\mathbb{F}_q$, los $q-1$ elementos de la forma\\
+$$
+	\alpha^0=1,\;\; \alpha^1=\alpha,\;\dots\; ,\alpha^{q-2}
+$$
+serán todos independientes y distintos de cero, por lo que serán todos los elementos no nulos de $\mathbb{F}_q$. Además se verifica que $\alpha^{q-1}=\alpha^0$ por lo que para cualquier $n \in \mathbb{Z}$ se cumple que $\alpha^n=\alpha^{n\mod q-1}$.\\
+Ahora para multiplicar dos elementos pertenecientes a $\mathbb{Z}_{17}$ podemos usar su logaritmo en base 2, el exponente que hay que elevar 2 para obtener el número, sumar los logaritmos y reducirlos base 13 y elevar 2 al resultado. Un ejemplo sería:
+$$
+	10\cdot12=2^{10}\cdot2^{6}=2^{16}=2^3=8.
+$$
+Para calcular el inverso sería:
+$$
+	12^{-1}=(2^6)^{-1}=2^{12-6}=2^6=12.
+$$
+Esta es la idea que se va a seguir para optimizar las multiplicaciones y los cálculos de inversos en $\mathbb{F}_{256}$.
 
+\begin{teorema}
+	Todo cuerpo finito tiene al menos un elemento primitivo.
+\end{teorema}
+Salvo para $q=2$ se tiene que el número de elementos primitivos de $\mathbb{F}_q$ es $\phi(q-1)$. Para el caso $q=13$ se tiene que $\phi(12)=\phi(2^2\cdot 3)=2\cdot2=4$, luego $\mathbb{Z}_13$ tiene 4 elementos primitivos que son 2, 6, 7 y 11.
 \subsection{Las Rondas de AES}
 Dado que el algoritmo AES puede aplicarse para longitudes diferentes de bloque y clave, el número de rondas es variable, como se ha visto en \ref{rondas_aes}.\\
 Siendo $S$ la matriz de estado y $K_i$ la subclave correspondiente a la ronda $i$-ésima, cada ronda posee esta estructura:
@@ -473,7 +504,7 @@ RSA es llamado así en honor a sus creadores Ron Rivest, Adi Shamir y Loenard Ad
 Este criptosistema está basado en el \emph{Teorema de Euler} y en particular en la \emph{Proposición 2.2}.\\
 
 \begin{teorema}
-	(Teorema pequeño de Fermat) Sea $a \in \mathbb{Z}$ y $p$ un número primo tal que $mcd(a,p)=1$. Entonces
+		(Teorema pequeño de Fermat) Sea $a \in \mathbb{Z}$ y $p$ un número primo tal que $\operatorname{mcd}(a,p)=1$. Entonces
 	$$
 		a^{p-1} \equiv 1 \mod p.
 	$$
@@ -484,7 +515,7 @@ Este criptosistema está basado en el \emph{Teorema de Euler} y en particular en
 	$$
 		a^{p-1}·(p-1)! \equiv (p-1)! \mod p.
 	$$
-	Como tenemos que $p\nmid (p-1)!$ se cumple que $mcd(p,p-1)=1$ y por tanto cancelando en la expresión anterior obtenemos
+	Como tenemos que $p\nmid (p-1)!$ se cumple que $\operatorname{mcd}(p,p-1)=1$ y por tanto cancelando en la expresión anterior obtenemos
 	$$
 		a^{p-1} \equiv 1 \mod p.
 	$$
@@ -494,12 +525,12 @@ Este criptosistema está basado en el \emph{Teorema de Euler} y en particular en
 	(Teorema de Euler) Sean a,n $\in \mathbb{Z}$ primos relativos entre sí, entonces $a^{\phi(n)}\equiv 1 \mod n$.
 \end{teorema}\vspace*{-10mm}
 \begin{proof}
-		Sea $n\in \mathbb{Z^+}$ que verifica que $mcd(a,n)=1$ y definimos $S$ como el conjunto de las unidades modulo $n$, $S=\{u_1,u_2,\dots,u_{\phi(n)}\}$ donde $1\leq u_i\leq n-1$, $mcd(u_i,n)=1$ y $u_i\neq u_j$ $\forall i,j \in \{1,\dots,\phi(n)\}$ con $ i\neq j$.\\
+		Sea $n\in \mathbb{Z^+}$ que verifica que $\operatorname{mcd}(a,n)=1$ y definimos $S$ como el conjunto de las unidades modulo $n$, $S=\{u_1,u_2,\dots,u_{\phi(n)}\}$ donde $1\leq u_i\leq n-1$, $\operatorname{mcd}(u_i,n)=1$ y $u_i\neq u_j$ $\forall i,j \in \{1,\dots,\phi(n)\}$ con $ i\neq j$.\\
 	Multiplicando  los elementos de $S$ por $a$ obtenemos 
 	$$
 		aS=\{au_1,au_2,\dots,au_{\phi(n)}\}
 	$$
-	Como $mcd(a,n)=1$ entonces $a\mod n$ es una unidad y por tanto $aS$ será el conjunto de las unidades módulo $n$. Y dado que los elementos de $S$ y los de $aS$ coinciden módulo $n$, el producto de estos será el mismo módulo $n$ por lo que obtenemos 
+	Como $\operatorname{mcd}(a,n)=1$ entonces $a\mod n$ es una unidad y por tanto $aS$ será el conjunto de las unidades módulo $n$. Y dado que los elementos de $S$ y los de $aS$ coinciden módulo $n$, el producto de estos será el mismo módulo $n$ por lo que obtenemos 
 	$$
 		u_1u_2\dots u_{\phi(n)} \equiv (au_1)(au_2)\dots (au_{\phi(n)})\mod n.
 	$$
@@ -511,7 +542,7 @@ Este criptosistema está basado en el \emph{Teorema de Euler} y en particular en
 Donde $\phi(n)$ es la \emph{funclón de Euler} definida como $\phi(n)=|\mathbb{Z}^*_n|$ y se puede calcular de la siguiente forma $$\phi(n)=n\prod_{p_i|n}\left(1-\frac{1}{p_i}\right).$$
 
 \begin{teorema}
-		(Teorema Chino del Resto) Sean $a_i\in \mathbb{Z}$ y $p,q \in \mathbb{N}$ tales que $mcd(p,q)$ con $i = 1,2$. Entonces el sistema
+		(Teorema Chino del Resto) Sean $a_i\in \mathbb{Z}$ y $p,q \in \mathbb{N}$ tales que $\operatorname{mcd}(p,q)$ con $i = 1,2$. Entonces el sistema
 		$$
 			x\equiv a_1 \mod p,
 		$$\vspace*{-10mm}
@@ -579,7 +610,7 @@ Como hemos visto anteriormente RSA puede ser vulnerable en función de los núme
 	\end{align*}
 
 	\subsubsection{Ataque por exponente pequeño.}
-	Este ataque se puede hacer cuando se elige un exponente muy pequeño y se cifra el mismo mensaje con distinto módulo. En este caso se puede recuperar el mensaje principal aplicando el Teorema Chino del Resto. Supongamos a varios receptores con claves públicas $(n_i, e)$, con $1\leq i \leq r$, tal que mcd$(n_i, n_j) = 1$ si $i\neq j$ ya que en caso contrario, se podría factorizar el módulo correspondiente mediante el cálculo del MCD.\\
+	Este ataque se puede hacer cuando se elige un exponente muy pequeño y se cifra el mismo mensaje con distinto módulo. En este caso se puede recuperar el mensaje principal aplicando el Teorema Chino del Resto. Supongamos a varios receptores con claves públicas $(n_i, e)$, con $1\leq i \leq r$, tal que $\operatorname{mcd}(n_i, n_j) = 1$ si $i\neq j$ ya que en caso contrario, se podría factorizar el módulo correspondiente mediante el cálculo del MCD.\\
 	Llamamos $c_i = m^e \mod n_i$ para cada $1\leq i \leq r$. Seleccionamos $\{i_1,...,i_e \}\subseteq \{1,...,r\}$ y empleando el inverso del isomorfismo de anillos
 	\begin{align*}
 		\chi:\mathbb{Z}_{n_{i_1}\dots n_{i_e}}\rightarrow \mathbb{Z}_{n_{i_1}}\times \dots \times \mathbb{Z}_{n_{i_e}}
