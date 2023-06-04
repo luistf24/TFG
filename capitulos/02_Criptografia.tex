@@ -345,7 +345,13 @@ $$
 	\alpha^0=1,\;\; \alpha^1=\alpha,\;\dots\; ,\alpha^{q-2}
 $$
 serán todos independientes y distintos de cero, por lo que serán todos los elementos no nulos de $\mathbb{F}_q$. Además se verifica que $\alpha^{q-1}=\alpha^0$ por lo que para cualquier $n \in \mathbb{Z}$ se cumple que $\alpha^n=\alpha^{n\mod q-1}$.\\
-Ahora para multiplicar dos elementos pertenecientes a $\mathbb{Z}_{17}$ podemos usar su logaritmo en base 2, el exponente que hay que elevar 2 para obtener el número, sumar los logaritmos y reducirlos base 13 y elevar 2 al resultado. Un ejemplo sería:
+
+\begin{teorema}
+	Todo cuerpo finito tiene al menos un elemento primitivo.
+\end{teorema}
+Salvo para $q=2$ se tiene que el número de elementos primitivos de $\mathbb{F}_q$ es $\phi(q-1)$. Para el caso $q=13$ se tiene que $\phi(12)=\phi(2^2\cdot 3)=2\cdot2=4$, luego $\mathbb{Z}_13$ tiene 4 elementos primitivos que son 2, 6, 7 y 11. En $\mathbb{F_{256}}$ tenemos que hay $\phi(256)=128$ elementos primitivos.
+
+Ahora para multiplicar dos elementos pertenecientes a $\mathbb{Z}_{13}$ podemos usar su logaritmo en base 2, el exponente que hay que elevar 2 para obtener el número, sumar los logaritmos y reducirlos base 13 y elevar 2 al resultado. Un ejemplo sería:
 $$
 	10\cdot12=2^{10}\cdot2^{6}=2^{16}=2^3=8.
 $$
@@ -353,12 +359,63 @@ Para calcular el inverso sería:
 $$
 	12^{-1}=(2^6)^{-1}=2^{12-6}=2^6=12.
 $$
-Esta es la idea que se va a seguir para optimizar las multiplicaciones y los cálculos de inversos en $\mathbb{F}_{256}$.
+Esta es la idea que se va a seguir para optimizar las multiplicaciones y los cálculos de inversos en $\mathbb{F}_{256}$. Para ello elegimos un elemento primitivo que nos servirá de generador, en este caso nosotros utilizaremos el más pequeño, que es $[x+1]$ en notación polinomial, 00000011 en binario, 03 en hexadecimal y 3 en binario. Por comodidad trabajaremos en hexadecimal. 
 
-\begin{teorema}
-	Todo cuerpo finito tiene al menos un elemento primitivo.
-\end{teorema}
-Salvo para $q=2$ se tiene que el número de elementos primitivos de $\mathbb{F}_q$ es $\phi(q-1)$. Para el caso $q=13$ se tiene que $\phi(12)=\phi(2^2\cdot 3)=2\cdot2=4$, luego $\mathbb{Z}_13$ tiene 4 elementos primitivos que son 2, 6, 7 y 11.
+\begin{table}[!htb]
+    \begin{adjustwidth}{-.8in}{-.8in}  
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
+\hline
+\multicolumn{1}{|r|}{} & 0  & 1  & 2  & 3  & 4  & 5  & 6  & 7  & 8  & 9  & A  & B  & C  & D  & E  & F  \\ \hline
+0                      & 01 & 03 & 05 & 0F & 11 & 33 & 55 & FF & 1A & 2E & 72 & 96 & A1 & F8 & 13 & 35 \\ \hline
+1                      & 5F & E1 & 38 & 48 & D8 & 73 & 95 & A4 & F7 & 02 & 06 & 0A & 1E & 22 & 66 & AA \\ \hline
+2                      & E5 & 34 & 5C & E4 & 37 & 59 & EB & 26 & 6A & BE & D9 & 70 & 90 & AB & E6 & 31 \\ \hline
+3                      & 53 & F5 & 04 & 0C & 14 & 3C & 44 & CC & 4F & D1 & 68 & B8 & D3 & 6E & B2 & CD \\ \hline
+4                      & 4C & D4 & 67 & A9 & E0 & 3B & 4D & D7 & 62 & A6 & F1 & 08 & 18 & 28 & 78 & 88 \\ \hline
+5                      & 83 & 9E & B9 & D0 & 6B & BD & DC & 7F & 81 & 98 & B3 & CE & 49 & DB & 76 & 9A \\ \hline
+6                      & B5 & C4 & 57 & F9 & 10 & 30 & 50 & F0 & 0B & 1D & 27 & 69 & BB & D6 & 61 & A3 \\ \hline
+7                      & FE & 19 & 2B & 7D & 87 & 92 & AD & EC & 2F & 71 & 93 & AE & E9 & 20 & 60 & A0 \\ \hline
+8                      & FB & 16 & 3A & 4E & D2 & 6D & B7 & C2 & 5D & E7 & 32 & 56 & FA & 15 & 3F & 41 \\ \hline
+9                      & C3 & 5E & E2 & 3D & 47 & C9 & 40 & C0 & 5B & ED & 2C & 74 & 9C & BF & DA & 75 \\ \hline
+A                      & 9F & BA & D5 & 64 & AC & EF & 2A & 7E & 82 & 9D & BC & DF & 7A & 8E & 89 & 80 \\ \hline
+B                      & 9B & B6 & C1 & 58 & E8 & 23 & 65 & AF & EA & 25 & 6F & B1 & C8 & 43 & C5 & 54 \\ \hline
+C                      & FC & 1F & 21 & 63 & A5 & F4 & 07 & 09 & 1B & 2D & 77 & 99 & B0 & CB & 46 & CA \\ \hline
+D                      & 45 & CF & 4A & DE & 79 & 8B & 86 & 91 & A8 & E3 & 3E & 42 & C6 & 51 & F3 & 0E \\ \hline
+E                      & 12 & 36 & 5A & EE & 29 & 7B & 8D & 8C & 8F & 8A & 85 & 94 & A7 & F2 & 0D & 17 \\ \hline
+F                      & 39 & 4B & DD & 7C & 84 & 97 & A2 & FD & 1C & 24 & 6C & B4 & C7 & 52 & F6 & 01 \\ \hline
+\end{tabular}
+	\label{potencias}
+    \end{adjustwidth}
+\caption{Tabla con las potencias de $[x+1]$}
+\end{table}
+
+
+\begin{table}[!htb]
+    \begin{adjustwidth}{-.8in}{-.8in}  
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
+\hline
+  & 0  & 1  & 2  & 3  & 4  & 5  & 6  & 7  & 8  & 9  & A  & B  & C  & D  & E  & F  \\ \hline
+0 &    & 00 & 19 & 01 & 32 & 02 & 1A & C6 & 4B & C7 & 1B & 68 & 33 & EE & DF & 03 \\ \hline
+1 & 64 & 04 & E0 & 0E & 34 & 8D & 81 & EF & 4C & 71 & 08 & C8 & F8 & 69 & 1C & C1 \\ \hline
+2 & 7D & C2 & 1D & B5 & F9 & B9 & 27 & 6A & 4D & E4 & A6 & 72 & 9A & C9 & 09 & 78 \\ \hline
+3 & 65 & 2F & 8A & 05 & 21 & 0F & E1 & 24 & 12 & F0 & 82 & 45 & 35 & 93 & DA & 6E \\ \hline
+4 & 96 & 8F & DB & BD & 36 & D0 & CE & 94 & 13 & 5C & D2 & F1 & 40 & 46 & 83 & 38 \\ \hline
+5 & 66 & DD & FD & 30 & BF & 06 & 8B & 62 & B3 & 25 & E2 & 98 & 22 & 88 & 91 & 10 \\ \hline
+6 & 7E & 6E & 48 & C3 & A3 & B6 & 1E & 42 & 3A & 6B & 28 & 54 & FA & 85 & 3D & BA \\ \hline
+7 & 2B & 79 & 0A & 15 & 9B & 9F & 5E & CA & 4E & D4 & AC & E5 & F3 & 73 & A7 & 57 \\ \hline
+8 & AF & 58 & A8 & 50 & F4 & EA & D6 & 74 & 4F & AE & E9 & D5 & E7 & E6 & AD & E8 \\ \hline
+9 & 2C & D7 & 75 & 7A & EB & 16 & 0B & F5 & 59 & CB & 5F & B0 & 9C & A9 & 51 & A0 \\ \hline
+A & 7F & 0C & F6 & 6F & 17 & 74 & 49 & EC & D8 & 43 & 1F & 2D & A4 & 76 & 7B & B7 \\ \hline
+B & CC & BB & 3E & 5A & FB & 60 & B1 & 86 & 3B & 52 & A1 & BC & AA & 55 & 29 & 9D \\ \hline
+C & 97 & B2 & 87 & 90 & 61 & BE & DC & FC & B5 & 95 & CF & CD & 37 & 3F & 5B & D1 \\ \hline
+D & 53 & 39 & 84 & 3C & 41 & A2 & 6D & 47 & 14 & 2A & 9E & 5D & 56 & F2 & D3 & AB \\ \hline
+E & 44 & 11 & 92 & D9 & 23 & 20 & 2D & 89 & B4 & 7C & B8 & 26 & 77 & 99 & E3 & A5 \\ \hline
+F & 67 & 48 & ED & DE & C5 & 31 & FE & 18 & 0D & 63 & 8C & 80 & C0 & F7 & 70 & 07 \\ \hline
+\end{tabular}
+	\label{potenciasinversas}
+    \end{adjustwidth}
+\caption{Tabla con los inversos de $[x+1]$}
+\end{table}
+\newpage
 \subsection{Las Rondas de AES}
 Dado que el algoritmo AES puede aplicarse para longitudes diferentes de bloque y clave, el número de rondas es variable, como se ha visto en \ref{rondas_aes}.\\
 Siendo $S$ la matriz de estado y $K_i$ la subclave correspondiente a la ronda $i$-ésima, cada ronda posee esta estructura:
