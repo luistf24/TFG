@@ -384,10 +384,11 @@ E                      & 12 & 36 & 5A & EE & 29 & 7B & 8D & 8C & 8F & 8A & 85 & 
 F                      & 39 & 4B & DD & 7C & 84 & 97 & A2 & FD & 1C & 24 & 6C & B4 & C7 & 52 & F6 & 01 \\ \hline
 \end{tabular}
 	\label{potencias}
-    \end{adjustwidth}
+	\end{adjustwidth}
 \caption{Tabla con las potencias de $[x+1]$}
 \end{table}
-
+Por ejemplo para calcular el resultado de $[x+1]^{125}=(03)^{125}$ lo que hacemos es escribir 125 en hexadecimal que es 7D. A continuación miramos en la tabla, la fila 7 y la columna D que nos da 20 luego tendríamos que $(03)^{125}=20$. Pasándolo a forma polinomial tenemos que $[x+1]^{125}=x^5$.\\
+Para construir la tabla es mejor usar la forma binaria.
 
 \begin{table}[!htb]
     \begin{adjustwidth}{-.8in}{-.8in}  
@@ -415,6 +416,7 @@ F & 67 & 48 & ED & DE & C5 & 31 & FE & 18 & 0D & 63 & 8C & 80 & C0 & F7 & 70 & 0
     \end{adjustwidth}
 \caption{Tabla con los inversos de $[x+1]$}
 \end{table}
+
 \newpage
 \subsection{Las Rondas de AES}
 Dado que el algoritmo AES puede aplicarse para longitudes diferentes de bloque y clave, el número de rondas es variable, como se ha visto en \ref{rondas_aes}.\\
