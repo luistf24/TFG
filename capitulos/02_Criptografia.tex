@@ -385,11 +385,12 @@ F                      & 39 & 4B & DD & 7C & 84 & 97 & A2 & FD & 1C & 24 & 6C & 
 \end{tabular}
 	\label{potencias}
 	\end{adjustwidth}
-\caption{Tabla con las potencias de $[x+1]$}
+\caption{Tabla de los antilogaritmos de $[x+1]$}
 \end{table}
 Por ejemplo para calcular el resultado de $[x+1]^{125}=(03)^{125}$ lo que hacemos es escribir 125 en hexadecimal que es 7D. A continuación miramos en la tabla, la fila 7 y la columna D que nos da 20 luego tendríamos que $(03)^{125}=20$. Pasándolo a forma polinomial tenemos que $[x+1]^{125}=x^5$.\\
-Para construir la tabla es mejor usar la forma binaria.
+Para construir la tabla es mejor usar la forma binaria.\\
 
+A continuación vamos a construir la tabla inversa de la anterior, esta nos permitirá calcular dado un $z \in \mathbb{F}_{256}$ con $z \neq 0$ el valor de $y$ que verifica $[x+1]^y=z$ que denominaremos $\log_{x+1}(z)$.
 \begin{table}[!htb]
     \begin{adjustwidth}{-.8in}{-.8in}  
 \begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
@@ -414,12 +415,30 @@ F & 67 & 48 & ED & DE & C5 & 31 & FE & 18 & 0D & 63 & 8C & 80 & C0 & F7 & 70 & 0
 \end{tabular}
 	\label{potenciasinversas}
     \end{adjustwidth}
-\caption{Tabla con los inversos de $[x+1]$}
+\caption{Tabla de los logaritmos de $[x+1]$}
 \end{table}
-
 \newpage
+A partir de estas dos tablas ya podemos hacer sin mucha dificultad a nivel computacional multiplicaciones y cálculo de inversos. En general para realizar el producto de dos elementos $X$ e $Y$ lo haremos de la siguiente manera:
+$$
+	X\cdot Y = A\log((\log_{x+1}(X)+log_{x+1}(Y)) \mod 255).
+$$
+Análogamente para calcular el inverso tenemos:
+$$
+	X^{-1} = A\log(FF-\log_{x+1}(X)).
+$$
+
+Por ejemplo para calcular $[x^7+x^6+x^4+x^2+x]\cdot[x^6+x^5+x^4+x^2+1]$ hacemos lo siguiente:
+\begin{enumerate}
+	\item Pasamos ambos polinomios a la forma hexadecimal como hemos visto anteriormente, en este caso nos quedaría $D6$ y $75$.
+	\item Nos vamos a la tabla de logaritmos y obtenemos que $\log_{03}(D6)=6D$ y $\log_{03}(75)=9F$.
+	\item Sumamos ambos resultados y lo reducimos módulo $255$, parar ello lo pasamos a decimal por comodidad $(109+159)\mod255=13$.
+	\item Calculamos el antilogaritmo de $13=0D$ con la tabla y tenemos que vale $F8$ por lo que tenemos que $D6\cdot 75 = F8$.
+\end{enumerate}
+
+%\newpage
 \subsection{Las Rondas de AES}
-Dado que el algoritmo AES puede aplicarse para longitudes diferentes de bloque y clave, el número de rondas es variable, como se ha visto en \ref{rondas_aes}.\\
+Una vez visto algunas propiedades de los cuerpos finitos vamos a hablar de las operaciones que se realizan en AES.
+Dado que este algoritmo puede aplicarse para longitudes diferentes de bloque y clave, el número de rondas es variable, como se ha visto en \ref{rondas_aes}.\\
 Siendo $S$ la matriz de estado y $K_i$ la subclave correspondiente a la ronda $i$-ésima, cada ronda posee esta estructura:
 \begin{enumerate}
 	\item $S \leftarrow ByteSub(S)$
@@ -598,7 +617,7 @@ Este criptosistema está basado en el \emph{Teorema de Euler} y en particular en
 		u_1u_2\dots u_{\phi(n)} \equiv a^{\phi(n)}u_1u_2\dots u_{\phi(n)}\mod n.
 	$$
 \end{proof}\\
-Donde $\phi(n)$ es la \emph{funclón de Euler} definida como $\phi(n)=|\mathbb{Z}^*_n|$ y se puede calcular de la siguiente forma $$\phi(n)=n\prod_{p_i|n}\left(1-\frac{1}{p_i}\right).$$
+Donde $\phi(n)$ es la \emph{función de Euler} definida como $\phi(n)=|\mathbb{Z}^*_n|$ y se puede calcular de la siguiente forma $$\phi(n)=n\prod_{p_i|n}\left(1-\frac{1}{p_i}\right).$$
 
 \begin{teorema}
 		(Teorema Chino del Resto) Sean $a_i\in \mathbb{Z}$ y $p,q \in \mathbb{N}$ tales que $\operatorname{mcd}(p,q)$ con $i = 1,2$. Entonces el sistema
@@ -657,11 +676,11 @@ El conjunto de los mensajes sin cifrar es $\mathcal{M}$, el de los mensajes cifr
 \subsection{Ataques}
 Como hemos visto anteriormente RSA puede ser vulnerable en función de los números primos que se elijan y el tamaño de estos. En este apartado veremos algunos posibles ataques que se podrían llevar a cabo \cite{apuntesCriptografia}.
 	\subsubsection{Ataque por módulo común.}
-	Este ataque se da cuando hay una mala elección de las claves, típicamente cuando se tienen que generar múltiples claves para varios usuarios y para optimizar, se utiliza el mismo módulo $n$ para todos. Mientras el exponente sea distinto, la clave sigue siendo segura, pero si se da que se cifra el mismo mensaje con los distintos exponentes pero el mismo módulo, se puede descifrar el mensaje original.\\
-	Supongamos que tenemos dos claves públicas con el mismo módulo, $(n, e_1)$ y $(n, e_2)$ y además ser verifica que  $mcm(e_1,e_2)$. Supongamos que $re_1+se_2=1$ con $r$\textless $0$\textless $s$. Como se ha visto el mensaje cifrado respectivamente será:
+	Este ataque se da cuando hay una mala elección de las claves, típicamente cuando se tienen que generar múltiples claves para varios usuarios y para optimizar, se utiliza el mismo módulo $n$ para todos.\\ 
+	Supongamos que tenemos dos claves públicas con el mismo módulo, $(n, e_1)$ y $(n, e_2)$ y además ser verifica que  $\operatorname{mcd}(e_1,e_2)=1$. Supongamos que $re_1+se_2=1$ con $r$\textless $0$\textless $s$. Como se ha visto el mensaje cifrado respectivamente será:
 	\begin{align*}
-		c_1 = m^{e_1} \mod n\\
-		c_2 = m^{e_2} \mod n
+		c_1 = m^{e_1} \mod n,\\
+		c_2 = m^{e_2} \mod n.
 	\end{align*}
 	Si $(c_1,n) \neq 1$, podemos factorizar $n$ y romper la clave, por lo que podemos suponer que $c_1 \in \mathcal{U}(\mathbb{Z}_n)$. Calculamos $c_1^{-1}$ con el algoritmo extendido de Euclídes tenemos que:
 	\begin{align*}
@@ -669,14 +688,14 @@ Como hemos visto anteriormente RSA puede ser vulnerable en función de los núme
 	\end{align*}
 
 	\subsubsection{Ataque por exponente pequeño.}
-	Este ataque se puede hacer cuando se elige un exponente muy pequeño y se cifra el mismo mensaje con distinto módulo. En este caso se puede recuperar el mensaje principal aplicando el Teorema Chino del Resto. Supongamos a varios receptores con claves públicas $(n_i, e)$, con $1\leq i \leq r$, tal que $\operatorname{mcd}(n_i, n_j) = 1$ si $i\neq j$ ya que en caso contrario, se podría factorizar el módulo correspondiente mediante el cálculo del MCD.\\
+	Este ataque se puede hacer cuando se elige un primo muy pequeño y se cifra el mismo mensaje con distinto módulo. En este caso se puede recuperar el mensaje original aplicando el Teorema Chino del Resto. Supongamos a varios receptores con claves públicas $(n_i, e)$, con $1\leq i \leq r$, tal que $\operatorname{mcd}(n_i, n_j) = 1$ si $i\neq j$ ya que en caso contrario, se podría factorizar el módulo correspondiente mediante el cálculo del MCD.\\
 	Llamamos $c_i = m^e \mod n_i$ para cada $1\leq i \leq r$. Seleccionamos $\{i_1,...,i_e \}\subseteq \{1,...,r\}$ y empleando el inverso del isomorfismo de anillos
 	\begin{align*}
 		\chi:\mathbb{Z}_{n_{i_1}\dots n_{i_e}}\rightarrow \mathbb{Z}_{n_{i_1}}\times \dots \times \mathbb{Z}_{n_{i_e}}
 	\end{align*}
 	obtenido gracias al Teorema Chino del Resto, se puede calcular
 	\begin{align*}
-		\chi^{-1}(c_{i_1},\dots,c_{i_e}) = m^e \mod n_{i_1},\dots,n_{i_e}
+		\chi^{-1}(c_{i_1},\dots,c_{i_e}) = m^e \mod n_{i_1},\dots,n_{i_e}.
 	\end{align*}
 	Dado $m^e$\textless $n_{i_1}\dots n_{i_e}$, se puede obtener $m$ calculando la raíz $e$-ésima en $\mathbb{Z} \subseteq \mathbb{R}$, siempre y cuando $e$ no sea muy grande.
 
@@ -778,7 +797,7 @@ La información para esta sección se ha obtenido de \cite{En2011}.
 \begin{definicion}
 	Una curva definida en $\mathbb{R}$ es el conjunto de puntos del plano (x,y) que cumplen la siguiente ecuación:
 $$
-	y^2=x^3+ax+b
+	y^2=x^3+ax+b.
 $$
 Donde los coeficientes a,b $\in \mathbb{R}$ defininen de manera unívoca a la curva.
 \end{definicion}
@@ -796,7 +815,7 @@ el punto $\mathcal{O}$ llamado \emph{punto en el infinito} y la operación $+$ q
 a continuación es lo que se denomina el \emph{grupo de curva elíptica E(\mathbb{R})}.\\
 El punto $\mathcal{O}$ es un punto imaginario situado a una distancia infinita que no tendrá ningún valor en particular.\\
 
-\textbf{Operación $+$ en $\mathbb{R}$}\\
+\subsubsection{Operación $+$ en $\mathbb{R}$}
 Definido el conjunto en el que se trabajará, definiremos una ley de composición interna $+$.\\
 Sean los puntos $r=(r_x,r_y)$, $s=(s_x,s_y)$, $p=(p_x,p_y)$, $t=(t_x,t_y)$ con $r,s,p,t \in E(\mathbb{R})$ la operación $+$ se define como sigue:
 \begin{itemize}
@@ -808,10 +827,10 @@ Sean los puntos $r=(r_x,r_y)$, $s=(s_x,s_y)$, $p=(p_x,p_y)$, $t=(t_x,t_y)$ con $
 \end{itemize}
 \begin{aligned*}
 	\center
-	&$2r = r + r = \mathcal{O}$\\
-	&$3r = 2r + r = \mathcal{O} + r = r$\\
-	&$4r = 3r + r = r + r = \mathcal{O}$\\
-	&...\\
+	&$2r = r + r = \mathcal{O}$,\\
+	&$3r = 2r + r = \mathcal{O} + r = r$,\\
+	&$4r = 3r + r = r + r = \mathcal{O}$,\\
+	& \dots\\
 \end{aligned}
 La suma de curvas elípticas de manera algebraica se define de la siguiente forma:\\
 Dados $r=(r_x,r_y)$ y $s=(s_x,s_y)$, tal que $r\noeq-s$, tenemos que $r+s=t$ donde $d=\frac{r_y-s_y}{r_x-s_x},\; t_x=d^2-r_x-s_x,\; t_y=-r_y+d(r_x-t_x)$.
