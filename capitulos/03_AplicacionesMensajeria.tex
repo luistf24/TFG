@@ -375,4 +375,14 @@ Cada vez que un mensaje es enviada una clave pública efímera \emph{Curve25519}
 	\item $Chain$ $Key$, $Root$ $Key$ $= HKDF(Root$ $Key, ephemeral$\textunderscore$secret)$.
 \end{enumerate}
 
-\section{iMessage?}
+\section{iMessage}
+En esta sección hablaré sobre los criptosistemas utilizados en la aplicación de mensajería de Apple llamada iMessage.\\
+iMessage es una aplicación de mensajería diseñada para ser utilizada en dispositivos iOS, iPadOS, Apple Watch y ordenadores con MacOS. Esta aplicación permite enviar mensajes de texto, y archivos como pueden ser fotos, contactos, ubicaciones etc. La información para este apartado ha sido obtenido mayormente de \cite{apple2} y \cite{apple1}.\\
+
+Para iniciar una nueva conversación a partir de una dirección o un nombre. En caso de usar un número de teléfono o una dirección de correo electrónico, la aplicación contacta con el servicio de identidad de Apple (\emph{IDS}). Este es un directorio de claves públicas de iMessage, direcciones del servicio de notificaciones push de Apple (APNs), números de teléfono y direcciones de correo electrónico usadas para obtener las claves y direcciones de los dispositivos \cite{ids}. Una vez que se pone en contacto con este se obtienen las claves públicas y las direcciones APNs de todos los dispositivos asociados al destinatario.
+\begin{figure}[htb]
+	\centering
+	\includegraphics[scale=0.2]{imagenes/apple.png} 
+	\caption{Esquema de cifrado en iMessage \cite{apple1}.}
+	\label{mtproto2}
+\end{figure}
