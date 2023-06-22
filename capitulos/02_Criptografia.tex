@@ -859,7 +859,7 @@ Donde al igual que en $E(\mathbb{R})$, $a,b\in{1..n}$ definen de manera unívoca
 Sean los puntos $r=(r_x,r_y),\: s=(s_x,s_y),\: p=(p_x,p_y),\: t=(t_x,t_y)\in E(\operatorname{GF}(n))$, definimos la operación $+$  como sigue:
 \begin{itemize}
 	\item $r+\mathcal{O}=\mathcal{O}+r=r,\: \forall r \in \operatorname{GF}(n)$.
-	\item Si $r_x=s_x$ y $r_y=s_x+s_y$, entoces se dice que $r$ es el opuesto de $s$, se nota como $r=-s$ y se verifica que $r+s=s+r=\mathcal{O}$.
+	\item Si $r_x=s_x$ y $r_y=s_x+s_y$, entonces se dice que $r$ es el opuesto de $s$, se nota como $r=-s$ y se verifica que $r+s=s+r=\mathcal{O}$.
 	\item Si $r\neq s$ y $r\neq-s$, $t=r+s$ se calcula como $d=\frac{s_y-r_y}{s_x-r_x}\mod n,\; t_x=d^2-r_x-s_x \mod n,\; t_y=-r_y+d(r_x-t_x) \mod n$
 	\item Si $p_x = 0$ entonces $2p = \mathcal{O}$
 \end{itemize}
@@ -878,7 +878,7 @@ Los puntos de una curva serán pares de polinomios de grado $n-1$ y como hemos v
 Sean los puntos $r=(r_x,r_y),\: s=(s_x,s_y),\: p=(p_x,p_y),\: t=(t_x,t_y)\in E(\operatorname{GF}(n))$, definimos la operación $+$  como sigue:
 \begin{itemize}
 	\item $r+\mathcal{O}=\mathcal{O}+r=r,\; \forall r \in E(\operatorname{GF}(2^n))$
-	\item Si $r_x=s_x$ y $r_y=s_x+s_y$, entoces se dice que $r$ es el opuesto de $s$, se nota como $r=-s$ y se verifica que $r+s=s+r=\mathcal{O}$.
+	\item Si $r_x=s_x$ y $r_y=s_x+s_y$, entonces se dice que $r$ es el opuesto de $s$, se nota como $r=-s$ y se verifica que $r+s=s+r=\mathcal{O}$.
 	\item Si $r\neq s$ y $r\neq-s$, $t=r+s$ se calcula como $d=\frac{s_y-r_y}{s_x-r_x},\; t_x=d^2+d+r_x+s_x+a,\; t_y=d(r_x+t_x)+t_x+r_y$.
 	\item Para $t=2p$ con $p_x\neq 0$ se calcula como $d=p_x+\frac{p_y}{p_x}, \: t_x=d^2+d+a, \: t_y=p_x^2+(d+1)t_x$.
 	\item Si $p_x=0$ tenemos que $2p=\mathcal{O}$
@@ -889,7 +889,7 @@ En esta sección se hablará sobre el análogo del problema del logaritmo discre
 
 \subsection{El problema del logaritmo discreto en curvas elípticas}
 Para todo punto $p$ definido en una curva elíptica, se define $\langle p\rangle$ al conjunto $\{\mathcal{O}, p, 2p, ... \}$.
-En $E(\operatorname{GF}(n))$ y $E(\operatorname{GF}(2^n))$ los conjutos como los que se han definido, tienen que ser finitos ya que los puntos de las curvas son finitos. Luego para todo punto $q\in \langle p\rangle$ tiene que existir un númer $k \in \mathbb{Z}$ que verifique que $kp=q$.\\
+En $E(\operatorname{GF}(n))$ y $E(\operatorname{GF}(2^n))$ los conjutos como los que se han definido, tienen que ser finitos ya que los puntos de las curvas son finitos. Luego para todo punto $q\in \langle p\rangle$ tiene que existir un número $k \in \mathbb{Z}$ que verifique que $kp=q$.\\
 Por lo tanto, el problema del logaritmo discreto en curvas elípticas consiste en hallar dicho número $k$ a partir de $p$ y $q$.
 \subsection{Intercambio de claves \emph{Diffie-Hellman} en curvas elípticas}
 Una vez visto el problema del logaritmo discreto en curvas elípticas, se explicará el intercambio de claves $Diffie-Hellman$ usando curvas elípticas. Para ello se explicará previamente la conjetura \emph{Diffie-Hellman}. La información de este apartado la he obtenido de \cite{apuntesCriptografia}.\\
