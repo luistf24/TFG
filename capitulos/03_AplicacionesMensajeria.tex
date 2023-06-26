@@ -381,10 +381,23 @@ iMessage es una aplicación de mensajería diseñada para ser utilizada en dispo
 
 Para iniciar una nueva conversación a partir de una dirección o un nombre. En caso de usar un número de teléfono o una dirección de correo electrónico, la aplicación contacta con el servicio de identidad de Apple (\emph{IDS}). Este es un directorio de claves públicas de iMessage, direcciones del servicio de notificaciones push de Apple (APNs), números de teléfono y direcciones de correo electrónico usadas para obtener las claves y direcciones de los dispositivos \cite{ids}. Una vez que se pone en contacto con este se obtienen las claves públicas y las direcciones APNs de todos los dispositivos asociados al destinatario.\\
 Una vez obtenidas las claves, el mensaje que se envía es encriptado de manera individual para cada uno de los dispositivos del destinatario. Tanto las claves públicas usadas como las clases de firmas se obtienen del IDS. El emisor genera un valor aleatorio de 88bits para cada dispositivo de destino del destinatario y este es utilizado como clave \emph{HMAC-SHA256} para crear una valor de 40 bits a partir de la clave pública del emisor, receptor y del texto sin formato. Los 88 bits generados aleatoriamente se combinan con los 40 bits obtenidos para formar una clave de 128 bits para encriptar el mensaje usando el estándar AES en modo contador (CTR).\\
-El dispositivo receptor usa el valor de 40 bits para comprobar la integridad del texto sin formato una vez que este es desencriptado. 
+El dispositivo receptor usa el valor de 40 bits para comprobar la integridad del texto sin formato una vez que este es desencriptado.\\
+Para encriptar esta clave AES se usa REA-OAEP para la clave pública con el dispositivo receptor. Una vez encriptados el mensaje y la clave se genera un hash SHA1 el cual es firmado con el algoritmo de firma digital de curva elíptica ECDSA, para esto también se usa la clave de firma privada del emisor. En dispositivos más recientes que tengan un sistema operativo iOS13 o posterior y iPadOS 13.1 o posterior se puede utilizar ECIES en lugar de RSA.\\
+Los mensajes obtenidos después del proceso encriptación contienen:
+\begin{itemize}
+	\item Texto del mensaje encriptado.
+	\item Clave del mensaje encriptada.
+	\item Firma digital del emisor.
+\end{itemize}
+Para enviar los mensajes se mandan al APNs, donde los metadatos asociados a este como son la fecha o la información sobre el enrutamiento del APNs no son encriptados. Para comunicarse con el APNs se una comunicación encriptada a través de un canal TLS de secreto-hacia-delante.\\
+Como el APNs solo puede emitir mensajes de 4 o 16KB como máximo dependiendo de la versión del sistema operativo. Por lo que si el mensaje tiene un tamaño más grande como podría pasar si se envía una foto o un vídeo, lo que se hace es encriptar el archivo adjunto con AES en modo CTR utilizando una clave de 256 bits generada aleatoriamente y se carga en iCloud. Una vez subido el archivo encriptado se envía al receptor la clave AES del archivo adjunto, su identificador uniforme de recursos(URI) y un hash SHA1 de su forma encriptada.\\
+En el siguiente esquema se puede ver resumido el proceso de encriptado y desencriptado de los mensajes.
 \begin{figure}[htb]
 	\centering
 	\includegraphics[scale=0.2]{imagenes/apple.png} 
 	\caption{Esquema de cifrado en iMessage \cite{apple1}.}
 	\label{mtproto2}
 \end{figure}
+
+\newpage
+Al igual que en las notificaciones push, los mensajes son eliminados del APNs una vez que se envían. Si es verdad que a diferencia de otras notificaciones que se envían del APNs, los mensajes se guardan en una cola para enviarlos a dispositivos sin conexión. Esto permite almacenar los mensajes en un plazo de 30 días máximo permitiendo así que un mensaje llegue tiempo después a un dispositivo que esta sin conexión.
