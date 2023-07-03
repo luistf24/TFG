@@ -325,7 +325,7 @@ Sea $\mathbb{Z}_2[x]$ el conjunto de polinomios con coeficientes en $\mathbb{Z}_
 Además si lo sumamos con otro polinomio como puede ser $g(x)=x^2+x+1$, tenemos que $f(x)+g(x)=x^4+x^3+x^2$, que equivale a hacer la operación XOR entre 11011 y 00111, por lo que a nivel computacional, es muy fácil implementar estas operaciones.\\
 Podemos definir el cuerpo $\operatorname{GF}(2^n)$ como $\mathbb{Z}_2[x]/(a(x))$, con $a(x)$ un polinomio irreducible en $\mathbb{Z}/(a(x))$. Tenemos que la existencia del inverso de cualquier polinomio no nulo está asegurada por el algoritmo Extendido de Euclídes.\\ 
 Principalmente se trabaja con $\operatorname{GF}(2^n)$ debido a que la implementación de las operaciones de este es más sencilla que la implementación en las que se utilizan otros cuerpos. Ya que como hemos visto, es muy fácil implementar las operaciones. Por lo que teniendo el mismo orden de complejidad, se multiplica la velocidad permitiendo obtener sistemas con mejores prestaciones.\\
-A continuación presentaré el cuerpo $\operatorname{GF}(2^8)$ ya que será necesario para entender adecuadamente las operaciones utilizadas en AES. La información ha sido obtenida de \cite{criptografiaa}.\\
+A continuación presentaré el cuerpo $\operatorname{GF}(2^8)$ ya que será necesario para entender adecuadamente las operaciones utilizadas en AES. La información ha sido obtenida de \cite{criptografia}.\\
 Tenemos que $\operatorname{GF}(2^8)=\mathbb{F}_{256}$ por lo que por comodidad trabajaremos con este último.\\
 Por definición tenemos que para $p$ número primo y $n$ se define el cuerpo $\mathbb{F}_{p^n}$ al único cuerpo existente con $p^n$ elementos. En particular para trabajar con $\mathbb{F}_{256}$ tomamos $p=2$ y $n=8$.\\
 Para construir $\mathbb{F}_{256}$ necesitamos un polinomio de grado 8, con coeficientes en $\mathbb{Z}_2$ y que sea irreducible. En total hay 30 polinomios con esas características donde algunos de ellos son 
@@ -529,8 +529,16 @@ En la última ronda se hacen solo los tres primeros pasos del algoritmo.
 		\end{figure}
 %\newpage
 	\subsubsection{MezclarColumnas}
-		Durante la aplicación de esta función se considera cada columna del vector de estado se considera un polinomio cuyos coeficientes pertenecen a $\operatorname{GF}(2^8)$ y se multiplica módulo $x^4+1$ por: $c(x)=03x^3+01x^2+01x+02$ donde 03 es el valor hexadecimal que se obtiene concatenado los coeficientes binarios del polinomio correspondiente en $\operatorname{GF}(2^8)$, en este caso sería 00000011 y por tanto $x+1$ análogamente se haría con los demás.\\
-		La inversa de $MezclarColumnas$ se obtiene multiplicando cada columna de la matriz de estado por el polinomio: $d(x)=0Bx^3+0Dx^2+09x+0E$.
+	Durante la aplicación de esta función cada columna del vector de estado es vista como una matriz $4 \times 1$ donde sus coeficientes pertenecen a $\mathbb{F}_{256}$. Aplicar MezclarColumnas a cada estado equivale a multiplicar cada columna por la matriz $4 \times 4$.
+
+			\begin{center}
+					\begin{pmatrix} 
+						02 & 03 & 01 & 01 \\
+						01 & 02 & 03 & 01 \\
+						01 & 01 & 02 & 03 \\
+						03 & 01 & 01 & 02 \\
+					\end{pmatrix}
+			\end{center}
 
 \subsection{Cálculo de las Subclaves}
 Las subclaves $K_i$ se obtienen de la clave principal $K$ mediante el uso de dos funciones: una de expansión y otra de selección. Siendo $n$ el número de rondas que se van a aplicar, la función de expansión obtiene a partir del valor de $K$ una secuencia de $4(n+1)N_b$ bytes.\\
@@ -576,31 +584,14 @@ La función \emph{Sub} devuelve el resultado de aplicar la s-caja de AES a cada 
 \end{itemize}
 
 \section{Criptosistema de Rivest-Shamir-Adleman, RSA}
-En esta sección hablaré sobre el cifrado RSA y su funcionamiento, cifrado que como AES, está muy extendido y es utilizado por muchas aplicaciones para cifrar y validar los mensajes.\\
-RSA es llamado así en honor a sus creadores Ron Rivest, Adi Shamir y Loenard Adleman, fué desarrollado en 1977. Cabe a destacar que en 1973 se desarrolló en secreto un criptosistema similar por Clifford Cocks para la \emph{Government Communications Headquarters}, que es la agencia de inteligencia de señales británica, y fue desclasificado en 1997\cite{cliffordCocks}.\\
+En esta sección describiré sobre el cifrado RSA y su funcionamiento, cifrado que como AES, está muy extendido y es utilizado por muchas aplicaciones para cifrar y validar los mensajes.\\
+RSA es llamado así en honor a sus creadores Ron Rivest, Adi Shamir y Loenard Adleman. Fue desarrollado en 1977. Cabe a destacar que en 1973 se desarrolló en secreto un criptosistema similar por Clifford Cocks para la \emph{Government Communications Headquarters}, que es la agencia de inteligencia de señales británica, y fue desclasificado en 1997\cite{cliffordCocks}.\\
 Este criptosistema está basado en el \emph{Teorema de Euler} y en particular en la \emph{Proposición 2.2}.\\
 
-\begin{teorema}
-		(Teorema pequeño de Fermat) Sea $a \in \mathbb{Z}$ y $p$ un número primo tal que $\operatorname{mcd}(a,p)=1$. Entonces
-	$$
-		a^{p-1} \equiv 1 \mod p.
-	$$
-\end{teorema}\vspace*{-10mm}
-\begin{proof}
-		Sea $a \in \mathbb{Z}$. Tomamos los $p-1$ primeros múltiplos positivos de $a$ que serán de la forma $a, 2a,\dots,(p-1)a$. El resto resultante de dividir los $p-1$ múltiplos positivos de $a$ por $p$ corresponden a 1,2,3,$\dots,p-1$.\\
-	Multiplicando ahora todas las congruencias obtenemos 
-	$$
-		a^{p-1}·(p-1)! \equiv (p-1)! \mod p.
-	$$
-	Como tenemos que $p\nmid (p-1)!$ se cumple que $\operatorname{mcd}(p,p-1)=1$ y por tanto cancelando en la expresión anterior obtenemos
-	$$
-		a^{p-1} \equiv 1 \mod p.
-	$$
-\end{proof}
 
 \begin{teorema}
 	(Teorema de Euler) Sean a,n $\in \mathbb{Z}$ primos relativos entre sí, entonces $a^{\phi(n)}\equiv 1 \mod n$.
-\end{teorema}\vspace*{-10mm}
+\end{teorema}\vspace*{-7mm}
 \begin{proof}
 		Sea $n\in \mathbb{Z^+}$ que verifica que $\operatorname{mcd}(a,n)=1$ y definimos $S$ como el conjunto de las unidades modulo $n$, $S=\{u_1,u_2,\dots,u_{\phi(n)}\}$ donde $1\leq u_i\leq n-1$, $\operatorname{mcd}(u_i,n)=1$ y $u_i\neq u_j$ $\forall i,j \in \{1,\dots,\phi(n)\}$ con $ i\neq j$.\\
 	Multiplicando  los elementos de $S$ por $a$ obtenemos 
@@ -613,52 +604,65 @@ Este criptosistema está basado en el \emph{Teorema de Euler} y en particular en
 	$$
 	Sacando como factor común $a$ tenemos 
 	$$
-		u_1u_2\dots u_{\phi(n)} \equiv a^{\phi(n)}u_1u_2\dots u_{\phi(n)}\mod n.
+		u_1u_2\dots u_{\phi(n)} \equiv a^{\phi(n)}u_1u_2\dots u_{\phi(n)}\mod n. \qedhere
 	$$
 \end{proof}\\
-Donde $\phi(n)$ es la \emph{función de Euler} definida como $\phi(n)=|\mathbb{Z}^*_n|$ y se puede calcular de la siguiente forma $$\phi(n)=n\prod_{p_i|n}\left(1-\frac{1}{p_i}\right).$$
+
+\begin{teorema}
+		(Teorema pequeño de Fermat) Sea $a \in \mathbb{Z}$ y $p$ un número primo tal que $\operatorname{mcd}(a,p)=1$. Entonces
+	$$
+		a^{p-1} \equiv 1 \mod p.
+	$$
+\end{teorema}\vspace*{-7mm}
+\begin{proof}
+		Sea $a \in \mathbb{Z}$. Tomamos los $p-1$ primeros múltiplos positivos de $a$ que serán de la forma $a, 2a,\dots,(p-1)a$. El resto resultante de dividir los $p-1$ múltiplos positivos de $a$ por $p$ corresponden a 1,2,3,$\dots,p-1$.\\
+	Multiplicando ahora todas las congruencias obtenemos 
+	$$
+		a^{p-1}·(p-1)! \equiv (p-1)! \mod p.
+	$$
+	Como tenemos que $p\nmid (p-1)!$ se cumple que $\operatorname{mcd}(p,p-1)=1$ y por tanto cancelando en la expresión anterior obtenemos
+	$$
+		a^{p-1} \equiv 1 \mod p. \qedhere
+	$$
+\end{proof}
+
+Cabe a mencionar que el Teorema de Fermat es un caso particular del Teorema de Euler.\\
+\begin{definicion}
+Se conoce a la función $\phi(n)$ como la función de Euler. Esta es definida como $\phi(n)=|\mathbb{Z}^*_n|$ y se puede calcular como $$\phi(n)=n\prod_{p_i|n}\left(1-\frac{1}{p_i}\right).$$
+\end{definicion}
 
 \begin{teorema}
 		(Teorema Chino del Resto) Sean $a_i\in \mathbb{Z}$ y $p,q \in \mathbb{N}$ tales que $\operatorname{mcd}(p,q)$ con $i = 1,2$. Entonces el sistema
 		$$
 			x\equiv a_1 \mod p,
-		$$\vspace*{-10mm}
+		$$\vspace*{-11mm}
 
 		$$
 			x\equiv a_2 \mod q,
 		$$
-
 	tiene solución única módulo $n=pq$. Además, la solución está dada por
 	$$
-		x\equiv a_1\cdot c_1\cdot d_1 +a_2\cdot c_2\cdot d_2 \mod n,
+		x\equiv a_1\cdot q\cdot d_1 +a_2\cdot p\cdot d_2 \mod n,
 	$$
 	donde se cumple
 	$$
-		c_1=\frac{n}{p},
+		q\cdot d_1 \equiv 1 \mod p,
 	$$
 	$$
-		c_2=\frac{n}{q},
+		p\cdot d_2 \equiv 1 \mod q.
 	$$
-		y
-	$$
-		c_1\cdot d_1 \equiv 1 \mod p,
-	$$
-	$$
-		c_2\cdot d_2 \equiv 1 \mod q.
-	$$
-	
 \end{teorema}
 
 \begin{proposicion}
 	Sea $n = pq$, donde p y q son dos primos distintos. Si $x\equiv 1 \mod \phi(n)$, entonces $a^x\equiv a\mod n$ para todo $ a \n \in \mathbb{Z}$.
-\end{proposicion}\vspace*{-10mm}
+\end{proposicion}\vspace*{-5mm}
+
 	\begin{proof}
-		Si $a$ es múltiplo de $n$, entonces se cumple que $a^x \equiv 0 \equiv a \mod n$. Si $a$ y $n$ son coprimos, $mcm(a,n) = 1$. Entonces tendríamos que $a^x \equiv a \mod n$ por el Teorema de Euler.\\
-		Nos quedaría ver ocurre en el caso de $a$ sea múltiplo de $p$ o de $q$, pero no de ambos. Por simetría supondremos que a es múltiplo de $p$, pero no de $q$. En este caso tenemos que $a^x \equiv 0 \equiv a \mod p$  y $a^x \equiv a \mod q$ por el Teorema de Fermat. Como $p$ y $q$ son coprimos entre sí, aplicando el Teorema Chino del Resto se deduce que $a^x \equiv a \mod n$.
+		Si $a$ es múltiplo de $n$, entonces se cumple que $a^x \equiv 0 \equiv a \mod n$. Si $a$ y $n$ son coprimos, $\operatorname{mcm}(a,n) = 1$. Entonces tendríamos que $a^x \equiv a \mod n$ por el Teorema de Euler.\\
+		Nos quedaría ver ocurre en el caso de $a$ sea múltiplo de $p$ o de $q$, pero no de ambos. Por simetría supondremos que a es múltiplo de $p$, pero no de $q$. En este caso tenemos que $a^x \equiv 0 \equiv a \mod p$  y $a^x \equiv a \mod q$ por el Teorema de Fermat. Como $p$ y $q$ son coprimos entre sí, aplicando el Teorema Chino del Resto se deduce que $a^x \equiv a \mod n$.\qedhere
 	\end{proof}
 
-\subsection{Descripción de RSA}
-El contenido de esta sección se basa en \cite{angelRiosMateos}. El funcionamiento de RSA es el siguiente.\\
+Una vez que tenemos herramientas necesarias vamos a describir el funcionamiento de RSA. El contenido de esta sección se basa en \cite{angelRiosMateos}.\\
 El usuario elige dos números primos distintos \emph{p} y \emph{q} de buen tamaño ya que mientras más grandes sean más seguro será el cifrado.
 Se calcula $n = pq$ y por tanto tenemos que $\phi(n) = (p-1)(q-1)$. A continuación se elige un elemento $c$ coprimo con $\phi(n)$ y se calcula el inverso $d = c^{-1}\mod \phi(n)$. La clave pública será $k=(n,c)$ y la clave privada $k'=(n,d)$.\\
 En un principio se consideraba que un tamaño de $n$ de 1024 bits era lo suficientemente grande para que fuera seguro, pero en 2003 Tromer y Shamir mostraron que es posible factorizar números de 1024 bits \cite{1024RSA} por lo que en la actualidad se considera 2048 bits como un tamaño seguro.\\
