@@ -325,7 +325,7 @@ Sea $\mathbb{Z}_2[x]$ el conjunto de polinomios con coeficientes en $\mathbb{Z}_
 Además si lo sumamos con otro polinomio como puede ser $g(x)=x^2+x+1$, tenemos que $f(x)+g(x)=x^4+x^3+x^2$, que equivale a hacer la operación XOR entre 11011 y 00111, por lo que a nivel computacional, es muy fácil implementar estas operaciones.\\
 Podemos definir el cuerpo $\operatorname{GF}(2^n)$ como $\mathbb{Z}_2[x]/(a(x))$, con $a(x)$ un polinomio irreducible en $\mathbb{Z}/(a(x))$. Tenemos que la existencia del inverso de cualquier polinomio no nulo está asegurada por el algoritmo Extendido de Euclídes.\\ 
 Principalmente se trabaja con $\operatorname{GF}(2^n)$ debido a que la implementación de las operaciones de este es más sencilla que la implementación en las que se utilizan otros cuerpos. Ya que como hemos visto, es muy fácil implementar las operaciones. Por lo que teniendo el mismo orden de complejidad, se multiplica la velocidad permitiendo obtener sistemas con mejores prestaciones.\\
-A continuación presentaré el cuerpo $\operatorname{GF}(2^8)$ ya que será necesario para entender adecuadamente las operaciones utilizadas en AES. La información ha sido obtenida de \cite{criptografia}.\\
+A continuación presentaré el cuerpo $\operatorname{GF}(2^8)$ ya que será necesario para entender adecuadamente las operaciones utilizadas en AES. La información ha sido obtenida de \cite{criptografia} y \cite{dem1}.\\
 Tenemos que $\operatorname{GF}(2^8)=\mathbb{F}_{256}$ por lo que por comodidad trabajaremos con este último.\\
 Por definición tenemos que para $p$ número primo y $n$ se define el cuerpo $\mathbb{F}_{p^n}$ al único cuerpo existente con $p^n$ elementos. En particular para trabajar con $\mathbb{F}_{256}$ tomamos $p=2$ y $n=8$.\\
 Para construir $\mathbb{F}_{256}$ necesitamos un polinomio de grado 8, con coeficientes en $\mathbb{Z}_2$ y que sea irreducible. En total hay 30 polinomios con esas características donde algunos de ellos son 
@@ -339,6 +339,30 @@ La operación $\cdot$  es mucho más compleja ya que en principio habría que re
 \begin{definicion}
 	Sea $K=\mathbb{F}_q$ un cuerpo finito $(q=p^n)$. Un elemento primitivo de $K$ es un elemento $\alpha$ que tiene $q-1$ potencias distintas.
 \end{definicion}
+
+\begin{teorema}
+	(Teorema Fundamental de los Grupos Abelianos) Todo grupo abeliano finito $G$ es isomorfo a un producto directo de grupo cíclicos de la forma
+	$$
+		\mathbb{Z}_{p^{\alpha_1}_1}\times \dots \times \mathbb{Z}_{p^{\alpha_n}_n},
+	$$
+	donde los $p_i$ son primos no necesariamente diferentes.
+\end{teorema}
+
+\begin{teorema}
+		Si $G$ es un subgrupo finito de $F^*$, el grupo multiplicativo de elementos no nulos de un cuerpo $F$, entonces $G$ es cíclico.
+\end{teorema}\vspace*{-7mm}
+\begin{proof}
+		Sea $G$ un subgrupo finito de $F^*$ de orden $n$. Por el Teorema Fundamental de Grupos Abelianos tenemos,
+		$$
+			G \cong \mathbb{Z}_{p^{e_1}_1}\times \dots \times \mathbb{Z}_{p^{e_k}_k},
+		$$
+		donde $n = p^{e_1}_1 \dots p^{e_k}_k$ y los $p_1, \dots, p_k$ son primos no necesariamente distintos. Sea $m$ el mínimo común múltiplo de $p^{e_1}_1 \dots p^{e_k}_k$. Entonces $G$ contiene un elemento de orden $m$. Como todo $\alpha$ en $G$ satisface $x^r-1$ para algún $r$ que divide a $m$, $\alpha$ debe también ser raíz de $x^m-1$. Como $x^m-1$ tienen a lo más $m$ raíces en $F$, $n\leq m$. Por otra parte, sabemos que $m\leq |G|$, por lo tanto, $m=n$. Luego $G$ contiene un elemento de orden $n$ y tiene que ser cíclico.\qedhere
+\end{proof}
+
+\begin{corolario}
+		El grupo multiplicativo de todos los elementos no nulos de un cuerpo finito es cíclico.
+\end{corolario}
+
 Por lo que si $\alpha$ es un elemento primitivo de $\mathbb{F}_q$, los $q-1$ elementos de la forma\\
 $$
 	\alpha^0=1,\;\; \alpha^1=\alpha,\;\dots\; ,\alpha^{q-2}
@@ -675,39 +699,11 @@ El conjunto de los mensajes sin cifrar es $\mathcal{M}$, el de los mensajes cifr
 	D_{k'}:\mathcal{C}\rightarrow\mathcal{M},\\
 	a \rightarrow a^d.
 \end{align*}
-
-\subsection{Ataques}
-Como hemos visto anteriormente RSA puede ser vulnerable en función de los números primos que se elijan y el tamaño de estos. En este apartado veremos algunos posibles ataques que se podrían llevar a cabo \cite{apuntesCriptografia}.
-	\subsubsection{Ataque por módulo común.}
-	Este ataque se da cuando hay una mala elección de las claves, típicamente cuando se tienen que generar múltiples claves para varios usuarios y para optimizar, se utiliza el mismo módulo $n$ para todos.\\ 
-	Supongamos que tenemos dos claves públicas con el mismo módulo, $(n, e_1)$ y $(n, e_2)$ y además ser verifica que  $\operatorname{mcd}(e_1,e_2)=1$. Supongamos que $re_1+se_2=1$ con $r$\textless $0$\textless $s$. Como se ha visto el mensaje cifrado respectivamente será:
-	\begin{align*}
-		c_1 = m^{e_1} \mod n,\\
-		c_2 = m^{e_2} \mod n.
-	\end{align*}
-	Si $(c_1,n) \neq 1$, podemos factorizar $n$ y romper la clave, por lo que podemos suponer que $c_1 \in \mathcal{U}(\mathbb{Z}_n)$. Calculamos $c_1^{-1}$ con el algoritmo extendido de Euclídes tenemos que:
-	\begin{align*}
-			(c^{-1})^{-r}c_2^s \equiv (m^{e_1})^r(m^{e_2})^s \equiv m^{e_1r+e_2s} = m \mod n.
-	\end{align*}
-
-	\subsubsection{Ataque por exponente pequeño.}
-	Este ataque se puede hacer cuando se elige un primo muy pequeño y se cifra el mismo mensaje con distinto módulo. En este caso se puede recuperar el mensaje original aplicando el Teorema Chino del Resto. Supongamos a varios receptores con claves públicas $(n_i, e)$, con $1\leq i \leq r$, tal que $\operatorname{mcd}(n_i, n_j) = 1$ si $i\neq j$ ya que en caso contrario, se podría factorizar el módulo correspondiente mediante el cálculo del MCD.\\
-	Llamamos $c_i = m^e \mod n_i$ para cada $1\leq i \leq r$. Seleccionamos $\{i_1,...,i_e \}\subseteq \{1,...,r\}$ y empleando el inverso del isomorfismo de anillos
-	\begin{align*}
-		\chi:\mathbb{Z}_{n_{i_1}\dots n_{i_e}}\rightarrow \mathbb{Z}_{n_{i_1}}\times \dots \times \mathbb{Z}_{n_{i_e}}
-	\end{align*}
-	obtenido gracias al Teorema Chino del Resto, se puede calcular
-	\begin{align*}
-		\chi^{-1}(c_{i_1},\dots,c_{i_e}) = m^e \mod n_{i_1},\dots,n_{i_e}.
-	\end{align*}
-	Dado $m^e$\textless $n_{i_1}\dots n_{i_e}$, se puede obtener $m$ calculando la raíz $e$-ésima en $\mathbb{Z} \subseteq \mathbb{R}$, siempre y cuando $e$ no sea muy grande.
-
-	\subsubsection{Ataque con primos muy próximos.}
-	Este ataque se da cuando se eligen dos primos muy próximos entre sí. Dado $n=pq$, con $p$\textless $q$, tenemos que  
-	\begin{align*}
-			n=\left (\frac{p+q}{2}\right )^2-\left (\frac{p-q}{2}\right )^2.
-	\end{align*}
-	Si $p$ y $q$ son cercanos, $s=\frac{p-q}{2}$ es pequeño y $t=\frac{p+q}{2}$ es un entero ligeramente mayor que $\sqrt{n}$ tal que $t^2 - n^2$ es un cuadrado perfecto. Probando sucesivamente con valores mayores que $\sqrt{n}$ hasta encontrar una descomposición $n=t^2-s^2$, tenemos que $p=t+s$ y $q=t-s$.
+Como hemos visto anteriormente, el tamaño del mensaje puede llegar a ser un problema ya que aumenta el tiempo de encriptación y desencriptación. Para solucionar esto se puede fragmentar el mensaje y usar métodos de operación en bloques. Lo más habitual es usar funciones resumen, que de hecho, es el método que se sigue en las aplicaciones de mensajería como veremos en el siguiente capítulo.\\
+Además RSA puede ser vulnerable en función de los números primos que se elijan y el tamaño de estos. 
+Por ejemplo para evitar \textbf{el ataque por módulo común}, es recomendable utilizar distinto módulo $n$ para cada clave. 
+Para evitar \textbf{el ataque por exponente pequeño} es recomendable utilizar unos números primos $p$ y $q$ grandes. Ya que si no se usan, se puede utilizar el Teorema Chino del Resto para factorizar $n$ y obtenerlos. 
+Para evitar \textbf{el ataque por primos muy próximos} se recomienda usar números primos que estén relativamente alejados entre sí. 
 
 \subsection{Firma digital RSA}
 La firma digital con RSA, es una herramienta muy utilizada en las aplicaciones de mensajería para garantizar el no repudio de los mensajes.
@@ -716,7 +712,7 @@ Dados dos interlocutores A y B cada uno con sus claves públicas:
 	\item para A tenemos $n_A$, $d_A$ y $e_A$,  
 	\item para B tenemos $n_B$, $d_B$ y $e_B$.  
 \end{itemize}
-Para que B sepa que un mensaje \emph{m} ha sido enviado por A se siguen los siguientes pasos:
+Para que B sepa que un mensaje \emph{m} ha sido enviado por A se siguen los siguientes pasos.
 \begin{enumerate}
 	\item A cifra el mensaje \emph{m} usando su clave secreta:
 		$$
@@ -724,10 +720,10 @@ Para que B sepa que un mensaje \emph{m} ha sido enviado por A se siguen los sigu
 		$$
 	\item A continuación encripta el mensaje firmado con la clave pública de B:
 		$$
-			C_B(S)=S\mod n_B.
+			C_B(S)=S^{e_B}\mod n_B.
 		$$
 		y se lo envía a B.
-	\item B recibe $C_B(S)=S^{e_B}$ y lo desencripta: 
+	\item B recibe $C_B(S)=S^{e_B} \mod n_B$ y lo desencripta: 
 		$$
 			D_B(S^{e_B})=S \mod n_B.
 		$$
@@ -740,12 +736,12 @@ Una vez hecho esto, B podría afirmar casi con total seguridad que el mensaje ha
 Sin embargo este método tiene un inconveniente y es que para documentos muy largos, el proceso para firmar y verificar es muy lento. Para solucionarlo se utiliza una función hash o resumen de manera que en lugar de firmar el mensaje entero, se firma un resumen de este. La firma en este caso quedaría $fir(m)=h(m)^{d_A} \mod n$ y la comprobación sería $h(m)=fir(m)^{d_A} \mod n$ donde $h$ será una función hash o resumen de las que hablaré al final del capítulo.
 
 \section{El Problema del Logaritmo Discreto. Diffie-Hellman}
-El intercambio de claves \emph{Diffie-Hellman} es un método basado en el Problema del Logaritmo Discreto muy utilizado en las aplicaciones de mensajería al iniciar una conexión. La información de este apartado sobre el logaritmo ha sido obtenida de \cite{angelRiosMateos} y la de \emph{Diffie-Hellman} ha sido obtenida de \cite{En2011}.\\
+El intercambio de claves \emph{Diffie-Hellman} es un método basado en el Problema del Logaritmo Discreto muy utilizado en las aplicaciones de mensajería al iniciar una conexión. La información de este apartado sobre el logaritmo discreto ha sido obtenida de \cite{angelRiosMateos} y la de \emph{Diffie-Hellman} ha sido obtenida de \cite{En2011}.\\
 El Problema del Logaritmo Discreto es definido de la siguiente forma:
 \begin{definicion}
-	Sea S un semigrupo finito. El Problema del Logaritmo Discreto en el semigrupo S es el de resolver ecuaciones del tipo\\
+	Sea S un semigrupo finito. El Problema del Logaritmo Discreto en el semigrupo S es el de resolver una ecuación del tipo\\
 		$$
-			a^x\!=b\;(x\in \mathbb{N}).
+			a^x\!=b\;(x\in \mathbb{N}),
 		$$
 	donde a y b son dos elementos dados de S.
 \end{definicion}
@@ -753,17 +749,17 @@ El Problema del Logaritmo Discreto es definido de la siguiente forma:
 La complejidad del Problema del Logaritmo Discreto depende en gran medida del semigrupo $S$ que se elija.
 Dado que si se eligiera como $S$ el grupo aditivo $\mathbb{Z}_n$ la solución se obtendría fácilmente resolviendo una ecuación de congruencias del tipo $aX \equiv b \mod n$ que equivaldría a resolver la ecuación diofántica $aX + nY = b$. Pero si ahora $S$ pasara a ser los semigrupos multiplicativos $\mathbb{Z}_n$ o $\mathbb{F}_q$ o sus grupos de unidades, el problema aumentaría su complejidad de manera significativa.\\
 Tenemos que $a^x = b$ tiene solución si y solamente si $b$ está en el semigrupo cíclico generado por $a$. Luego si $a$ es un elemento de orden finito de un grupo, se podría suponer en la práctica que $S$ es un grupo cíclico y por ello existiría un isomorfismo con ($\mathbb{Z}_n$, $+$). Luego la dificultad del problema no estaría en la estructura del grupo, sino en reconocer los elementos como potencias de enteros.\\
-Se cree que el problema de logaritmo discreto es $\mathbb{NP}$-completo, pero esta conjetura todavía no ha sido demostrada por lo que se considera un problema $\mathbb{NP}$-Intermedio, estos problemas son llamados así porque no están dentro de los problemas $\mathbb{P}$ ni en los problemas $\mathbb{NP}$-completo por ahora \cite{NP-intermedio}.\\
+Se cree que el problema de logaritmo discreto es $\mathbb{NP}$-completo, pero esta conjetura todavía no ha sido demostrada por lo que se considera un problema $\mathbb{NP}$-Intermedio. Estos problemas son llamados así porque no están dentro de los problemas $\mathbb{P}$ ni en los problemas $\mathbb{NP}$-completo \cite{NP-intermedio}.\\
 Una vez visto el problema de logaritmo discreto, se explicará el intercambio de claves \emph{Diffie-Hellman}.
 \subsection{Intercambio de claves Diffie-Hellman}
 Antes de explicar el intercambio de claves \emph{Diffie-Hellman} se introducirá el problema de Diffie-Hellman ya que es la base de este.\\
 
-\begin{definicion}
-	Dado el conjunto $\mathbb{Z}^*_{p'}$ con p primo, diremos que $\alpha \in \mathbb{Z}^*_p$ es un generador de $\mathbb{Z}^*_{p'}$ si se cumple:\\
-	$$
-		\forall b \in \mathbb{Z}^*_{p'},\: \exists i\: tal \: que \: \alpha^i = b
-	$$
-\end{definicion}
+%\begin{definicion}
+	%Dado el conjunto $\mathbb{Z}^*_{p'}$ con p primo, diremos que $\alpha \in \mathbb{Z}^*_p$ es un generador de $\mathbb{Z}^*_{p'}$ si se cumple:\\
+	%$$
+		%\forall b \in \mathbb{Z}^*_{p'},\: \exists i\: tal \: que \: \alpha^i = b
+	%$$
+%\end{definicion}
 
 \begin{definicion}
 	(El Problema Diffie-Hellman)\\ Dado un número primo p, un número $\alpha$ que sea un \emph{generador} de $\mathbb{Z}^*_{p'}$, $\alpha^a$ y $\alpha^b$, encontrar $\alpha^{ab} \mod p$.  
@@ -775,24 +771,24 @@ Sean $A$ y $B$ dos interlocutores que quieren compartir un valor $K$. Para ello 
 \begin{enumerate}
 	\item $A$ escoge un número aleatorio $x$, comprendido entre 1 y $p-2$ y envía a $B$ el valor 
 		$$
-			\alpha^x \mod p
+			\alpha^x \mod p.
 		$$
 	\item Análogamente $B$ escoge un número aleatorio $y$, comprendido entre 1 y $p-2$ y envía a $A$ el valor 
 		$$
-			\alpha^y \mod p
+			\alpha^y \mod p.
 		$$
 
-	\item $B$ recoge $\alpha^x$ y calcula $K=(\alpha^x)^y \mod p$
-	\item $A$ recoge $\alpha^y$ y calcula $K=(\alpha^y)^x \mod p$
+	\item $B$ recoge $\alpha^x$ y calcula $K=(\alpha^x)^y \mod p$.
+	\item $A$ recoge $\alpha^y$ y calcula $K=(\alpha^y)^x \mod p$.
 \end{enumerate}
-Puesto que $x$ e $y$ son conocidos solamente por $A$ y $B$ respectivamente, tenemos que al final solamente $A$ y $B$ acaban conociendo el valor de $K$.\\
-A continuación se introducirá la teoría de curvas Elípticas ya que nos permitirá redefinir el intercambio de claves usando estas, generando un problema mucho más complejo y con mayor seguridad el cual es el que se utiliza en aplicaciones de mensajería como \textbf{WhatsApp} y \textbf{Telegram}.
+Puesto que $x$ e $y$ son conocidos solamente por $A$ y $B$ respectivamente, tenemos que al final ambos acaban conociendo el valor de $K$.\\
 
 \section{Curvas Elípticas en Criptografía}
-La criptografía en curvas Elípticas es considerada como uno de los campos de las matemáticas con más futuro en la criptografía asimétrica.
-Esto es debido a sus propiedades que dan lugar a problemas de una gran complejidad computacional análogos a los que presenta la aritmética modular. 
-Esto permite que sean utilizadas en algunos algoritmos asimétricos como puede ser el intercambio de claves \emph{Diffie-Hellman} que se verá más adelante. A priori su 
-estructura algebraica es más compleja que la de la aritmética modular sin embargo, al implementarlas suelen ser más eficientes y además, con claves más cortas alcanzan 
+A continuación se introducirá la teoría de curvas Elípticas ya que nos permitirá redefinir el intercambio de claves usando estas. Es el método que se usa actualmente en aplicaciones de mensajería que implementan el protocolo \textbf{MTProto} y \textbf{Signal}.\\
+La criptografía en Curvas Elípticas es considerada como uno de los campos con mayor potencial en la criptografía asimétrica.
+Esto es debido a sus propiedades que dan lugar a problemas muy complejos análogos a los que presenta la aritmética modular por lo que garantizan más la seguridad. 
+Esto permite que sean utilizadas en algunos algoritmos asimétricos como puede ser el intercambio de claves \emph{Diffie-Hellman} que se verá más adelante. 
+Aunque su estructura algebraica es más compleja que la de la aritmética modular sin embargo, al implementarlas suelen ser más eficientes y además, con claves más cortas alcanzan 
 el mismo nivel de seguridad.\\
 El uso de curvas elípticas en criptografía se presentó por primera vez en 1985 por Neal Koblitz y Víctor Miller de manera independiente.\\
 La información para esta sección se ha obtenido de \cite{En2011}.
@@ -905,8 +901,8 @@ El protocolo de intercambio de claves queda como:\\
 Dadas dos personas A y B que quieren realizar un intercambio de claves.
 \begin{itemize}
 	\item A y B se ponen de acuerdo en la curva elíptica $E$ y el punto $q\in E$.
-	\item A elige aleatoriamente un número $a\in(2,...,n-1)$ y le envía a B $p_a=aq$.
-	\item B elige aleatoriamente un número $b\in(2,...,n-1)$ y le envía a A $p_b=bq$.
+	\item A elige aleatoriamente un número $a\in(2,\dots,n-1)$ y le envía a B $p_a=aq$.
+	\item B elige aleatoriamente un número $b\in(2,\dots,n-1)$ y le envía a A $p_b=bq$.
 	\item A calcula $a(p_b)$.
 	\item B calcula $b(p_a)$.
 	\item La clave compartida es $(ab)q=a(p_b)=b(p_a)$
