@@ -656,7 +656,7 @@ Se conoce a la función $\phi(n)$ como la función de Euler. Esta es definida co
 \end{definicion}
 
 \begin{teorema}
-		(Teorema Chino del Resto) Sean $a_i\in \mathbb{Z}$ y $p,q \in \mathbb{N}$ tales que $\operatorname{mcd}(p,q)$ con $i = 1,2$. Entonces el sistema
+		(Teorema Chino del Resto) Sean $a_1, a_2\in \mathbb{Z}$ y $p,q \in \mathbb{N}$ tales que $\operatorname{mcd}(p,q) = 1$. Entonces el sistema
 		$$
 			x\equiv a_1 \mod p,
 		$$\vspace*{-11mm}
@@ -676,6 +676,35 @@ Se conoce a la función $\phi(n)$ como la función de Euler. Esta es definida co
 		p\cdot d_2 \equiv 1 \mod q.
 	$$
 \end{teorema}
+\begin{proof}
+		Veamos la existencia de la solución. Sea $N=p\cdot q$. Como por hipótesis tenemos que $\operatorname{mcm}(p,q)=1$, por Bézout existen enteros $d_i$, $s_i$ con $i=1,2$ tales que $d_1p+s_1q=1$ y $d_2q+s_2p=1$. Tomando módulo $p$ y $q$ tenemos que 
+	$$
+		d_1\cdot p \equiv 1 \mod q,
+	$$
+	$$
+		d_2\cdot q \equiv 1 \mod p.
+	$$
+	Definiendo 
+	$$
+		x :=  a_1\cdot q\cdot d_1 +a_2\cdot p\cdot d_2,
+	$$
+	se consigue que $x$ sea la solución del sistema. Además, trabajando módulo $p$ y $q$ obtenemos que $x\equiv a_1 \mod p$ y $x\equiv a_2 \mod q$.\\
+	Una vez vista la existencia de la solución quedaría demostrar la unicidad. Para ello supongamos que existen dos números enteros distintos $x$ e $y$ tales que 
+	$$
+		x \equiv a_1 \mod p,
+	$$
+	$$
+		y \equiv a_1 \mod p.
+	$$
+	Y también 
+	$$
+		x \equiv a_2 \mod q,
+	$$
+	$$
+		y \equiv a_2 \mod q.
+	$$
+	Esto implica que $x-y\equiv0 \mod p$ y $x-y\equiv0 \mod q$. Como $p$ y $q$ son coprimos, tenemos que $x-y\equiv 0 \mod N$, luego se da que $x\equiv y \mod N$ llegando así a una contradicción. \qedhere
+\end{proof}
 
 \begin{proposicion}
 	Sea $n = pq$, donde p y q son dos primos distintos. Si $x\equiv 1 \mod \phi(n)$, entonces $a^x\equiv a\mod n$ para todo $ a \n \in \mathbb{Z}$.
