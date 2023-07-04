@@ -836,22 +836,24 @@ Un ejemplo de curvas elípticas en $\mathbb{R}$ son:
 \end{figure}
 
 \begin{proposicion}
-		Sea $p=\operatorname{char}(\mathcal{K})$ y sea $E$ una curva elíptica definida sobre $\mathcal{K}$.\\
-		Si $p$\textgreater$3$, la ecuación $E$ puede simplificarse a
+		Sea $p=\operatorname{char}(\mathcal{K})$ y sea $E$ una curva elíptica definida sobre $\mathcal{K}$.
+		\begin{enumerate}
+			\item Si $p$\textgreater$3$, la ecuación $E$ puede simplificarse a
 		\begin{align}
 			y^2=x^3+ax+b,\label{eq:tipo1}
 		\end{align}
-		recibiendo el nombre de forma de Weiertrass.\\
-		Si $p=3$, la ecuación de $E$ puede simplificarse a 
+		recibiendo el nombre de forma de Weiertrass.
+			\item Si $p=3$, la ecuación de $E$ puede simplificarse a 
 		\begin{equation}
 			y^2=x^3+a^2+bx+c.
 		\end{equation}
-		Si $p=2$ la ecuación de $E$ puede simplificarse a 
+			\item Si $p=2$ la ecuación de $E$ puede simplificarse a 
 				\begin{align}
 					y^2+xy=x^3+ax^2+b \: si\: a_1 \neq 0,\label{eq:uno}\\
 					y^2+ay=x^3+bx+c \: si\: a_1=0,\label{eq:dos}
 				\end{align}
 		también se denominan como forma de Weiertrass.
+		\end{enumerate}
 \end{proposicion}
 
 Las curvas más utilizadas en criptografía son las curvas definidas sobre $\mathbb{Z}_p$ del tipo \eqref{eq:tipo1} y las curvas sobre $\mathbb{F}_{2^l}$ con un $l$ grande y verificando \eqref{eq:uno}. Me voy centrar en explicar estas últimas porque actualmente en las aplicaciones de mensajería son las que se utilizan.
