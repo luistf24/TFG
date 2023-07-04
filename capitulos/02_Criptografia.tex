@@ -628,7 +628,7 @@ Este criptosistema está basado en el \emph{Teorema de Euler} y en particular en
 	$$
 	Sacando como factor común $a$ tenemos 
 	$$
-		u_1u_2\dots u_{\phi(n)} \equiv a^{\phi(n)}u_1u_2\dots u_{\phi(n)}\mod n. \qedhere
+		u_1u_2\dots u_{\phi(n)} \equiv a^{\phi(n)}u_1u_2\dots u_{\phi(n)}\mod n. 
 	$$
 \end{proof}\\
 
@@ -646,7 +646,7 @@ Este criptosistema está basado en el \emph{Teorema de Euler} y en particular en
 	$$
 	Como tenemos que $p\nmid (p-1)!$ se cumple que $\operatorname{mcd}(p,p-1)=1$ y por tanto cancelando en la expresión anterior obtenemos
 	$$
-		a^{p-1} \equiv 1 \mod p. \qedhere
+		a^{p-1} \equiv 1 \mod p. 
 	$$
 \end{proof}
 
@@ -690,19 +690,19 @@ Se conoce a la función $\phi(n)$ como la función de Euler. Esta es definida co
 	$$
 	se consigue que $x$ sea la solución del sistema. Además, trabajando módulo $p$ y $q$ obtenemos que $x\equiv a_1 \mod p$ y $x\equiv a_2 \mod q$.\\
 	Una vez vista la existencia de la solución quedaría demostrar la unicidad. Para ello supongamos que existen dos números enteros distintos $x$ e $y$ tales que 
-	$$
-		x \equiv a_1 \mod p,
-	$$
-	$$
-		y \equiv a_1 \mod p.
-	$$
+		\begin{equation}
+			\begin{split}
+				x \equiv a_1 \mod p,\notag\\
+				y \equiv a_1 \mod p.\notag
+			\end{split}
+		\end{equation}
 	Y también 
-	$$
-		x \equiv a_2 \mod q,
-	$$
-	$$
-		y \equiv a_2 \mod q.
-	$$
+		\begin{equation}
+			\begin{split}
+				x \equiv a_2 \mod q,\notag\\
+				y \equiv a_2 \mod q.\notag
+			\end{split}
+		\end{equation}
 	Esto implica que $x-y\equiv0 \mod p$ y $x-y\equiv0 \mod q$. Como $p$ y $q$ son coprimos, tenemos que $x-y\equiv 0 \mod N$, luego se da que $x\equiv y \mod N$ llegando así a una contradicción. \qedhere
 \end{proof}
 
@@ -813,14 +813,110 @@ Sean $A$ y $B$ dos interlocutores que quieren compartir un valor $K$. Para ello 
 Puesto que $x$ e $y$ son conocidos solamente por $A$ y $B$ respectivamente, tenemos que al final ambos acaban conociendo el valor de $K$.\\
 
 \section{Curvas Elípticas en Criptografía}
-A continuación se introducirá la teoría de curvas Elípticas ya que nos permitirá redefinir el intercambio de claves usando estas. Es el método que se usa actualmente en aplicaciones de mensajería que implementan el protocolo \textbf{MTProto} y \textbf{Signal}.\\
+A continuación se introducirá la teoría de curvas Elípticas ya que nos permitirá redefinir el intercambio de claves usando estas. Es el método que se usa actualmente en aplicaciones de mensajería que implementan el protocolo \emph{MTProto} y \emph{Signal}.\\
 La criptografía en Curvas Elípticas es considerada como uno de los campos con mayor potencial en la criptografía asimétrica.
 Esto es debido a sus propiedades que dan lugar a problemas muy complejos análogos a los que presenta la aritmética modular por lo que garantizan más la seguridad. 
 Esto permite que sean utilizadas en algunos algoritmos asimétricos como puede ser el intercambio de claves \emph{Diffie-Hellman} que se verá más adelante. 
 Aunque su estructura algebraica es más compleja que la de la aritmética modular sin embargo, al implementarlas suelen ser más eficientes y además, con claves más cortas alcanzan 
 el mismo nivel de seguridad.\\
 El uso de curvas elípticas en criptografía se presentó por primera vez en 1985 por Neal Koblitz y Víctor Miller de manera independiente.\\
-La información para esta sección se ha obtenido de \cite{En2011}.
+La información para esta sección se ha obtenido de \cite{En2011} y de \cite{apuntesCriptografia}.\\
+
+Una curva elíptica $E$ sobre un cuerpo $\mathcal{K}$ es el conjunto de los $(x,y)\in \mathcal{K}^2$ tales que
+$$
+	y^2+a_1xy+a_3y = x^3+a_2x^2+a_4x+a_6,
+$$
+junto con un punto $\mathcal{O}$.\\
+Un ejemplo de curvas elípticas en $\mathbb{R}$ son:
+\begin{figure}[htb]
+	\centering
+	\subfloat[\centering Curva $y^2=x^3-4x+1$]{{\includegraphics[width=5.9cm]{imagenes/ec1:y^2x^3-4x+1.png}}}
+	\qquad
+	\subfloat[\centering Curva $y^2=x^3-3x+4$]{{\includegraphics[width=5.9cm]{imagenes/ec2:y^2x^3-3x+4.png}}}
+\end{figure}
+
+\begin{proposicion}
+		Sea $p=\operatorname{char}(\mathcal{K})$ y sea $E$ una curva elíptica definida sobre $\mathcal{K}$.\\
+		Si $p$\textgreater$3$, la ecuación $E$ puede simplificarse a
+		\begin{align}
+			y^2=x^3+ax+b,\label{eq:tipo1}
+		\end{align}
+		recibiendo el nombre de forma de Weiertrass.\\
+		Si $p=3$, la ecuación de $E$ puede simplificarse a 
+		\begin{equation}
+			y^2=x^3+a^2+bx+c.
+		\end{equation}
+		Si $p=2$ la ecuación de $E$ puede simplificarse a 
+				\begin{align}
+					y^2+xy=x^3+ax^2+b \: si\: a_1 \neq 0,\label{eq:uno}\\
+					y^2+ay=x^3+bx+c \: si\: a_1=0,\label{eq:dos}
+				\end{align}
+		también se denominan como forma de Weiertrass.
+\end{proposicion}
+
+Las curvas más utilizadas en criptografía son las curvas definidas sobre $\mathbb{Z}_p$ del tipo \eqref{eq:tipo1} y las curvas sobre $\mathbb{F}_{2^l}$ con un $l$ grande y verificando \eqref{eq:uno}. Me voy centrar en explicar estas últimas porque actualmente en las aplicaciones de mensajería son las que se utilizan.
+
+\begin{proposicion}
+	Una curva $E(x,y)$ sobre $\mathbb{F}_{2^l}$ que satisface \eqref{eq:uno} tiene un punto singular si y solo si $b=0$.
+\end{proposicion}
+\begin{proof}
+	Sea $F(x,y)=y^2+xy+x^3+ax^2+b$. $E$ es singular en $(x_0,y_0)\in E$ si y solo si  
+	$$
+		\frac{\partial F}{\partial x}(x_0,y_0)=\frac{\partial F}{\partial y}=0.
+	$$
+	Dado que
+	$$
+		\frac{\partial F}{\partial x} = y+3x^2+2ax=y+x^2
+	$$
+	y
+	$$
+		\frac{\partial F}{\partial y}=2y+x=x,
+	$$
+	el único punto donde puede haber una singularidad es $(0,0)$ que pertenece a la curva si y solo si b=0.
+\end{proof}
+
+\begin{lema}
+	Sea $E=E(a,b)$ una curva sobre $\mathbb{F}_{2^l}$ definida por la ecuación \eqref{eq:uno}. Si $(x_0,y_0), (x_1,y_1)\in E$, entonces $y_1=y_0$ o $y_1=x_0+y_0$.
+\end{lema}
+\begin{proof}
+	Como se cumple que
+	$$
+		y_0^2+x_0y_0=x_0^3+ax_0^2+b=y_1^2+x_0y_1,
+	$$
+	tenemos que
+	$$
+		(y_1+y_0)^2=y_1^2+y_0^2=(y_1+y_0)x_0.
+	$$
+	Si $y_0\neq y_1$ tenemos que $y_0+y_1\neq0$ y por tanto $x_0=y_1+y_0$, luego $y_1=y_0$ o $y_1=y_0+x_0$.
+\end{proof}
+
+\begin{proposicion}
+	Sea $E(a,b)$ una curva elíptica sobre $\mathbb{F}_{2^l}$ que verifica \eqref{eq:uno}. Sean $P=(x_0,y_0),\: P_1=(x_1,y_1)\:y\:P_2=(x_2,y_2)$ puntos de $E(a,b)$. Entonces, 
+	\begin{enumerate}
+		\item $-P=(x_0,x_0+y_0)$.
+		\item Si $P_2=-P_1,\: P_1+P_2=\mathcal{O}$.
+		\item Si $P_2\neq-P_1,\:P_1+P_2=P_3,$ viene dado por
+		\begin{equation}
+			\begin{split}
+					P_3 &=(x_3,y_3)\notag\\
+						&=(m^2+m+a+x_1+x_2,m(x_1+x_3)+x_3+y_1)\notag,
+			\end{split}
+		\end{equation}
+		donde 
+		\begin{equation}
+		  m =
+			\begin{cases}
+				(y_2+y_1)(x_2+x_1)^{-1} & \text{si } x_1\neq x_2, \\
+				x_1+y_1x_1^{-1} & \text{si } x_1=x_2
+			\end{cases}       
+			\notag
+		\end{equation}
+	\end{enumerate}
+\end{proposicion}
+\begin{proof}
+	La ecuación \eqref{eq:tipo1} es un caso particular de \eqref{eq:uno} tomando $a_1=1$, $a_3=0$, $a_2=a$, $a_4=0$ y $a_6=b$. Luego la aritmética es consecuencia de la aritmética definida para una curva elíptica cualquiera, por el lema visto anteriormente, tenemos que $x_1=x_2$ y $P_2\neq-P_1$ implica $P_2=P_1$ y por tanto $P_1+P_2=2P_1$.
+\end{proof}
+
 \section{El problema del logaritmo discreto usando curvas elípticas. \emph{Diffie-Hellman}}
 En esta sección se hablará sobre el análogo del problema del logaritmo discreto en curvas elípticas y como resultado un análogo del intercambio de claves \emph{Diffie-Hellman}.
 
