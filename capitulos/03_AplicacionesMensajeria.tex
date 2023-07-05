@@ -103,7 +103,12 @@ En esta sección se describirán las distintas claves que entran en juego en el 
 	Es el \emph{External Header} + mensaje cifrado o contenedor.
 \end{description}
 
-\includegraphics[scale=0.5]{imagenes/MTProto2.png} 
+\begin{figure}[htb]
+	\centering
+	\includegraphics[scale=0.5]{imagenes/MTProto2.png} 
+	\caption{Mensajes de MTProto \cite{WebProto}.}
+	\label{mtproto1}
+\end{figure}
 
 \subsection{Creación de la \emph{Authorization Key}}
 Como hemos visto en el apartado anterior la \emph{Authorization Key} se genera durante el registro del usuario en la aplicación. El formato de las consultas usa \emph{Binary Data Serialization} ya que MTProto requiere que los tipos de datos estén en formato binario y \emph{TL Language} que sirve para describir el sistema utilizado de tipos y funciones.\\
@@ -233,7 +238,7 @@ Los 1024 bits menos significativos de la \emph{auth\textunderscore key} no se ut
 \begin{figure}[htb]
 	\centering
 	\includegraphics[scale=0.4]{imagenes/diagramaMTProto.jpg} 
-	\caption{Esquema del cifrado de mensajes usado en MTProto 2.0 \cite{WebProto}}
+	\caption{Esquema del cifrado de mensajes usado en MTProto 2.0 \cite{WebProto}.}
 	\label{mtproto2}
 \end{figure}
 
@@ -334,7 +339,7 @@ Etapa inicial consistente en añadir dispositivos asociados al cliente, como se 
 \begin{figure}[htb]
 	\centering
 	\includegraphics[scale=0.25]{imagenes/what1.png} 
-	\caption{Diagrama de un conexión entre dos dispositivos teniendo uno de ellos un dispositivo compañero. Obtenido de \cite{what1}.}
+	\caption{Diagrama de un conexión entre dos dispositivos teniendo uno de ellos un dispositivo compañero \cite{what1}.}
 	\label{what1}
 \end{figure}
 
