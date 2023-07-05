@@ -975,15 +975,15 @@ Y por último nos quedaría seleccionar el punto base.\\
 Para ello seleccionamos aleatoriamente $P\in E$ donde $E=E(a,b)$ es una curva elíptica tal que $|E|=hn$ con $n$ primo y $h$ pequeño. Una vez seleccionado calculamos $Q=hP$ y comprobamos si $Q\neq\mathcal{O}$. Como $n$ es primo y $nQ=\mathcal{O}$, $Q$ será un generador de $E_n$. Si $Q=\mathcal{O}$ tomamos un nuevo $P$ y repetimos la operación.\\
 Con esto ya tenemos todo lo necesario para explicar el Problema del Logaritmo Discreto usando Curvas Elípticas.
 \section{El Problema del Logaritmo Discreto usando Curvas Elípticas. \emph{Diffie-Hellman}}
-En esta sección se hablará sobre el análogo del Problema del Logaritmo Discreto en Curvas Elípticas y como resultado un análogo del intercambio de claves \emph{Diffie-Hellman}.
+En esta sección voy a describir el análogo del Problema del Logaritmo Discreto en Curvas Elípticas y como resultado un análogo del intercambio de claves \emph{Diffie-Hellman}.
 
 \subsection{El Problema del Logaritmo Discreto en Curvas Elípticas}
 Para todo punto $p$ definido en una curva elíptica, se define $\langle p\rangle$ al conjunto $\{\mathcal{O}, p, 2p, ... \}$.
 En $E(\operatorname{GF}(n))$ y $E(\operatorname{GF}(2^n))$ los conjutos como los que se han definido, tienen que ser finitos ya que los puntos de las curvas son finitos. Luego para todo punto $q\in \langle p\rangle$ tiene que existir un número $k \in \mathbb{Z}$ que verifique que $kp=q$.\\
 Por lo tanto, el problema del logaritmo discreto en curvas elípticas consiste en hallar dicho número $k$ a partir de $p$ y $q$.
 \subsection{Intercambio de claves \emph{Diffie-Hellman} en curvas elípticas}
-Una vez visto el Problema del Logaritmo Discreto en Curvas Elípticas, se explicará el intercambio de claves $Diffie-Hellman$ usando Curvas Elípticas. Para ello se explicará previamente la conjetura \emph{Diffie-Hellman}. La información de este apartado la he obtenido de \cite{apuntesCriptografia}.\\
-Fijamos una curva elíptica $E=E(a,b)$ tal que $|E|=hn$ con $n$ primo y $h$ pequeño. Se fija también $q$ un elemento de orden $n$.
+Una vez visto el Problema del Logaritmo Discreto en Curvas Elípticas, voy a explicar el intercambio de claves \emph{Diffie-Hellman} usando Curvas Elípticas. Para ello se explicaré previamente la conjetura \emph{Diffie-Hellman} en Curvas Elípticas. La información de este apartado la he obtenido de \cite{apuntesCriptografia}.\\
+Fijamos una curva elíptica $E=E(a,b)$ tal que $|E|=hn$ con $n$ primo y $h$ pequeño como he explicado en la sección anterior. Esta curva puede estar definida sobre $\mathbb{F}_p$ o sobre $\mathbb{F}_{2^l}$. También se fija  $q$ un elemento de orden $n$, en función del cuerpo que elijamos lo fijamos de una forma u otra como ya hemos visto.
 \begin{definicion}
 	(Conjetura Diffie-Hellman). Conocidos $p_a=aq$ y $p_b=bq$ para ciertos $1\leq a,\: b\leq n$, calcular $abq$ es equivalente a nivel computacional a calcular $a=\log_q(p_a)$ o $b=\log_q(p_b)$.
 \end{definicion}
@@ -992,15 +992,18 @@ El protocolo de intercambio de claves queda como:\\
 Dadas dos personas A y B que quieren realizar un intercambio de claves.
 \begin{itemize}
 	\item A y B se ponen de acuerdo en la curva elíptica $E$ y el punto $q\in E$.
-	\item A elige aleatoriamente un número $a\in(2,\dots,n-1)$ y le envía a B $p_a=aq$.
-	\item B elige aleatoriamente un número $b\in(2,\dots,n-1)$ y le envía a A $p_b=bq$.
+	\item A elige aleatoriamente un número $a\in\{2,\dots,n-1\}$ y le envía a B $p_a=aq$.
+	\item B elige aleatoriamente un número $b\in\{2,\dots,n-1\}$ y le envía a A $p_b=bq$.
 	\item A calcula $a(p_b)$.
 	\item B calcula $b(p_a)$.
-	\item La clave compartida es $(ab)q=a(p_b)=b(p_a)$
+	\item La clave compartida es $(ab)q=a(p_b)=b(p_a)$.
 \end{itemize}
 
 \section{Funciones Hash}
-Una función resumen o función hash es un proceso en el cual se transforma un conjunto arbitrario de datos en una nueva serie de caracteres con una longitud fija independiente del tamaño de los datos de entrada, la información para esta sección la he obtenido \cite{aepd}.\\
+Una función resumen o función hash es una función que se puede calcular mediante un algoritmo en el cual se transforma un conjunto arbitrario de datos en una nueva serie de caracteres con una longitud fija independiente del tamaño de los datos de entrada.
+Estas funciones son muy utilizadas en criptografía ya que como hemos visto, en el caso de RSA el tamaño del bloque puede suponer un problema debido a que aumenta considerablemente el tiempo de ejecución.
+Para ello se utilizan funciones hash, ya que mediante el uso de estas, se consigue reducir el tamaño del mensaje sin perder información.\\ La información para esta sección la he obtenido \cite{aepd}.\\
+
 Las propiedades esperadas de una función hash son:
 \begin{itemize}
 	\item Se tiene que poder utilizar en contenido digital de cualquier tamaño y formato.
@@ -1020,63 +1023,43 @@ Visto esto, en general, una función hash funciona de la siguiente forma:
 	\item Se calcula el hash del siguiente bloque y se suma con el hash calculado previamente.
 	\item Se repite de manera análoga con el resto de bloques hasta que se recorren todos.
 \end{enumerate}
-Las hash que explicaré serán: \emph{MD5, SHA-0} y \emph{SHA-1} que son las funciones antecesoras de la función \emph{SHA-256} que es la que se utiliza mayoritariamente en las funciones de mensajería en la actualidad. Algunas también pueden utilizar SHA-1\\
 
-\subsection{MD5}
-MD5 fue diseñada en 1992 por Ron Rivest como una mejora de la función MD4. Es una de las funciones más usadas hasta la fecha aunque su uso esta disminuyendo debido a que se han encontrado algunas debilidades en esta. Uno de los motivos por los que es tan importante es que sirvió como base para desarrollar las funciones SHA-0, SHA-1 y la familia de funciones SHA-2.
-La información ha sido obtenida de \cite{Wang2005}.\\
-En MD5 el mensaje inicial se fragmenta en bloques de 512 bits y la salida es un hash de 128 bits, el proceso de generación de este es el siguiente:
+Las hash que explicaré serán: \emph{SHA-0} y \emph{SHA-1} que son las funciones antecesoras de la función \emph{SHA-256} que es la que se utiliza mayoritariamente en las funciones de mensajería en la actualidad. Algunas también pueden utilizar SHA-1\\
 
-\begin{enumerate}
-	\item El mensaje se rellena con un único bit '1' seguido de 0-511 bits '0'. A continuación se añade una representación de 64 bits de la longitud del mensaje donde el número de ceros es elegido para asegurar que la longitud total del mensaje es un múltiplo de 512 bits. El mensaje se divide en bloques de 512 bits: $M_1,...,M_n$.
-	\item Para la primera iteración se utiliza un buffer predefinido:
-	$$
-		h_0=(67452301_x, EFCDAB89_x, 98BADCFE_x, 10325476_x, C3D2E1F0_x).
-	$$
-	\item Cada bloque $M_j$ es pasado por la función de compresión junto con el valor actual de $h_{j-1}$, la salida es el nuevo valor de $h_j$, la operación se puede resumir en:
-	$$
-		h_j=compresión(M_{j-1},h_{j-1}).
-	$$
-	\item $h_n$ es la salida de la función hash.
-\end{enumerate}
-Donde la función hash funciona de la siguiente manera:
-\begin{enumerate}
-	\item Se divide el bloque $M_j$ de 512 bits en bloques 16 bloques de 32 bits $m_0,m_1,...,m_{15}$. 
-\item Divide $h_{j-1}$ en 4 registros \emph{A, B, C} y \emph{D} como:
-	$$
-		h_{j-1} = (A_0, B_0, C_0, D_0, E_0).
-	$$
-	\item Para $i=0,...,63$ hacemos:
-	$$
-		A_{i+1}=B_i+((A_i+\Phi_i(B_i,C_i,D_i)+W_i+T_i)\lll S_i),
-	$$
-	$$
-		D_{i+1}=A_{i+1}+((D_i+\Phi_{i+1}(A_{i+1},B_i,C_i)+W_{i+1}+T_{i+1})\lll S_{i+1}),
-	$$
-	$$
-		C_{i+1}=D_{i+1}+((C_i+\Phi_{i+2}(D_{i+1},A_{i+1},B_i)+W_{i+2}+T_{i+2})\lll S_{i+2}),
-	$$
-	$$
-		B_{i+1}=C_{i+1}+((B_i+\Phi_{i+3}(C_{i+1},D_{i+1},A_{i+1})+W_{i+3}+T_{i+3})\lll S_{i+3}).
-	$$
-	Donde la operación $+$ es la operación ADD $\mod 32$, $T_{i+j}$ y $S_{i+j}\; (j=0,1,2,3)$ son constantes dependientes de la iteración y $W_i$ son palabras del mensaje.\\
-	En cada ronda se utiliza una función $\Phi_i(X,Y,Z)$ que depende de la iteración:
-	\begin{description}
-		\item $\Phi_i(X,Y,Z)=(X\wedge Y)\vee (\overline{X}\wedge Z),\; 0\leq i\leq 15,$
-		\item $\Phi_i(X,Y,Z)=(X\wedge Z)\vee (Y\wedge \overline{Z}),\; 16\leq i\leq 31,$
-		\item $\Phi_i(X,Y,Z)=X\oplus Y\oplus Z,\; 32\leq i\leq 47,$
-		\item $\Phi_i(X,Y,Z)=Y\oplus (X\vee \overline(Z)),\; 48\leq i\leq 63$
-	\end{description}
-\end{enumerate}
-En la imagen siguiente se puede ver un esquema del proceso de generación del hash usando MD5.
+\subsection{La construcción \emph{Merkle-Damgård}}
+Antes de desarrollar las funciones hash mencionadas anteriormente, voy a describir la construcción \emph{Merkle-Damgård}. Este es un método para construir funciones hash que sean resistentes a colisiones a partir de funciones de compresión unidireccionales. La información para este apartado ha sido obtenida de \cite{Tiwari2017}.\\
+Este método fue descubierto en 1989 por Merkle y Damgård de manera independiente. Es muy importante ya que gracias a este, se desarrollaron las funciones hash \emph{MD4,\:MD5,\:SHA-0,\:SHA-1 \text{ y }SHA-2} entre otras.\\
+Una función de compresión es una función que toma una entrada de longitud fija y produce un resumen de longitud fija. Esta recibe dos entradas: una variable cadena y un bloque del mensaje.\\
+
 \begin{figure}[htb]
 	\centering
-	\includegraphics[scale=0.5]{imagenes/md5.png} 
-	\caption{Esquema de los pasos seguidos en MD5 \cite{fotosmd5}.}
+	\includegraphics[scale=0.3]{imagenes/md1.png} 
+	\caption{Construcción de Merkle-Damgård \cite{Tiwari2017}.}
+\end{figure}
+Sea $f:\{0,1\}^b\times\{0,1\}^n\leftarrow\{0,1\}^n$ una función de compresión que toma un bloque de mensajes de $b$ bits y un valor de encadenamiento de $n$ bits. Sea $h:\{0,1\}^*\leftarrow\{0,1\}^n$ una construcción \emph{MD} construida iterando la función de compresión $f$ para procesar un mensaje de longitud arbitraria. Para que esto sea posible lo que se hace es rellenar cualquier mensaje para que la longitud de este sea múltiplo de la longitud de bloque $b$ de $f$.\\
+El relleno se realiza añadiendo después del último bit del último bloque del mensaje un único bit $1$ seguido del resto de bits necesarios a $0$.
+Por último, para terminar de rellenar el mensaje, se añade la codificación binaria de la longitud del mensaje.\\
+Una vez rellenado el mensaje, la entrada se divide en $t$ bloques, cada uno de longitud $b$. La función hash resultante puede describirse de la siguiente manera.
+$$
+		H_0 = IV,\\
+$$
+$$
+		H_i = f(H_{i-1},M_i)\:i=1\dots t,\\
+$$
+$$
+		h(M)=H_t.
+$$
+Este proceso se continua recursivamente, actualizando la variable cadena a partir de pasar cada bloque del mensaje por la función de compresión. La salida será la variable cadena. En \ref{mdcon} se puede ver un resumen del proceso.
+
+\begin{figure}[htb]
+	\centering
+	\includegraphics[scale=0.4]{imagenes/md2.png} 
+	\caption{Esquema de los pasos seguidos en la construcción de Merkle-Damgård \cite{Tiwari2017}.}
+	\label{mdcon}
 \end{figure}
 
 \subsection{SHA-0}
-SHA-0 es una función hash que apareció publicado en el Federal Information Processing Standard (FIPS-180) por el NIST en 1993 \cite{Penard2008}. Está basado en \emph{MD4} y \emph{MD5}. El algoritmo transforma un mensaje de cualquier tamaño hasta $2^{64}$ bits y los transforma en hashes de 160 bits.\\
+SHA-0 es una función hash que apareció publicada en el Federal Information Processing Standard (FIPS-180) por el NIST en 1993 \cite{Penard2008}. Está basada en \emph{MD4} y \emph{MD5}. El algoritmo transforma un mensaje de cualquier tamaño hasta $2^{64}$ bits y los transforma en un resumen de 160 bits.\\
 El funcionamiento de SHA-0 es el siguiente \cite{sha0}:
 \begin{enumerate}
 	\item Al igual que en MD5, el mensaje se rellena con un único bit '1' seguido de 0-511 bits '0'. A continuación se añade una representación de 64 bits de la longitud del mensaje donde el número de ceros es elegido para asegurar que la longitud total del mensaje es un múltiplo de 512 bits. El mensaje se divide en bloques de 512 bits: $M_1,...,M_n$.
@@ -1132,7 +1115,7 @@ Los pasos seguidos en la función de compresión son:
 \end{table}
 
 \subsection{SHA-1}
-La función SHA-1 es una función hash diseñada en 1995 por la \emph{National Security Agency} (NSA) dado que que se encontró varias colisiones y vulnerabilidades en la función SHA-0 \cite{Penard2008}.\\
+La función SHA-1 es una función hash diseñada en 1995 por la \emph{National Security Agency} (NSA) dado que que se encontraron varias colisiones y vulnerabilidades en la función SHA-0 \cite{Penard2008}.\\
 Su funcionamiento es muy similar al de la función SHA-0 variando en las funciones y variables usadas en las distintas rondas de la función de compresión. En la tabla \ref{tablasha1} se pueden ver los nuevos valores utilizados.\\
 \begin{table}[htb]
 	\begin{center}
@@ -1149,11 +1132,12 @@ Su funcionamiento es muy similar al de la función SHA-0 variando en las funcion
 	\end{center}
 \end{table}
 
-En siguiente imagen se puede observar un esquema del proceso para obtener un el hash seguido por las funciones  SHA-0 y SHA-1 donde \textbf{F} será la función de compresión.
+En imagen \ref{sha01img} se puede observar un esquema del proceso para obtener un el hash seguido por las funciones  SHA-0 y SHA-1 donde \textbf{F} será la función de compresión.
 \begin{figure}[htb]
 	\centering
 	\includegraphics[scale=0.5]{imagenes/sha0-1.png} 
 	\caption{Esquema de los pasos seguidos en SHA-0 y SHA-1 \cite{fotosha10}.}
+	\label{sha01img}
 \end{figure}
 
 \subsection{SHA-256}
@@ -1166,14 +1150,14 @@ El funcionamiento de las función es el siguiente\cite{Function2016}:\\
 		h_0=(H_1, H_2, H_3, H_4, H_5, H_6, H_7, H_8),
 	$$
 	donde:\\
-	$H_1=6A09E776$\\
-	$H_2=BB67AE85$\\
-	$H_3=3C6EF372$\\
-	$H_4=A54FF53A$\\
-	$H_5=510E527F$\\
-	$H_6=9B05688C$\\
-	$H_7=1F83D9AB$\\
-	$H_8=5BE0CD19$\\
+	$H_1=6A09E776$,\\
+	$H_2=BB67AE85$,\\
+	$H_3=3C6EF372$,\\
+	$H_4=A54FF53A$,\\
+	$H_5=510E527F$,\\
+	$H_6=9B05688C$,\\
+	$H_7=1F83D9AB$,\\
+	$H_8=5BE0CD19$.\\
 	\item Cada bloque $M_j$ es pasado por la función de compresión junto con el valor actual de $h_{j-1}$, la salida es el nuevo valor de $h_j$, la operación se puede resumir en:
 	$$
 		h_j=compresión(M_j,h_{j-1}).
@@ -1227,12 +1211,17 @@ $$
 	\sigma_1(x) = (x\ggg17)\oplus (x\ggg19)\oplus (x\lll10).
 $$
 
-%\newpage
-En la siguiente imagen podemos ver un esquema de los pasos seguidos en las funciones SHA-2.\\
-\begin{figure}[htb]
+En la imagen \ref{sha256img} podemos ver un esquema de los pasos seguidos en las funciones SHA-2.\\
+\newpage
+\begin{figure}[t]
 	\centering
 	\includegraphics[scale=0.5]{imagenes/sha2.png} 
 	\caption{Esquema de los pasos seguidos en las funciones de la familia SHA-2 \cite{sha2wikipedia}.}
+	\label{sha256img}
 \end{figure}
 
-Con esto concluye el capítulo en el cual se han introducido todas las herramientas necesarias para entender los criptosistemas de las aplicaciones de mensajería. En el próximo capítulo procederé a explicar los criptosistemas utilizados en algunas de las aplicaciones de mensajería más populares.
+Con esto concluye el capítulo en el cual se han introducido todas las
+herramientas necesarias para entender los criptosistemas de las aplicaciones
+de mensajerı́a. En el próximo capítulo procederé a explicar los criptosistemas
+utilizados en algunas de las aplicaciones de mensajerı́a más populares.
+
