@@ -77,7 +77,7 @@ En esta sección se describirán las distintas claves que entran en juego en el 
 	Bajo ninguna circunstancia un mensaje perteneciente a una sesión puede ser enviado a otra.
 
 	\item  \textbf{Server Salt}\\
-	Es un número de 64 bits generado aleatoriamente que cambia cada 30 minutos independiente de las sesiones por una petición del servidor. Una vez generado el nuevo salt todos los mensajes tienen que tenerlo aunque se aceptan los mensajes con el salt previo. Es necesario para proteger ante ciertos ataques como podría ser ajustar el reloj de la víctima en un momento futuro.
+	Es un número de 64 bits generado aleatoriamente que cambia cada 30 minutos independiente de las sesiones. Se genera por una petición del servidor. Una vez generado el nuevo salt, todos los mensajes tienen que tenerlo. Si bien, se aceptan los mensajes con el salt previo. El \emph{Server Salt} es necesario para proteger ante ciertos ataques como podría ser ajustar el reloj de la víctima en un momento futuro.
 
 	\item \textbf{Message Identifier (msg\textunderscore id)}\\
 	Es un número de 64 bits dependiente del tiempo usado únicamente para identificar mensajes que no tienen asociada una clave de sesión \emph{(Session)}. Los \emph{Message Identifiers} del servidor módulo 4 dan 1 si el mensaje es una respuesta a un mensaje del cliente y dan 3 en otro caso. 
@@ -117,7 +117,7 @@ Los números de gran tamaño son transmitidos como cadenas que contienen la secu
 Una vez introducidos los formatos que seguirán las consultas y los números veamos los pasos que se siguen en la creación de la \emph{Authorization Key}.
 
 \begin{enumerate}
-	\item El cliente envía una consulta al servidor, en esta consulta irá el \emph{nonce} que es un número aleatorio \emph{int128} generado por el cliente que servirá para para que el servidor lo identifique, este número no es secreto y a partir de ese momento irá incorporado en todas las consultas. 
+	\item El cliente envía una consulta al servidor, en esta consulta irá el \emph{nonce} que es un número aleatorio \emph{int128} generado por el cliente que servirá para para que el servidor lo identifique, este número no es secreto y a partir de ese momento irá incorporado en todas las consultas. Con este paso empieza el intercambio de claves \emph{Diffie-Hellman}.
 	
 	\item El servidor le responde enviando 
 	\begin{itemize}
@@ -126,20 +126,34 @@ Una vez introducidos los formatos que seguirán las consultas y los números vea
 		\item \emph{server\textunderscore public\textunderscore key\textunderscore fingerprints}: Es una lista de \emph{fingerprints}, secuencias únicas de letras y números usadas para identificar las claves RSA públicas.
 	\end{itemize}
 
-	\item El cliente descompone \emph{pq} en factores primos tal que $p$\textless$q$. Una vez hecho esto empieza el intercambio de claves Diffie-Hellman.
+	\item El cliente descompone \emph{pq} en factores primos tal que $p$\textless$q$. Una vez hecho esto empieza el intercambio de claves Diffie-Hellman. Este paso es la prueba de trabajo.
 
-	\item El cliente envía una nueva consulta que contiene
-	\begin{itemize}
-		\item \emph{nonce}.
-		\item \emph{server\textunderscore nonce}.
-		\item \emph{p}: Factor obtenido en el paso anterior, es de tipo \emph{long}.
-		\item \emph{q}: El otro factor obtenido en el paso anterior, al igual que \emph{p} es de tipo \emph{long}.
-		\item \emph{public\textunderscore key\textunderscore fingerprint}: Una de las \emph{fingerprints} obtenida de la lista enviada por el servidor en el paso anterior, es del tipo \emph{long}.
-		\item \emph{encrypted\textunderscore data}: Mensaje cifrado obtenido aplicando RSA a \emph{data} y \emph{server\textunderscore public \textunderscore key} donde:
+	\item En este paso se presentan las pruebas de trabajo. Para ello se genera \emph{encrypted\textunderscore data} como sigue.
+	\begin{enumerate}
+		\item Se genera \emph{new\textunderscore nonce} un número aleatorio generado por el cliente.
+		\item Se genera \emph{data} que es una serialización de:
 		\begin{itemize}
-			\item \emph{data}: Es una serialización de \emph{pq}, \emph{p}, \emph{q}, \emph{nonce}, \emph{server\textunderscore nonce}, \emph{new\textunderscore nonce} (un nuevo número aleatorio generado por el cliente y desde este paso conocido por el cliente y el servidor) y \emph{dc} o una serialización de \emph{pq}, \emph{p}, \emph{q}, \emph{nonce}, \emph{server\textunderscore nonce}, \emph{new\textunderscore nonce}, \emph{dc} y \emph{expires\textunderscore in}. Donde \emph{dc} es un identificador de la consulta, es del tipo \emph{int} y \emph{expires\textunderscore in} es el tiempo en el que expira la consulta, es del tipo \emph{int}.
+			\item \emph{pq},
+			\item \emph{p},
+			\item \emph{q},
+			\item \emph{server\textunderscore nonce},
+			\item \emph{new\textunderscore nonce},
+			\item \emph{dc}, que es la id del servidor con el que se está haciendo el intercambio de claves.
 		\end{itemize}
-	\end{itemize}
+		\item Se genera \emph{encrypted\textunderscore data} como el resultado de la función $RSA\textunderscore PAD(data, server\textunderscore public\textunderscore key)$. Esta es una variación de RSA cuyo funcionamiento es el siguiente.
+		\begin{itemize}
+			\item Se genera \emph{data\textunderscore with\textunderscore padding:=data+random\textunderscore padding\textunderscore bytes}, donde \emph{random\textunderscore padding\textunderscore bytes} se escoge de manera que \emph{data\textunderscore with\textunderscore padding} tenga un tamaño final de 192 bytes.
+			\item Luego se crea la variable \emph{data\textunderscore pad\textunderscore reversed} como resultado de la función $BYTE\textunderscore REVERSE(data\textunderscore with\textunderscore padding)$, función la cual revierte el orden de los bytes.
+			\item Se genera un número aleatorio de 32 bytes que se denomina como \emph{temp\textunderscore key}.
+	\item Se genera $data\textunderscore with\textunderscore hash:=data\textunderscore pad\textunderscore reversed + SHA256(temp\textunderscore key + data\textunderscore with\textunderscore padding)$. Después de esta operación \emph{data\textunderscore with\textunderscore hash} tiene exactamente una longitud de 224 bytes.
+	\item Después de este paso se encripta \emph{data\textunderscore with\textunderscore hash} a partir de \emph{temp\textunderscore key} usando AES-256 y se almacena el resultado en la variable \emph{aes\textunderscore encrypted}.
+	\item Se ajusta \emph{aes\textunderscore encrypted} a 32 bytes usando la función SHA-256 y a continuación se realiza la operación XOR con \emph{temp\textunderscore key} almacenándose el resultado en \emph{temp\textunderscore key\textunderscore xor}.
+	\item Se combinan \emph{temp\textunderscore key\textunderscore xor} con \emph{aes\textunderscore encrypted} y se almacena el resultado en \emph{key\textunderscore aes\textunderscore encrypted}. Esta tiene un tamaño de 256 bytes. 
+	\item Se compara el tamaño \emph{key\textunderscore aes\textunderscore encrypted} con \emph{RSA-modulus} de \emph{server\textunderscore pub\textunderscore key} en formato big endian de 2048 bits. Si \emph{key\textunderscore aes\textunderscore encrypted} es mayor que \emph{RSA-modulus}, se empieza de nuevo el proceso eligiendo un nuevo \emph{random\textunderscore temp\textunderscore key}.
+	\item Por último se genera \emph{encrypted\textunderscore data} como resultado de aplicar RSA a \emph{key\textunderscore aes\textunderscore encrypted} y a \emph{server\textunderscore pub\textunderscore key}.
+		\end{itemize}
+	\end{enumerate}
+	Una vez hecho esto, se envía \emph{encrypted\textunderscore data} al servidor.
 	Después de este paso alguien podría interceptar la consulta y modificarla con una cosulta suya haciendo un ataque \textbf{man-in-the-middle}. 
 	Este ataque no sería muy efectivo, ya que el único elemento que podría modificar sería \emph{new\textunderscore nonce} porque los demás están cifrados y el resultado sería que el atacante genere una \emph{Authorization\textunderscore key} propia independiente de la del cliente haciendo que el ataque no sea efectivo.
 
@@ -150,8 +164,8 @@ Una vez introducidos los formatos que seguirán las consultas y los números vea
 			\item \emph{encrypted\textunderscore answer}: Respuesta cifrada que es del tipo \emph{string} y a su vez contiene
 			\begin{itemize}
 				\item \emph{new\textunderscore nonce\textunderscore hash}: Son los 128 bits menos significativos de \emph{SHA-1(new\textunderscore nonce)}.
-				\item \emph{answer}: Es una serialización de \emph{nonce}, \emph{server\textunderscore nonce}, \emph{g}, \emph{dh\textunderscore prime}, \emph{g\textunderscore a} y \emph{server\textunderscore time}. Donde \emph{dh_prime} es un número primo seguro de 2048 bits, \emph{g} un generador de un subgrupo cíclico de orden $\frac{p-1}{2}$, $g_a$ es la clave que envía el servidor al cliente que al elevarla a $b$ módulo $dh_prime$ el cliente obtendría la clave final.
-				\item \emph{answer\textunderscore with\textunderscore hash}: Es una generación con la función hash \emph{HASH1} quedando de la siguiente forma: \emph{SHA-1(answer)+answer+(0-15 bytes aleatorios)} de manera que la longitud sea divisible por 16, es del tipo \emph{string}.
+				\item \emph{answer}: Es una serialización de \emph{nonce}, \emph{server\textunderscore nonce}, \emph{g}, \emph{dh\textunderscore prime}, \emph{g\textunderscore a} y \emph{server\textunderscore time}. Donde \emph{dh\textunderscore prime} es un número primo seguro de 2048 bits, \emph{g} un generador de un subgrupo cíclico de orden $\frac{p-1}{2}$, $g_a$ es la clave que envía el servidor al cliente que al elevarla a $b$ módulo \emph{dh\textunderscore prime} el cliente obtendría la clave final.
+\item \emph{answer\textunderscore with\textunderscore hash}: Es una generación con la función hash \emph{HASH1} quedando como \emph{SHA-1(answer)}+\emph{answer}+\emph{(0-15 bytes aleatorios)} de manera que la longitud sea divisible por 16, es del tipo \emph{string}.
 				\item \emph{answer\textunderscore aes\textunderscore key}: \emph{SHA-1(new\textunderscore nonce + server\textunderscore nonce) + substr(SHA-1(server\textunderscore nonce + new\textunderscore nonce), 0, 12)} y es del tipo \emph{string}. Donde \emph{substr} es una función que devuelve caracteres del \emph{string} desde una posición hasta otra, en este caso desde la posición $0$ hasta $12$.
 				\item \emph{tmp\textunderscore aes\textunderscore iv}: \emph{substr(SHA-1(server\textunderscore nonce + new\textunderscore nonce), 12, 8) + SHA-1(new\textunderscore nonce + new\textunderscore nonce) + substr(new\textunderscore, 0, 4)}
 				\item \emph{encrypted\textunderscore answer}: \emph{AES256\textunderscore ige\textunderscore encrypt(answer\textunderscore with\textunderscore hash, tmp\textunderscore aes\textunderscore key, tmp\textunderscore aes\textunderscore iv)} donde:
