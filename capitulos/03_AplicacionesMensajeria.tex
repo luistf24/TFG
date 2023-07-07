@@ -20,7 +20,7 @@ El protocolo esta subdividido en tres componentes virtuales independientes.
 \end{itemize}
 Y se pueden resumir como sigue.\\
 
-\textbf{Componentes de alto nivel(Lenguajes de consulta/API RPC)}\\
+\subsubsection{Componentes de alto nivel(Lenguajes de consulta/API RPC)}\\
 Desde el punto de vista del componente de alto nivel, el cliente y el servidor intercambian mensajes dentro de una sesión.\\
 La sesión se adjunta al cliente en lugar de una conexión \emph{websocket/http/https/tcp.} 
 Además, cada sesión tiene asociada a clave ID de usuario mediante la cual se logra la autorización.\\ 
@@ -41,7 +41,7 @@ Además cuando un contenedor o un mensaje simple se envían, una \emph{cabecera 
 El \emph{cuerpo} del mensaje normalmente consiste en un \emph{tipo mensaje} de 32 bits seguido de los \emph{parámetros dependientes del tipo}.\\
 Los números están escritos en \emph{little endian}. Sin embargo los números muy grandes (2048 bits) usados en \textbf{RSA} y \textbf{DH} están escritos en \emph{big endian} porque es lo que hace la biblioteca \textbf{OpenSSL}.\\
 
-\textbf{Autorización y Cifrado}\\
+\subsubsection{Autorización y Cifrado}
 			Antes de que un mensaje sea transmitido por la red usando un protocolo de transporte, este es cifrado añadiendo una cabecera externa la cual es insertada al principio del mensaje y contiene:
 	\begin{itemize}
 		\item \emph{Key Identifier} de 64 bits,
@@ -53,7 +53,7 @@ además los mensajes en varias partes, que son los mensajes que se fragmentan de
 Lo primero que tiene que hacer la aplicación cliente es crear una clave de autorización que se genera normalmente la primera vez que se ejecuta la aplicación y por lo general nunca cambia.\\
 Para prevenir potenciales ataques debido a la apropiación de la clave de autorización MTProto soporta \emph{Perfect Forward Secrecy} tanto en los chats en la nube como en los chats secretos.\\
 
-\textbf{Sincronización de la hora}\\
+\subsubsection{Sincronización de la hora}
 Si la hora de un cliente difiere de la hora del servidor, el servidor podría empezar a ignorar los mensajes de este y recíprocamente el cliente a los mensajes del servidor debido a que el mensaje tenga un indentificador inválido del mensaje.\\
 Bajo estas circunstancias, el servidor enviará un mensaje especial al cliente el cual contendrá la hora correcta, este mensaje será el primero en el caso de que también se envíe un grupo de mensajes.\\
 Habiendo recibido el mensaje, el cliente primero ejecutará una sincronización de la hora y después verificará la clave del mensaje\emph{(Message Key)} para ver si es correcto.\\
@@ -265,16 +265,17 @@ Los protocolos de transporte que están disponibles son los siguientes.
 	\item \emph{UDP}
 \end{itemize}
 
+
 \section{WhatsApp, Facebook Menssenger y Signal\\ (TextSecure Protocol)}
 El protocolo \emph{TextSecure Protocol} también conocido como \emph{Signal} fue desarrollado por Trevor Perrin y Moxie Marilinspike que trabajaban en la empresa Open Whisper Systems en 2013. Se implementó inicialmente en la aplicación de mensajería homónima \emph{Signal} aunque posteriormente se introdujo en otras aplicaciones de mensajería como \emph{WhatsApp} y \emph{Facebook Menssenger}.\\
 Este protocolo ha tenido 3 versiones.
 \begin{itemize}
-	\item \textbf{TextSecure v1:} Es la primera versión del protocolo, que fue lanzada en 2013 y estaba basada en el protocolo \emph{Off-the-Record Messaging (OTR)}.
-	\item \textbf{TextSecure v2:} Es la segunda versión publicada el 24 de febrero de 2014. Esta versión extendió el protocolo con \emph{Double Ratchet Algorithm} el cual un intercambio de claves \emph{Diffie-Hellman} con una \emph{función de derivación de clave (KDF)} usando funciones hash, permitiendo extender las claves y aumentando la seguridad del protocolo.
-	\item \textbf{TextSecure v3:} Esta tercera versión fue lanzada en octubre de 2014 y añadió algunos cambios a las primitivas criptográficas y al protocolo de red.
+	\item \textbf{TextSecure v1.} Es la primera versión del protocolo, que fue lanzada en 2013 y estaba basada en el protocolo \emph{Off-the-Record Messaging (OTR)}.
+	\item \textbf{TextSecure v2.} Es la segunda versión publicada el 24 de febrero de 2014. Esta versión extendió el protocolo con \emph{Double Ratchet Algorithm} el cual un intercambio de claves \emph{Diffie-Hellman} con una \emph{función de derivación de clave (KDF)} usando funciones hash, permitiendo extender las claves y aumentando la seguridad del protocolo.
+	\item \textbf{TextSecure v3.} Esta tercera versión fue lanzada en octubre de 2014 y añadió algunos cambios a las primitivas criptográficas y al protocolo de red.
 \end{itemize}
 Cabe a mencionar que aunque el protocolo originalmente el protocolo se llamaba \emph{TextSecure} en 2016 fue renombrado como \emph{Signal Protocol} que es como lo conocemos hoy en día.\\
-La información técnica de este protocolo que se va a desarrollar a continuación ha sido obtenida de \cite{November2021b}.
+La información técnica de este protocolo que voy a desarrollar a continuación ha sido obtenida de \cite{November2021b}.
 
 \subsection{Descripción general y dispositivos}
 El protocolo \emph{Signal} es un protocolo diseñado para prevenir que aplicaciones como \emph{WhatsApp, Signal y Facebook Messenger} sean vulneradas de manera que se pueda acceder a la información intercambiada en los mensajes y las llamadas. Este protocolo permite que un usuario tener diversos dispositivos cada uno con su propias claves garantizando que si se obtiene alguna de ellas, los mensajes enviados por alguno de los otros dispositivos no puedan ser descifrados. Además también es usado en el caso de \emph{WhatsApp} para cifrar el historial de mensajes y enviarlo a un nuevo dispositivo del mismo usuario.\\
@@ -320,8 +321,7 @@ En este apartado hablaré acerca de las distintas claves que se utilizan para ci
 Una vez introducido la terminología que se va a usar el la descripción del protocolo \emph{Signal}, procederé a describir las etapas principales de este.\\
 
 \subsection{Registro de clientes}
-Etapa inicial consistente en añadir dispositivos asociados al cliente, como se ha visto anteriormente existen dos tipos de dispositivos: \emph{dispositivo principal} y \emph{dispositivos compañeros} y en función del tipo se registrarán de manera diferente.\\
-
+Etapa inicial consistente en añadir dispositivos asociados al cliente, como se ha visto anteriormente existen dos tipos de dispositivos: \emph{dispositivo principal} y \emph{dispositivos compañeros} y en función del tipo se registrarán de manera diferente.
 \begin{description}
 	\item \textbf{Dispositivo principal}\\
 	Durante el momento del registro, el cliente de WhatsApp envía al servidor su \emph{Identity Key}, su \emph{Signed Pre Key} con una firma y conjunto de \emph{One-Time Pre Keys}. Una vez enviadas el servidor de WhatsApp almacena estas estas claves públicas asociadas con el indentificador del usuario.
@@ -333,14 +333,14 @@ Etapa inicial consistente en añadir dispositivos asociados al cliente, como se 
 		\item El dispositivo principal escanea el código QR y almacena $I_{companion}$ en el disco.
 		\item El dispositivo principal carga su propia \emph{Identity Key} como $I_{primary}$.
 		\item El dispositivo genera los metadatos de la vinculación ($L_{metadata}$) y actualiza la lista de datos de dispositivos para que contenga un nuevo dispositivo compañero como ($L_{istData}$).
-		\item El dispositivo principal genera una firma de la cuenta para el compañero, $A_{signature}=CURVE25519\textunderscore SIGN(I_{primary} || L_{metadata} || I_{companion})$.
-		\item El dispositivo principal genera una firma para la lista de dispositivos que permitirá actualizar la propia lista de dispositivos. $ListSignature = CURVE25519\textunderscore SIGN(I_{primary}, 0x0602 || ListData)$.
+		\item El dispositivo principal genera una firma de la cuenta para el compañero, $$A_{signature}=CURVE25519\textunderscore SIGN(I_{primary} || L_{metadata} || I_{companion}).$$
+		\item El dispositivo principal genera una firma para la lista de dispositivos que permitirá actualizar la propia lista de dispositivos. $$ListSignature = CURVE25519\textunderscore SIGN(I_{primary}, 0x0602 || ListData).$$
 		\item El dispositivo principal agrupa los datos de la vinculación en $L_{data}$, conteniendo este $L_{metadata}$, $I_{primary}$ y $A_{signature}$.
 		\item El dispositivo principal genera una \emph{HMAC} para la vinculación y una \emph{PHMAC} que será igual a $HMAC-SHA256(L_{companion}, L_{data})$. Una vez hecho esto enviará \emph{ListData}, \emph{ListSignature}, $L_{data}$ y la \emph{PHMAC} al servidor.
 		\item El servidor almacena \emph{ListData} y \emph{ListSignature} y reenvía $L_{data}$ y la \emph{PHMAC} al dispositivo compañero.
 		\item El dispositivo compañero  verfica la \emph{PHMAC}, decodifica \emph{Ldata} en \emph{Lmetadata}, \emph{Iprimary} y \emph{Asignature} verificando esta última.
 		\item El dispositivo compañero almacena $L_{metadata}$ e $I_{primary}$ en el disco.
-		\item A continuación este genera una firma del dispositivo por si mismo que es de la forma $D_{signature}=CURVE25519\textunderscore SIGN(I_{companion}, 0x0601\\ || L_{metadata} || I_{companion} || I_{primary})$.
+		\item A continuación este genera una firma del dispositivo por si mismo que es de la forma $$D_{signature}=CURVE25519\textunderscore SIGN(I_{companion}, 0x0601 || L_{metadata} || I_{companion} || I_{primary}).$$
 		\item El dispositivo compañero sube al servidor de WhatsApp $L_{metadata}$, $A_{signature}$, $D_{signature}$, $I_{companion}$, la \emph{Signed Pre Key} pública del dispositivo firmada y un lote de \emph{Pre Keys} de un solo uso
 		\item El servidor almacena los datos subidos asociados con la identificación del usuario combinados con el identificador especifico del dispositivo.
 	\end{enumerate}
@@ -356,12 +356,12 @@ Etapa inicial consistente en añadir dispositivos asociados al cliente, como se 
 
 \subsection{Inicio de sesión}
 Para que la comunicación entre usuarios sea segura y privada el emisor establece una conexión por pares con cada uno de los dispositivos del receptor. Una vez que la conexión entre emisor y receptor ha sido establecida, no es necesario volver a establecerla a no ser que la sesión se pierda.\\
-Lo pasos que se siguen para establecer una conexión son:
+Lo pasos que se siguen para establecer una conexión son los siguientes.
 \begin{enumerate}
 	\item El cliente que inicia la conexión solicita la \emph{identity key}, la \emph{Signed Pre key} y un lote de \emph{Pre keys} de un solo uso para cada dispositivo del receptor y los dispositivos adicionales que el mismo posee excluyendo el dispositivo desde el que se inicia la conexión. 
 	\item El servidor devuelve todo lo solicitado y elimina las \emph{Pre keys} enviadas ya que son de un solo uso. Sí el último lote de \emph{Pre keys} enviado es agotado y el receptor no los ha repuesto no se devuelve ninguna clave. Además, por cada dispositivo compañero que haya tanto del emisor como del receptor, el servidor devuelve $L_{metadata}$, $A_{signature}$ y $D_{signature}$ que fueron enviadas por el dispositivo compañero cuando se vinculó.
-	\item Por cada conjunto de claves devueltas, el emisor tiene que verificar \emph{Asignature} con $CURVE25519\textunderscore VERIFY \textunderscore SIGNATURE(I_{primary}, 0x0600\\ || L_{metadata} || I_{companion})$.\\
-	$D_{signature}$ es obtenida con $CURVE25519\textunderscore VERIFY\textunderscore SIGNATURE(I_{companion},\\ 0x0601 || L_{metadata} || I_{companion} || I_{primary}).$\\
+	\item Por cada conjunto de claves devueltas, el emisor tiene que verificar\\ \emph{Asignature} con \emph{CURVE25519\textunderscore VERIFY \textunderscore SIGNATURE(\\I_{primary}, 0x0600 || L_{metadata} || I_{companion})}.\\
+	$D_{signature}$ es obtenida con \emph{CURVE25519\textunderscore VERIFY\textunderscore SIGNATURE(I_{companion},0x0601 ||\\ L_{metadata} || I_{companion} || I_{primary})}.\\
 	Si en algún momento la verificación falla, el emisor termina la sesión de cifrado y no envía ningún mensaje al dispositivo que ha fallado.
 \end{enumerate}
 Una vez obtenidas las claves del servidor y se ha verificado la identidad, el emisor inicia la sesión de encriptación con cada dispositivo individualmente. Para ello se siguen los siguientes pasos:
@@ -412,7 +412,7 @@ En el siguiente esquema se puede ver resumido el proceso de encriptado y desencr
 	\centering
 	\includegraphics[scale=0.2]{imagenes/apple.png} 
 	\caption{Esquema de cifrado en iMessage \cite{apple1}.}
-	\label{mtproto2}
+	\label{iMessagefoto}
 \end{figure}
 
 Al igual que en las notificaciones push, los mensajes son eliminados del APNs una vez que se envían. Si es verdad que a diferencia de otras notificaciones que se envían del APNs, los mensajes se guardan en una cola para enviarlos a dispositivos sin conexión. Esto permite almacenar los mensajes en un plazo de 30 días máximo permitiendo así que un mensaje llegue tiempo después a un dispositivo que esta sin conexión.

@@ -1041,14 +1041,15 @@ El relleno se realiza añadiendo después del último bit del último bloque del
 Por último, para terminar de rellenar el mensaje, se añade la codificación binaria de la longitud del mensaje.\\
 Una vez rellenado el mensaje, la entrada se divide en $t$ bloques, cada uno de longitud $b$. La función hash resultante puede describirse de la siguiente manera.
 $$
-		H_0 = IV,\\
+		H_0 = IV,
 $$
 $$
-		H_i = f(H_{i-1},M_i)\:i=1\dots t,\\
+		H_i = f(H_{i-1},M_i)\:i=1\dots t,
 $$
 $$
 		h(M)=H_t.
 $$
+
 Este proceso se continua recursivamente, actualizando la variable cadena a partir de pasar cada bloque del mensaje por la función de compresión. La salida será la variable cadena. En \ref{mdcon} se puede ver un resumen del proceso.
 
 \begin{figure}[htb]
@@ -1067,7 +1068,7 @@ El funcionamiento de SHA-0 es el siguiente \cite{sha0}:
 	$$
 		h_0=(67452301_x, EFCDAB89_x, 98BADCFE_x, 10325476_x, C3D2E1F0_x).
 	$$
-	\item Cada bloque $M_j$ es pasado por la función de compresión junto con el valor actual de $h_{j-1}$, la salida es el nuevo valor de $h_j$, la operación se puede resumir en:
+	\item Cada bloque $M_j$ es pasado por la función de compresión junto con el valor actual de $h_{j-1}$, la salida es el nuevo valor de $h_j$, la operación se puede resumir en
 	$$
 		h_j=compresión(M_j,h_{j-1}).
 	$$
