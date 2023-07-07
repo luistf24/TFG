@@ -341,7 +341,7 @@ Etapa inicial consistente en añadir dispositivos asociados al cliente, como se 
 		\item El dispositivo compañero  verfica la \emph{PHMAC}, decodifica \emph{Ldata} en \emph{Lmetadata}, \emph{Iprimary} y \emph{Asignature} verificando esta última.
 		\item El dispositivo compañero almacena $L_{metadata}$ e $I_{primary}$ en el disco.
 		\item A continuación este genera una firma del dispositivo por si mismo que es de la forma $$D_{signature}=CURVE25519\textunderscore SIGN(I_{companion}, 0x0601 || L_{metadata} || I_{companion} || I_{primary}).$$
-		\item El dispositivo compañero sube al servidor de WhatsApp $L_{metadata}$, $A_{signature}$, $D_{signature}$, $I_{companion}$, la \emph{Signed Pre Key} pública del dispositivo firmada y un lote de \emph{Pre Keys} de un solo uso
+		\item El dispositivo compañero sube al servidor de WhatsApp $L_{metadata}$, $A_{signature}$, $D_{signature}$, $I_{companion}$, la \emph{Signed Pre Key} pública del dispositivo firmada y un lote de \emph{Pre Keys} de un solo uso.
 		\item El servidor almacena los datos subidos asociados con la identificación del usuario combinados con el identificador especifico del dispositivo.
 	\end{enumerate}
 \end{description}
