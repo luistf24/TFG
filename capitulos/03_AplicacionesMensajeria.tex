@@ -106,7 +106,7 @@ En esta sección se describirán las distintas claves que entran en juego en el 
 
 \begin{figure}[htb]
 	\centering
-	\includegraphics[scale=0.5]{imagenes/MTProto2.png} 
+	\includegraphics[scale=0.45]{imagenes/MTProto2.png} 
 	\caption{Mensajes de MTProto \cite{WebProto}.}
 	\label{mtproto1}
 \end{figure}
@@ -281,11 +281,11 @@ La información técnica de este protocolo que voy a desarrollar a continuación
 El protocolo \emph{Signal} es un protocolo diseñado para prevenir que aplicaciones como \emph{WhatsApp, Signal y Facebook Messenger} sean vulneradas de manera que se pueda acceder a la información intercambiada en los mensajes y las llamadas. Este protocolo permite que un usuario tener diversos dispositivos cada uno con su propias claves garantizando que si se obtiene alguna de ellas, los mensajes enviados por alguno de los otros dispositivos no puedan ser descifrados. Además también es usado en el caso de \emph{WhatsApp} para cifrar el historial de mensajes y enviarlo a un nuevo dispositivo del mismo usuario.\\
 Por comodidad voy a explicar el protocolo para WhatsApp dado que para el resto de aplicaciones que lo usan hacen un uso igual de este.\\
 
-\textbf{Tipo de dispositivos}\\
-Como he me mencionado anteriormente, el protocolo \emph{Signal} permite tener varios dispositivos asociados al usuario, si bien no todos los dispositivo son iguales:
+\subsubsection{Tipo de dispositivos}
+Como he me mencionado anteriormente, el protocolo \emph{Signal} permite tener varios dispositivos asociados al usuario, si bien no todos los dispositivo son iguales. Se pueden distinguir dos tipos de dispositivos.
 \begin{itemize}
-	\item \textbf{Dispositivo principal:} Dispositivo único utilizado para vincular una cuenta de \emph{WhatsApp} con un número de teléfono. Este dispositivo permite vincular dispositivos adicionales que serán los dispositivos compañeros.
-	\item \textbf{Dispositivo Compañero o Secundario:} Es un dispositivo vinculado a una cuenta existente de WhatsApp, a diferencia del dispositivo principal, este no tiene porque ser único.
+	\item \textbf{Dispositivo principal.} Dispositivo único utilizado para vincular una cuenta de \emph{WhatsApp} con un número de teléfono. Este dispositivo permite vincular dispositivos adicionales que serán los dispositivos compañeros.
+	\item \textbf{Dispositivo Compañero o Secundario.} Es un dispositivo vinculado a una cuenta existente de WhatsApp, a diferencia del dispositivo principal, este no tiene porque ser único.
 \end{itemize}
 Ciertas aplicaciones únicamente pueden ser usadas en dispositivos principales como pueden ser las aplicaciones para \emph{Android} y \emph{iOS}.
 
