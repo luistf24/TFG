@@ -340,7 +340,11 @@ Etapa inicial consistente en añadir dispositivos asociados al cliente, como se 
 		\item El servidor almacena \emph{ListData} y \emph{ListSignature} y reenvía $L_{data}$ y la \emph{PHMAC} al dispositivo compañero.
 		\item El dispositivo compañero  verfica la \emph{PHMAC}, decodifica \emph{Ldata} en \emph{Lmetadata}, \emph{Iprimary} y \emph{Asignature} verificando esta última.
 		\item El dispositivo compañero almacena $L_{metadata}$ e $I_{primary}$ en el disco.
-		\item A continuación este genera una firma del dispositivo por si mismo que es de la forma $$D_{signature}=CURVE25519\textunderscore SIGN(I_{companion}, 0x0601 || L_{metadata} || I_{companion} || I_{primary}).$$
+		\item A continuación este genera una firma del dispositivo por si mismo que es de la forma 
+		\begin{aligned}
+			D_{signature}=CURVE25519\textunderscore SIGN(I_{companion}, 0x0601 || \\ || L_{metadata} || I_{companion} || I_{primary}).
+		\end{aligned}
+
 		\item El dispositivo compañero sube al servidor de WhatsApp $L_{metadata}$, $A_{signature}$, $D_{signature}$, $I_{companion}$, la \emph{Signed Pre Key} pública del dispositivo firmada y un lote de \emph{Pre Keys} de un solo uso.
 		\item El servidor almacena los datos subidos asociados con la identificación del usuario combinados con el identificador especifico del dispositivo.
 	\end{enumerate}
@@ -360,7 +364,7 @@ Lo pasos que se siguen para establecer una conexión son los siguientes.
 \begin{enumerate}
 	\item El cliente que inicia la conexión solicita la \emph{identity key}, la \emph{Signed Pre key} y un lote de \emph{Pre keys} de un solo uso para cada dispositivo del receptor y los dispositivos adicionales que el mismo posee excluyendo el dispositivo desde el que se inicia la conexión. 
 	\item El servidor devuelve todo lo solicitado y elimina las \emph{Pre keys} enviadas ya que son de un solo uso. Sí el último lote de \emph{Pre keys} enviado es agotado y el receptor no los ha repuesto no se devuelve ninguna clave. Además, por cada dispositivo compañero que haya tanto del emisor como del receptor, el servidor devuelve $L_{metadata}$, $A_{signature}$ y $D_{signature}$ que fueron enviadas por el dispositivo compañero cuando se vinculó.
-	\item Por cada conjunto de claves devueltas, el emisor tiene que verificar\\ \emph{Asignature} con \emph{CURVE25519\textunderscore VERIFY \textunderscore SIGNATURE(\\I_{primary}, 0x0600 || L_{metadata} || I_{companion})}.\\
+	\item Por cada conjunto de claves devueltas, el emisor tiene que verificar\\ \emph{Asignature} con $CURVE25519\textunderscore VERIFY \textunderscore SIGNATURE(I_{primary}, 0x0600 || L_{metadata} || I_{companion})$.\\
 	$D_{signature}$ es obtenida con \emph{CURVE25519\textunderscore VERIFY\textunderscore SIGNATURE(I_{companion},0x0601 ||\\ L_{metadata} || I_{companion} || I_{primary})}.\\
 	Si en algún momento la verificación falla, el emisor termina la sesión de cifrado y no envía ningún mensaje al dispositivo que ha fallado.
 \end{enumerate}
@@ -369,7 +373,11 @@ Una vez obtenidas las claves del servidor y se ha verificado la identidad, el em
 	\item El emisor almacena la \emph{Identity Key} del receptor como $I_{recipient}$, la \emph{Signed Pre Key} como $S_{recipient}$ y la \emph{Pre Key} de un solo uso como $O_{recipient}$.
 	\item El emisor genera un par de pares de claves efímeras \emph{Curve25519} llamada $E_{initiator}$.
 	\item El emisor carga su propia \emph{Identity Key} como $I_{initiator}$.
-	\item El emisor calcula el \emph{master\textunderscore secret} como $master\textunderscore secret = ECDH(I_{initiator}, S_{recipient}) ||\\ ECDH(E_{initiator}, I_{recipient}) || ECDH(E_{initiator}, S_{recipient}) || ECDH(E_{initiator}, O_{recipient})$. Cabe a mencionar que \emph{ECDH} es el intercambio de claves \emph{Diffie-Hellman}.
+	\item El emisor calcula el \emph{master\textunderscore secret} como 
+	\begin{aligned}
+			master\textunderscore secret = ECDH(I_{initiator}, S_{recipient}) || ECDH(E_{initiator}, I_{recipient})||\\ || ECDH(E_{initiator}, S_{recipient}) || ECDH(E_{initiator}, O_{recipient}). &
+	\end{aligned}
+	Cabe a mencionar que \emph{ECDH} es el intercambio de claves \emph{Diffie-Hellman}.
 	\item El emisor usa \emph{HKDF} para crear una \emph{Root Key} y una \emph{Chain Key} de \emph{master\textunderscore secret}. Donde HKDF es una función de derivación de claves simple basada en el código de autenticación de mensajes \emph{HMAC}\cite{cekd}.
 \end{enumerate}
 
