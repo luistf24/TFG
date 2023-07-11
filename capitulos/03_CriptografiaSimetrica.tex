@@ -193,7 +193,7 @@ La función de expansión tiene dos versiones según el valor de $N_k$:
 			\hspace*{40}$tmp\leftarrow Sub(Rot(tmp))\oplus Rc(i/N_k)$\\
 			\hspace*{20}$W(i)\leftarrow W(i-N_k)\oplus tmp$
 	\end{algorithm}
-
+\newpage
 	\item Si $N_k>6$:
 	\begin{algorithm}
 		Para $i$ desde 0 hasta $N_{k}-1$ hacer:
@@ -210,7 +210,6 @@ La función de expansión tiene dos versiones según el valor de $N_k$:
 	\end{algorithm}
 \end{itemize}
 
-\newpage
 La función \emph{Sub} devuelve el resultado de aplicar la s-caja de AES a cada uno de los bytes del registro de cuatro que se le pasa como parámetro, la función \emph{Rot} desplaza a la izquierda los bytes del registro y \emph{Rc(j)} es una constante que se define como:
 \begin{itemize}
 	\item $Rc(j)=(R(j),0,0,0)$.
