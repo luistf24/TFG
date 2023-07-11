@@ -1,6 +1,5 @@
 \chapter{Aplicaciones de Mensajería}
-
-En este capítulo explicaré los criptosistemas utilizados por las aplicaciones de mensajería más populares actualmente, estas serán: \emph{Telegram}, \emph{WhatsApp}, \emph{Facebook}, \emph{Signal} y \emph{iMessage}.
+En este capítulo explicaré como usan las aplicaciones de mensajería los criptosistemas que he desarrollado en los capítulos anteriores. Las aplicaciones que he estudiado son: \emph{Telegram}, \emph{WhatsApp}, \emph{Facebook}, \emph{Signal} y \emph{iMessage}.
 
 \section{Telegram (MTProto)}
 MTProto es el protocolo de datos con el Telegram cifra sus mensajes. Fue desarrollado por el matemático Nikolái Dúrov y financiado por Pável Dúrov. Al contrario que la mayoría de cifrados, MTProto esta enfocado en ser multisesión e independiente de la plataforma y el transporte de archivos independiente de su formato. MTProto tiene dos versiones.
@@ -266,7 +265,7 @@ Los protocolos de transporte que están disponibles son los siguientes.
 \end{itemize}
 
 
-\section{WhatsApp, Facebook Menssenger y Signal\\ (TextSecure Protocol)}
+\section{WhatsApp, Facebook Menssenger y Signal (TextSecure Protocol)}
 El protocolo \emph{TextSecure Protocol} también conocido como \emph{Signal} fue desarrollado por Trevor Perrin y Moxie Marilinspike que trabajaban en la empresa Open Whisper Systems en 2013. Se implementó inicialmente en la aplicación de mensajería homónima \emph{Signal} aunque posteriormente se introdujo en otras aplicaciones de mensajería como \emph{WhatsApp} y \emph{Facebook Menssenger}.\\
 Este protocolo ha tenido 3 versiones.
 \begin{itemize}
@@ -418,7 +417,7 @@ Como el APNs solo puede emitir mensajes de 4 o 16KB como máximo dependiendo de 
 En el siguiente esquema se puede ver resumido el proceso de encriptado y desencriptado de los mensajes.
 \begin{figure}[htb]
 	\centering
-	\includegraphics[scale=0.2]{imagenes/apple.png} 
+	\includegraphics[scale=0.15]{imagenes/apple.png} 
 	\caption{Esquema de cifrado en iMessage \cite{apple1}.}
 	\label{iMessagefoto}
 \end{figure}
