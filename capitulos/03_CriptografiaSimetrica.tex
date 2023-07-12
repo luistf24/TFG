@@ -11,7 +11,7 @@ El bloque a cifrar o descifrar se traslada directamente byte a byte sobre la mat
 
 \begin{table}[htb]
 	\begin{center}
-		\begin{tabular}{| l | l | l | l |}
+		\begin{tabular}{| c | c | c | c |}
 				\hline
 				$\math{a}_{0,0}$ & $\math{a}_{0,1}$ & $\math{a}_{0,2}$ & $\math{a}_{0,3}$\\ \hline
 				$\math{a}_{1,0}$ & $\math{a}_{1,1}$ & $\math{a}_{1,2}$ & $\math{a}_{1,3}$\\ \hline
@@ -24,7 +24,7 @@ El bloque a cifrar o descifrar se traslada directamente byte a byte sobre la mat
 
 \begin{table}[htb]
 	\begin{center}
-		\begin{tabular}{| l | l | l | l |}
+		\begin{tabular}{| c | c | c | c |}
 				\hline
 				$\math{k}_{0,0}$ & $\math{k}_{0,1}$ & $\math{k}_{0,2}$ & $\math{k}_{0,3}$\\ \hline
 				$\math{k}_{1,0}$ & $\math{k}_{1,1}$ & $\math{k}_{1,2}$ & $\math{k}_{1,3}$\\ \hline
@@ -51,7 +51,7 @@ Como las funciones usadas en cada ronda son invertibles, para descifrar aplicare
 
 \begin{table}[htb]
 	\begin{center}
-		\begin{tabular}{| l | l | l | l |}
+		\begin{tabular}{| c | c | c | c |}
 				\hline
 				& $N_b = 4$(128 bits) & $N_b = 6$(192 bits)& $N_b = 8$(256 bits)\\ \hline
 				$N_k = 4$(128 bits)& 10 & 12 & 14\\ \hline
@@ -142,7 +142,7 @@ En la última ronda se hacen solo los tres primeros pasos del algoritmo.
 
 		\begin{table}[htb]
 			\begin{center}
-				\begin{tabular}{| l | l | l | l |}
+				\begin{tabular}{| c | c | c | c |}
 						\hline
 						$N_b$ & $c_1$ & $c_2$ & $c_3$\\ \hline
 						4 & 1 & 2 & 3\\ \hline 
