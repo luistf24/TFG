@@ -144,7 +144,7 @@ Una vez introducidos los formatos que seguirán las consultas y los números vea
 			\item Se genera \emph{data\textunderscore with\textunderscore padding:=data+random\textunderscore padding\textunderscore bytes}, donde \emph{random\textunderscore padding\textunderscore bytes} se escoge de manera que \emph{data\textunderscore with\textunderscore padding} tenga un tamaño final de 192 bytes.
 			\item Luego se crea la variable \emph{data\textunderscore pad\textunderscore reversed} como resultado de la función $BYTE\textunderscore REVERSE(data\textunderscore with\textunderscore padding)$, función la cual revierte el orden de los bytes.
 			\item Se genera un número aleatorio de 32 bytes que se denomina como \emph{temp\textunderscore key}.
-	\item Se genera $data\textunderscore with\textunderscore hash:=data\textunderscore pad\textunderscore reversed + SHA256(temp\textunderscore key + data\textunderscore with\textunderscore padding)$. Después de esta operación \emph{data\textunderscore with\textunderscore hash} tiene exactamente una longitud de 224 bytes.
+	\item Se genera $data\textunderscore with\textunderscore hash:=data\textunderscore pad\textunderscore reversed + \\ + SHA256(temp\textunderscore key + data\textunderscore with\textunderscore padding)$. Después de esta operación \emph{data\textunderscore with\textunderscore hash} tiene exactamente una longitud de 224 bytes.
 	\item Después de este paso se encripta \emph{data\textunderscore with\textunderscore hash} a partir de \emph{temp\textunderscore key} usando AES-256 y se almacena el resultado en la variable \emph{aes\textunderscore encrypted}.
 	\item Se ajusta \emph{aes\textunderscore encrypted} a 32 bytes usando la función SHA-256 y a continuación se realiza la operación XOR con \emph{temp\textunderscore key} almacenándose el resultado en \emph{temp\textunderscore key\textunderscore xor}.
 	\item Se combinan \emph{temp\textunderscore key\textunderscore xor} con \emph{aes\textunderscore encrypted} y se almacena el resultado en \emph{key\textunderscore aes\textunderscore encrypted}. Esta tiene un tamaño de 256 bytes. 
@@ -165,9 +165,9 @@ Una vez introducidos los formatos que seguirán las consultas y los números vea
 				\item \emph{new\textunderscore nonce\textunderscore hash}: Son los 128 bits menos significativos de \emph{SHA-1(new\textunderscore nonce)}.
 				\item \emph{answer}: Es una serialización de \emph{nonce}, \emph{server\textunderscore nonce}, \emph{g}, \emph{dh\textunderscore prime}, \emph{g\textunderscore a} y \emph{server\textunderscore time}. Donde \emph{dh\textunderscore prime} es un número primo seguro de 2048 bits, \emph{g} un generador de un subgrupo cíclico de orden $\frac{p-1}{2}$, $g_a$ es la clave que envía el servidor al cliente que al elevarla a $b$ módulo \emph{dh\textunderscore prime} el cliente obtendría la clave final.
 \item \emph{answer\textunderscore with\textunderscore hash}: Es una generación con la función hash \emph{HASH1} quedando como \emph{SHA-1(answer)}+\emph{answer}+\emph{(0-15 bytes aleatorios)} de manera que la longitud sea divisible por 16, es del tipo \emph{string}.
-				\item \emph{answer\textunderscore aes\textunderscore key}: \emph{SHA-1(new\textunderscore nonce + server\textunderscore nonce) + substr(SHA-1(server\textunderscore nonce + new\textunderscore nonce), 0, 12)} y es del tipo \emph{string}. Donde \emph{substr} es una función que devuelve caracteres del \emph{string} desde una posición hasta otra, en este caso desde la posición $0$ hasta $12$.
+				\item \emph{answer\textunderscore aes\textunderscore key}: \emph{SHA-1(new\textunderscore nonce + server\textunderscore nonce) +\\+ substr(SHA-1(server\textunderscore nonce + new\textunderscore nonce), 0, 12)} y es del tipo \emph{string}. Donde \emph{substr} es una función que devuelve caracteres del \emph{string} desde una posición hasta otra, en este caso desde la posición $0$ hasta $12$.
 				\item \emph{tmp\textunderscore aes\textunderscore iv}: \emph{substr(SHA-1(server\textunderscore nonce + new\textunderscore nonce), 12, 8) + SHA-1(new\textunderscore nonce + new\textunderscore nonce) + substr(new\textunderscore, 0, 4)}
-				\item \emph{encrypted\textunderscore answer}: \emph{AES256\textunderscore ige\textunderscore encrypt(answer\textunderscore with\textunderscore hash, tmp\textunderscore aes\textunderscore key, tmp\textunderscore aes\textunderscore iv)} donde:
+				\item \emph{encrypted\textunderscore answer}: \emph{AES256\textunderscore ige\textunderscore encrypt(answer\textunderscore with\textunderscore hash,\\ tmp\textunderscore aes\textunderscore key, tmp\textunderscore aes\textunderscore iv)} donde:
 				\begin{itemize}
 					\item \emph{tmp\textunderscore aes\textunderscore key}: Es una clave de 256 bits
 					\item \emph{tmp\textunderscore aes\textunderscore iv}: Es un vector de inicialización de 256 bits.
@@ -220,7 +220,7 @@ Una vez introducidos los formatos que seguirán las consultas y los números vea
 			\end{itemize}
 	\end{enumerate}
 	Donde \emph{new\textunderscore nonce\textunderscore hash1}, \emph{new\textunderscore nonce\textunderscore hash2} y \emph{new\textunderscore nonce\textunderscore hash3} son los 128 bits menos significativos de SHA-1 de la cadena de bytes obtenida al añadir a \emph{new\textunderscore nonce} un byte con el valor 1,2 o 3 respectivamente y seguido de \emph{auth\textunderscore key\textunderscore hash}.\\
-	\emph{Auth\textunderscore key\textunderscore aux\textunderscore hash} son los 64 bits más significativos de \emph{SHA-1(auth\textunderscore key)}.
+	\emph{Auth\textunderscore key\textunderscore aux\textunderscore hash} son los 64 bits más significativos del resultado de la función hash \emph{SHA-1(auth\textunderscore key)}.\\
 	Si algo falla durante estos pasos, el cliente volvería al paso 6 y generándose un nuevo \emph{b}. Al mismo tiempo se define \emph{server\textunderscore salt} como \emph{substr(new\textunderscore nonce, 0, 8)} XOR \emph{substr(server\textunderscore nonce, 0, 8)}.\\
 	
 \end{enumerate}
@@ -235,12 +235,12 @@ El algoritmo sigue los siguientes pasos.
 	\item Calculamos \emph{msg\textunderscore key\textunderscore large} como \emph{SHA-256(substr(auth\textunderscore key, 88+x, 32)+plaintext+random\textunderscore padding)}.
 	\item Calculamos \emph{msg\textunderscore key} como \emph{substr(msg\textunderscore key\textunderscore large, 8, 16)}.
 	\item Calculamos \emph{sha256\textunderscore a} como \emph{SHA-256(msg\textunderscore key+substr(auth\textunderscore key, x, 36))}.
-	\item Calculamos \emph{sha256\textunderscore b} como \emph{SHA-256(substr(auth\textunderscore key, 40+x, 36)+msg\textunderscore key)}
+	\item Calculamos \emph{sha256\textunderscore b} como \emph{SHA-256(substr(auth\textunderscore key, 40+x,\\ 36)+msg\textunderscore key)}.
 \end{enumerate}
 Y una vez hechos estos pasos, ya podemos calcular la clave para AES y el vector de inicialización.
 \begin{itemize}
-	\item \textbf{\emph{aes\textunderscore key}}: \emph{substr(sha256\textunderscore a, 0, 8)+substr(sha256\textunderscore b, 8, 16)+substr(sha256\textunderscore a, 24, 8)}.
-	\item \textbf{\emph{aes\textunderscore iv}}: \emph{substr(sha256\textunderscore b, 0, 8) + substr(sha256\textunderscore a, 8 16)+substr(sha256\textunderscore b, 24, 8)}.
+	\item \textbf{\emph{aes\textunderscore key}}: \emph{substr(sha256\textunderscore a, 0, 8)+substr(sha256\textunderscore b, 8, 16)+\\+substr(sha256\textunderscore a, 24, 8)}.
+	\item \textbf{\emph{aes\textunderscore iv}}: \emph{substr(sha256\textunderscore b, 0, 8) + substr(sha256\textunderscore a, 8 16)+\\+substr(sha256\textunderscore b, 24, 8)}.
 \end{itemize}
 \emph{x} vale 0 cuando los mensajes van del cliente al servidor y 8 cuando los mensajes van del servidor al cliente.\\
 Los 1024 bits menos significativos de la \emph{auth\textunderscore key} no se utilizan para el cálculo ya que estos se usan para cifrar la copia local de los datos recibidos del servidor además, los 512 bits menos significativos no se almacenan en el servidor por lo que si el cliente pierde la clave o la contraseña del dispositivo, no se podrán descifrar los datos locales. Un esquema del proceso se puede ver en \ref{mtproto2}.
@@ -335,16 +335,15 @@ Etapa inicial consistente en añadir dispositivos asociados al cliente, como se 
 		\item El dispositivo principal genera una firma de la cuenta para el compañero, $$A_{signature}=CURVE25519\textunderscore SIGN(I_{primary} || L_{metadata} || I_{companion}).$$
 		\item El dispositivo principal genera una firma para la lista de dispositivos que permitirá actualizar la propia lista de dispositivos. $$ListSignature = CURVE25519\textunderscore SIGN(I_{primary}, 0x0602 || ListData).$$
 		\item El dispositivo principal agrupa los datos de la vinculación en $L_{data}$, conteniendo este $L_{metadata}$, $I_{primary}$ y $A_{signature}$.
-		\item El dispositivo principal genera una \emph{HMAC} para la vinculación y una \emph{PHMAC} que será igual a $HMAC-SHA256(L_{companion}, L_{data})$. Una vez hecho esto enviará \emph{ListData}, \emph{ListSignature}, $L_{data}$ y la \emph{PHMAC} al servidor.
+		\item El dispositivo principal genera una \emph{HMAC} para la vinculación y\\ una \emph{PHMAC} que será igual a $HMAC-SHA256(L_{companion}\\, L_{data})$. Una vez hecho esto enviará \emph{ListData}, \emph{ListSignature}, $L_{data}$ y la \emph{PHMAC} al servidor.
 		\item El servidor almacena \emph{ListData} y \emph{ListSignature} y reenvía $L_{data}$ y la \emph{PHMAC} al dispositivo compañero.
 		\item El dispositivo compañero  verfica la \emph{PHMAC}, decodifica \emph{Ldata} en \emph{Lmetadata}, \emph{Iprimary} y \emph{Asignature} verificando esta última.
 		\item El dispositivo compañero almacena $L_{metadata}$ e $I_{primary}$ en el disco.
-		\item A continuación este genera una firma del dispositivo por si mismo que es de la forma 
+		\item A continuación este genera una firma del dispositivo por si mismo que es de la forma\\ 
 		\begin{aligned}
 			D_{signature}=CURVE25519\textunderscore SIGN(I_{companion}, 0x0601 || \\ || L_{metadata} || I_{companion} || I_{primary}).
 		\end{aligned}
-
-		\item El dispositivo compañero sube al servidor de WhatsApp $L_{metadata}$, $A_{signature}$, $D_{signature}$, $I_{companion}$, la \emph{Signed Pre Key} pública del dispositivo firmada y un lote de \emph{Pre Keys} de un solo uso.
+		\item El dispositivo compañero sube al servidor de WhatsApp: $L_{metadata}$, $A_{signature}$, $D_{signature}$, $I_{companion}$, la \emph{Signed Pre Key} pública del dispositivo firmada y un lote de \emph{Pre Keys} de un solo uso.
 		\item El servidor almacena los datos subidos asociados con la identificación del usuario combinados con el identificador especifico del dispositivo.
 	\end{enumerate}
 \end{description}
@@ -363,8 +362,8 @@ Lo pasos que se siguen para establecer una conexión son los siguientes.
 \begin{enumerate}
 	\item El cliente que inicia la conexión solicita la \emph{identity key}, la \emph{Signed Pre key} y un lote de \emph{Pre keys} de un solo uso para cada dispositivo del receptor y los dispositivos adicionales que el mismo posee excluyendo el dispositivo desde el que se inicia la conexión. 
 	\item El servidor devuelve todo lo solicitado y elimina las \emph{Pre keys} enviadas ya que son de un solo uso. Sí el último lote de \emph{Pre keys} enviado es agotado y el receptor no los ha repuesto no se devuelve ninguna clave. Además, por cada dispositivo compañero que haya tanto del emisor como del receptor, el servidor devuelve $L_{metadata}$, $A_{signature}$ y $D_{signature}$ que fueron enviadas por el dispositivo compañero cuando se vinculó.
-	\item Por cada conjunto de claves devueltas, el emisor tiene que verificar\\ \emph{Asignature} con $CURVE25519\textunderscore VERIFY \textunderscore SIGNATURE(I_{primary}, 0x0600 || L_{metadata} || I_{companion})$.\\
-	$D_{signature}$ es obtenida con \emph{CURVE25519\textunderscore VERIFY\textunderscore SIGNATURE(I_{companion},0x0601 ||\\ L_{metadata} || I_{companion} || I_{primary})}.\\
+	\item Por cada conjunto de claves devueltas, el emisor tiene que verificar \emph{Asignature} con\\ $CURVE25519\textunderscore VERIFY \textunderscore SIGNATURE(I_{primary}, 0x0600 || L_{metadata}\\ || I_{companion})$.\\
+	$D_{signature}$ es obtenida con\\ $CURVE25519\textunderscore VERIFY\textunderscore SIGNATURE(I_{companion},0x0601 ||\\ L_{metadata} || I_{companion} || I_{primary})$.
 	Si en algún momento la verificación falla, el emisor termina la sesión de cifrado y no envía ningún mensaje al dispositivo que ha fallado.
 \end{enumerate}
 Una vez obtenidas las claves del servidor y se ha verificado la identidad, el emisor inicia la sesión de encriptación con cada dispositivo individualmente. Para ello se siguen los siguientes pasos:
@@ -372,7 +371,7 @@ Una vez obtenidas las claves del servidor y se ha verificado la identidad, el em
 	\item El emisor almacena la \emph{Identity Key} del receptor como $I_{recipient}$, la \emph{Signed Pre Key} como $S_{recipient}$ y la \emph{Pre Key} de un solo uso como $O_{recipient}$.
 	\item El emisor genera un par de pares de claves efímeras \emph{Curve25519} llamada $E_{initiator}$.
 	\item El emisor carga su propia \emph{Identity Key} como $I_{initiator}$.
-	\item El emisor calcula el \emph{master\textunderscore secret} como 
+	\item El emisor calcula el \emph{master\textunderscore secret} como \\
 	\begin{aligned}
 			master\textunderscore secret = ECDH(I_{initiator}, S_{recipient}) || ECDH(E_{initiator}, I_{recipient})||\\ || ECDH(E_{initiator}, S_{recipient}) || ECDH(E_{initiator}, O_{recipient}). &
 	\end{aligned}
@@ -387,7 +386,7 @@ Una vez que la sesión se ha establecido, los clientes intercambian los mensajes
 La \emph{Message Key} se genera:
 \begin{enumerate}
 	\item $Message Key = HMAC$-$SHA256(Chain Key, 0x01)$.
-	\item La \emph{Chain Key} es actualizada, $Chain Key = HMAC$-$SHA256(Chain Key, 0x02)$.
+	\item La \emph{Chain Key} es actualizada como \\ $Chain Key = HMAC$-$SHA256(Chain Key, 0x02)$.
 \end{enumerate}
 Este último paso hace que la \emph{Chain key} cambie haciendo imposible que con una \emp{Message Key} antigua se obtenga la \emph{Chain Key} actual.
 
