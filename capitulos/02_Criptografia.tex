@@ -213,12 +213,12 @@ Los distintos modos usados en los cifrados de bloque son:\\
 \newpage
 
 	\item \textbf{Galois Counter Mode (GCM)}\\
-	Modo en el cual se usa un función hash universal sobre un cuerpo de Galois binario que provee de una autentica encriptación. La información de este modo ha sido obtenida de \cite{gcm}.
+	Modo en el cual se usa un función hash universal sobre un cuerpo de Galois binario que provee de una autentica encriptación además de una método de validar los mensajes. La información de este modo ha sido obtenida de \cite{gcm}.
 		Para cifrar en este modo partimos de una entrada con 4 elementos. 
 		\begin{itemize}
 			\item \emph{K} que es una clave secreta.
 			\item \emph{IV} vector inicial que puede tener un número de bits entre 1 y $2^{64}$.
-			\item \emph{P} texto plano que puede tener un número de bits contenido entre 0 y $2^{39}-256$.
+			\item \emph{M} texto plano que puede tener un número de bits contenido entre 0 y $2^{39}-256$.
 			\item \emph{AAD} datos de autentificación adicionales, \emph{Additional Authenticated Data}, que puede tener un tamaño entre 0 y $2^{64}$ bits.
 		\end{itemize}
 		Y en la salida devuelve $C$ que es el texto encriptado y una autentificación $T$.\\
@@ -239,13 +239,14 @@ Los distintos modos usados en los cifrados de bloque son:\\
 			\item Para $i\in\{1,\dots,n-1\}$ hacer
 			\begin{description}
 				\item $Y_i=incr(Y_{i-1})$
-				\item $C_i=P_i\oplus E(Y_i)$
+				\item $C_i=M_i\oplus E(Y_i)$
 			\end{description}
 			\item $Y_n=incr(Y_{n-1})$
-			\item $C_n=P_n\oplus MSB_u(E(Y_n))$
+			\item $C_n=M_n\oplus MSB_u(E(Y_n))$
 			\item $T=MSB_t(GHASH(H,A,C)\oplus E(Y_0))$
+			\item Devolvemos $C=C_1,\dots, C_n$ y $T$
 		\end{description}
-		Donde $C=C_1,\dots, C_n$, $A=A_1,\dots,A_m$, $incr(F||I)= F||(I+1\mod 2^{32})$ y la función $GHASH(H,A,C)$ equivale a calcular $X_{m+n+1}$. $X_i$ es una variable que se calcula como  
+		Donde $A=A_1,\dots,A_m$, $incr(F||I)= F||(I+1\mod 2^{32})$ y la función $GHASH(H,A,C)$ equivale a calcular $X_{m+n+1}$. $X_i$ es una variable que se calcula como  
 		
 		\begin{equation}
 		  X_i =
@@ -275,13 +276,14 @@ Los distintos modos usados en los cifrados de bloque son:\\
 			\item Para $i\in\{1,\dots,n-1\}$ hacer
 			\begin{description}
 				\item $Y_i=incr(Y_{i-1})$
-				\item $P_i=C_i\oplus E(Y_i)$
+				\item $M_i=C_i\oplus E(Y_i)$
 			\end{description}
 			\item $Y_n=incr(Y_{n-1})$
-			\item $P_n=C_n\oplus MSB_u(E(Y_n))$
-			\item $T=MSB_t(GHASH(H,A,C)\oplus E(Y_0))$
+			\item $M_n=C_n\oplus MSB_u(E(Y_n))$
+			\item Devolvemos $M=M_1,\dots,M_n$ y T'
 		\end{description}
-		Si T y T' coinciden entonces se devuelve el texto descifrado. Si no coinciden, entonces el texto no se devuelve ya que eso implicaría que el mensaje ha sido manipulado.
+		Si T y T' coinciden entonces se devuelve el texto descifrado. Si no coinciden, entonces el texto no se devuelve ya que esto implicaría que el mensaje ha sido manipulado.
+	\newpage
 	\end{itemize}
 		\begin{figure}[htb]
 			\centering
@@ -291,7 +293,7 @@ Los distintos modos usados en los cifrados de bloque son:\\
 		\end{figure}
 \end{itemize}
 %\newpage
-Como podemos ver, el más sencillo es ECB ya que lo único que hace es fragmentar el mensaje en bloques y encriptar individualmente cada bloque. En CBC, CFB, OFB y GCM se parte de un bloque inicial y se generan bloques nuevos de manera recursiva operando con ellos de manera distinta en función de cada modo.\\ 
+Como podemos ver, el modo más sencillo es ECB ya que lo único que hace es fragmentar el mensaje en bloques y encriptar individualmente cada bloque. En CBC, CFB, OFB y GCM se parte de un bloque inicial y se generan bloques nuevos de manera recursiva operando con ellos de manera distinta en función de cada modo.\\ 
 En CBC se realiza la operación $\oplus$ de cada bloque generado encriptándose el bloque cifrado previo a esta con un bloque del mensaje, los nuevos bloques son los resultados de la operación anterior.\\
 En CFB se coge el bit menos significativo resultante de encriptar el bloque generado previo y se hace la operación $\oplus$ con cada bloque del mensaje. Para generar un nuevo bloque se combina el mensaje cifrado previo con el bit menos significativo del conjunto de bits $N-r$ del bloque generado anterior con la operación $||$.\\
 En OFB se realiza la operación $\oplus$ de el resultado de encriptar el bloque generado previo con un bloque del mensaje.\\
