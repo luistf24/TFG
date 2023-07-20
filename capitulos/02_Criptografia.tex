@@ -209,15 +209,94 @@ Los distintos modos usados en los cifrados de bloque son:\\
 			\caption{Esquema del cifrado y descifrado del modo OFB \cite{cifradobloque}.}
 			\label{esquemaofb}
 		\end{figure}
-\end{itemize}
+
 \newpage
-Como podemos ver, el más sencillo es ECB ya que lo único que hace es fragmentar el mensaje en bloques y encriptar individualmente cada bloque. En CBC, CFB y OFB se parte de un bloque inicial y se generan bloques nuevos de manera recursiva operando con ellos de manera distinta en función de cada modo.\\ 
+
+	\item \textbf{Galois Counter Mode (GCM)}\\
+	Modo en el cual se usa un función hash universal sobre un cuerpo de Galois binario que provee de una autentica encriptación. La información de este modo ha sido obtenida de \cite{gcm}.
+		Para cifrar en este modo partimos de una entrada con 4 elementos. 
+		\begin{itemize}
+			\item \emph{K} que es una clave secreta.
+			\item \emph{IV} vector inicial que puede tener un número de bits entre 1 y $2^{64}$.
+			\item \emph{P} texto plano que puede tener un número de bits contenido entre 0 y $2^{39}-256$.
+			\item \emph{AAD} datos de autentificación adicionales, \emph{Additional Authenticated Data}, que puede tener un tamaño entre 0 y $2^{64}$ bits.
+		\end{itemize}
+		Y en la salida devuelve $C$ que es el texto encriptado y una autentificación $T$.\\
+		Una vez visto la entrada y la salida, el algoritmo de cifrado y descifrado quedarían como sigue.
+		\newpage
+	\begin{itemize}
+		\item \textbf{\emph{Cifrado GCM}}
+		\begin{description}
+			\item $H=E(0^{128})$
+			\item Si $len(IV)=96$
+			\begin{description}
+				\item $Y_0=IV||0^{31}1$
+			\end{description}
+			\item si no
+			\begin{description}
+				\item $Y_0=GHASH(H,\{\},IV)$
+			\end{description}
+			\item Para $i\in\{1,\dots,n-1\}$ hacer
+			\begin{description}
+				\item $Y_i=incr(Y_{i-1})$
+				\item $C_i=P_i\oplus E(Y_i)$
+			\end{description}
+			\item $Y_n=incr(Y_{n-1})$
+			\item $C_n=P_n\oplus MSB_u(E(Y_n))$
+			\item $T=MSB_t(GHASH(H,A,C)\oplus E(Y_0))$
+		\end{description}
+		Donde $C=C_1,\dots, C_n$, $A=A_1,\dots,A_m$, $incr(F||I)= F||(I+1\mod 2^{32})$ y la función $GHASH(H,A,C)$ equivale a calcular $X_{m+n+1}$. $X_i$ es una variable que se calcula como  
+		
+		\begin{equation}
+		  X_i =
+			\begin{cases}
+				0 & \text{si } i= 0, \\
+				(X_{i-1}\oplus A_i)\cdot H & \text{si } i\in\{1,\dots,m-1\}, \\
+				(X_{m-1}\oplus(A_m||0^{128-v}))\cdot H & \text{si } i= m, \\
+				(X_{i-1}\oplus C_i)\cdot H & \text{si } i\in\{m+1,\dots,m+n-1\}, \\
+				(X_{m+n-1}\oplus(C_m||0^{128-u}))\cdot H & \text{si } i= m+n, \\
+				(X_{m+n}\oplus(len(A)||len(C)))\cdot H & \text{si } i=m+n+1.
+			\end{cases}       
+			\notag
+		\end{equation}
+
+		\item \textbf{\emph{Descifrado GCM}}
+		\begin{description}
+			\item $H=E(0^{128})$
+			\item Si $len(IV)=96$
+			\begin{description}
+				\item $Y_0=IV||0^{31}1$
+			\end{description}
+			\item si no
+			\begin{description}
+				\item $Y_0=GHASH(H,\{\},IV)$
+			\end{description}
+			\item $T^{'}=MSB_t(GHASH(H,A,C)\oplus(Y_0))$
+			\item Para $i\in\{1,\dots,n-1\}$ hacer
+			\begin{description}
+				\item $Y_i=incr(Y_{i-1})$
+				\item $P_i=C_i\oplus E(Y_i)$
+			\end{description}
+			\item $Y_n=incr(Y_{n-1})$
+			\item $P_n=C_n\oplus MSB_u(E(Y_n))$
+			\item $T=MSB_t(GHASH(H,A,C)\oplus E(Y_0))$
+		\end{description}
+		Si T y T' coinciden entonces se devuelve el texto descifrado. Si no coinciden, entonces el texto no se devuelve ya que eso implicaría que el mensaje ha sido manipulado.
+	\end{itemize}
+		\begin{figure}[htb]
+			\centering
+			\includegraphics[scale=0.4]{imagenes/cgc.png} 
+			\caption{Esquema del cifrado y descifrado del modo GCM \cite{gcm}.}
+			\label{esquemaofb}
+		\end{figure}
+\end{itemize}
+%\newpage
+Como podemos ver, el más sencillo es ECB ya que lo único que hace es fragmentar el mensaje en bloques y encriptar individualmente cada bloque. En CBC, CFB, OFB y GCM se parte de un bloque inicial y se generan bloques nuevos de manera recursiva operando con ellos de manera distinta en función de cada modo.\\ 
 En CBC se realiza la operación $\oplus$ de cada bloque generado encriptándose el bloque cifrado previo a esta con un bloque del mensaje, los nuevos bloques son los resultados de la operación anterior.\\
 En CFB se coge el bit menos significativo resultante de encriptar el bloque generado previo y se hace la operación $\oplus$ con cada bloque del mensaje. Para generar un nuevo bloque se combina el mensaje cifrado previo con el bit menos significativo del conjunto de bits $N-r$ del bloque generado anterior con la operación $||$.\\
-Y en OFB se realiza la operación $\oplus$ de el resultado de encriptar el bloque generado previo con un bloque del mensaje.\\
-Actualmente el más utilizado en las aplicaciones de mensajería es el modo CBC. Esto es debido a que es relativamente fácil de implementar y además permite encriptar en paralelo.
-
-
+En OFB se realiza la operación $\oplus$ de el resultado de encriptar el bloque generado previo con un bloque del mensaje.\\
+Y en GCM lo que se hace es fragmentar el mensaje y operar con los fragmentos de manera recursiva usando una función hash universal (\emph{GHASH}) con el primer bloque, además se realiza una operación paralela que se almacena en $T$ para certificar la integridad del mensaje.\\
+Actualmente el más utilizado en las aplicaciones de mensajería es el modo CBC. Esto es debido a que es relativamente fácil de implementar y además permite encriptar en paralelo. Si bien, está empezando a utilizarse el modo GCM ya que implementado en hardware permite unas velocidades muy altas de encriptado llegando incluso a poder encriptar 10 GB por segundo. Un ejemplo de ello es la aplicación Line, que en su segunda versión incorpora este modo. 
 
 \section{Criptosistema asimétrico}
 Un criptosistema asimétrico es un criptosistema en el cual se utilizan dos claves, una para cifrar el mensaje y otra para descifrarlo. La clave para cifrar es la que se conoce como \emph{clave pública}, mientras que la que se utiliza para descifrar es la \emph{clave privada}. Estos criptosistemas surgieron para paliar la debilidad de los criptosistemas simétricos, que es que la clave que cifra y descifra se tiene que compartir, pudiendo esta ser interceptada.  
