@@ -398,9 +398,9 @@ Cada vez que un mensaje es enviada una clave pública efímera \emph{Curve25519}
 \end{enumerate}
 
 \section{iMessage}
-En esta sección hablaré sobre los criptosistemas utilizados en la aplicación de mensajería de Apple llamada iMessage.\\
 iMessage es una aplicación de mensajería diseñada para ser utilizada en dispositivos iOS, iPadOS, Apple Watch y ordenadores con MacOS. Esta aplicación permite enviar mensajes de texto, y archivos como pueden ser fotos, contactos, ubicaciones etc. La información para este apartado ha sido obtenido mayormente de \cite{apple2} y \cite{apple1}.\\
 
+\subsubsection{Funcionamiento criptográfico}
 Para iniciar una nueva conversación a partir de una dirección o un nombre. En caso de usar un número de teléfono o una dirección de correo electrónico, la aplicación contacta con el servicio de identidad de Apple (\emph{IDS}). Este es un directorio de claves públicas de iMessage, direcciones del servicio de notificaciones push de Apple (APNs), números de teléfono y direcciones de correo electrónico usadas para obtener las claves y direcciones de los dispositivos \cite{ids}. Una vez que se pone en contacto con este se obtienen las claves públicas y las direcciones APNs de todos los dispositivos asociados al destinatario.\\
 Una vez obtenidas las claves, el mensaje que se envía es encriptado de manera individual para cada uno de los dispositivos del destinatario. Tanto las claves públicas usadas como las clases de firmas se obtienen del IDS. El emisor genera un valor aleatorio de 88bits para cada dispositivo de destino del destinatario y este es utilizado como clave \emph{HMAC-SHA256} para crear una valor de 40 bits a partir de la clave pública del emisor, receptor y del texto sin formato. Los 88 bits generados aleatoriamente se combinan con los 40 bits obtenidos para formar una clave de 128 bits para encriptar el mensaje usando el estándar AES en modo contador (CTR).\\
 El dispositivo receptor usa el valor de 40 bits para comprobar la integridad del texto sin formato una vez que este es desencriptado.\\
@@ -422,3 +422,88 @@ En el siguiente esquema se puede ver resumido el proceso de encriptado y desencr
 \end{figure}
 
 Al igual que en las notificaciones push, los mensajes son eliminados del APNs una vez que se envían. Si es verdad que a diferencia de otras notificaciones que se envían del APNs, los mensajes se guardan en una cola para enviarlos a dispositivos sin conexión. Esto permite almacenar los mensajes en un plazo de 30 días máximo permitiendo así que un mensaje llegue tiempo después a un dispositivo que esta sin conexión.
+
+\section{Line Messenger (Letter Sealing)}
+Line es una aplicación de mensajería diseñada para ser utilizadas en dispositivos móviles y ordenadores independientemente del sistema operativo. Fue diseñada en 2011 por la empresa surcoreana NHN en Japón.
+Apareció con la finalidad de paliar la caída de los servicios de telefonía en Japón debido al terremoto. Utiliza un protocolo criptográfico criptográfico propio llamado \emph{Letter Sealing}.\\
+Este protocolo apareció en 2016 y en la actualidad cuenta con dos versiones.
+\begin{itemize}
+	\item \textbf{Letter Sealing v1}. Fue desarrollado en 2016 y garantiza una protección extremo a extremo en mensajes individuales y en grupo.
+	\item \textbf{Letter Sealing v2}. Fue desarrollado en 2019. Gracias a un \emph{Bug Bounty  Program}, iniciativa por la cual se recompensa a las personas que descubren y notifican errores de software,  desarrollado por Takanori Isobe y Kazuhiko Minematsu se encontraron una serie de vulnerabilidades que aunque en ese momento no eran explotables, en un futuro si podrían llegar a serlo. Por ello se decidió desarrollar una nueva versión de este que garantizara una mayor seguridad.
+\end{itemize}
+La información para esta sección ha sido obtenida de \cite{line}.
+\begin{table}[htb]
+\resizebox{\textwidth}{!}{%
+	\begin{tabular}{|c|cc|}
+	\hline
+                             & \multicolumn{1}{c|}{\textbf{v1}}                       & \textbf{v2}          \\ \hline
+		Intercambio de claves       & \multicolumn{2}{c|}{ECDH sobre Curve255195}                  \\ \hline
+		Algoritmo para encriptar mensajes & \multicolumn{1}{c|}{AES256-CBC}               & AES256-GCM6 \\ \hline
+		Función Hash del mensaje        & \multicolumn{1}{c|}{SHA-256}                  & N/A         \\ \hline
+		Autenticación de los mensajes        & \multicolumn{1}{c|}{AES-ECB con SHA-256 MAC} & AES256-GCM  \\ \hline
+	\end{tabular}
+	}
+	\label{table:lsv}
+	\caption{Tabla comparativa de versiones de Letter Sealing.}
+\end{table}
+
+\subsection{Generación de claves}
+Al igual que en las aplicaciones de mensajería vistas, en \emph{Letter Sealing} se generan un par de claves por cada dispositivo del usuario. Si no existe ninguna en el dispositivo, se genera un par y se almacenan de manera segura en el almacenamiento privado de la aplicación.\\
+Una vez generadas la clave pública se registra en un servidor de LINE, el servidor la asocia la clave al usuario de LINE y le devuelve un \emph{ID} de clave único. Este \emph{ID} representa la última versión de clave pública del usuario. 
+
+\subsection{Intercambio de claves}
+Para poder intercambiar mensajes utilizando \emph{AES-256} los usuarios tienen que intercambiar previamente una clave secreta para poder cifrar los mensajes. Para ello se utiliza el intercambio de claves \emph{Diffie-Hellman} sobre la familia de curvas \emph{curve25519} como hemos visto en el capítulo 4.\\
+Todo el proceso es transparente para los usuarios y no se necesita de otro elemento para verificar las claves públicas. Esto se debe a que LINE permite a los usuarios ver las huellas de sus recipientes de clave pública.
+
+\subsection{Cifrado de mensajes}
+El funcionamiento de cifrado de mensajes en \emph{Letter Sealing v2} es el siguiente.
+\begin{enumerate}
+	\item Se deriva una clave para el cifrado usando dos valores, la clave secreta intercambiada durante el intercambio de claves (\emph{SharedSecret}) y valor aleatorio de 16 bytes generado aleatoriamente.
+		$$
+			salt = random_{secure}(16).
+		$$
+		$$
+			Key_{encrypt}=SHA256(SharedSecret||salt||"Key").
+		$$
+	\item Se calcula \emph{nonce} concadenando 8 bytes por cada contador de chat ($per\textunderscore chat_{counter}$) con 4 bytes generados aleatoriamente.
+		$$
+			nonce[12]=per\textunderscore chat_{counter}[8] || random_{secure}(4).
+		$$
+	\item Se encripta el payload (\emph{M}) del mensaje usando \emph{AES256-GCM}, usando $Key_{encrypt}$ y $nonce$. En \emph{Letter Sealing v2} se añade unos metadatos al mensaje (\emph{AAD}) para reforzar la integridad del mensaje. Se calcula de la siguiente manera.
+		$$
+			ADD =
+		$$
+		$$
+			 recipientID\:||\: senderID\:||\:senderkeyID\:||\:recipientkeyID\:||\:version\:||\:contenttype.
+		$$
+		También se utiliza una función llamada \emph{GCM} que es un esquema \emph{AEAD}, \emph{Authenticated Encryption with Associated Data} que garantiza la integridad y confidencialidad del mensaje. La salida del cifrado sería la siguiente.
+		$$
+			(C,tag) = AES - GCM(Key_{encrypt}, nonce, M, AAD).
+		$$
+	\item Una vez seguidos estos pasos el emisor envía al receptor un mensaje que consta de los siguientes elementos.\\
+	\begin{itemize}
+		\item \emph{version},
+		\item \emph{content type},
+		\item \emph{salt},
+		\item $C||tag$,
+		\item \emph{nonce},
+		\item \emph{sender key ID},
+		\item \emph{recipient key ID}.
+	\end{itemize}
+\end{enumerate}
+Donde 
+\begin{description}
+	\item \textbf{Version, Content type} sirven para indentificar la version de \emph{Letter Sealing} que se ha utilizado.
+	\item \textbf{Sender Key ID} es utilizada por el receptor del mensaje para recuperar la clave pública usada en el cifrado del mensaje.
+	\item \textbf{Recipient key ID} es utilizada para verificar que el mensaje puede se desencriptado usando la clave privada actual.
+\end{description}
+
+\subsection{Descifrado de mensajes}
+Una vez recibido el mensaje, el receptor lo desencripta siguiendo los siguientes pasos.
+\begin{enumerate}
+	\item Deriva una clave de cifrado usando \emph{SharedSecret} compartido previamente y \emph{Salt} del mensaje.
+	\item Descifra el mensaje usando \emph{AES-GCM}.
+	\item Aporta metadatos al mensaje como \emph{AAD} (\emph{Additional Uthenticated Data}).
+	\item Si la etiqueta, \emph{tag}, coincide con la que se ha generado desencriptando el mensaje, el receptor imprime el mensaje. Si no coincide, el receptor como medida de seguridad no lo imprime.
+\end{enumerate}
+
