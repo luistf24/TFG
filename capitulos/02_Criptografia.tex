@@ -332,55 +332,59 @@ Para que un criptosistema asimétrico sea seguro tenemos que garantizar:
 \end{itemize}
 
 \section{El cuerpo de Galois $\operatorname{GF}(2^n)$}
-Tanto para explicar el funcionamiento de las rondas de AES como para desarrollar la teoría de Curvas Elípticas en $\operatorname{GF}(2^n)$ es necesario introducir el cuerpo $\operatorname{GF}(2^n)$. El cual debido a las propiedades que tiene es muy utilizado en criptografía.\\
+Tanto para explicar el funcionamiento de las rondas de AES como para desarrollar la teoría de Curvas Elípticas en $\operatorname{GF}(2^n)$ es necesario introducir el cuerpo $\operatorname{GF}(2^n)$, el cual debido a las propiedades que tiene es muy utilizado en criptografía.\\
 Sea $\mathbb{Z}_2[x]$ el conjunto de polinomios con coeficientes en $\mathbb{Z}_2$, es decir, el conjunto de polinomios cuyos coeficientes solo valen 0 ó 1. Así los polinomios pueden ser representados por una cadena de bits.
  Un ejemplo sería el polinomio $f(x)=x^4+x^3+x+1$ que quedaría representado como 11011. 
 Además si lo sumamos con otro polinomio como puede ser $g(x)=x^2+x+1$, tenemos que $f(x)+g(x)=x^4+x^3+x^2$, que equivale a hacer la operación XOR entre 11011 y 00111, por lo que a nivel computacional, es muy fácil implementar estas operaciones.\\
 Podemos definir el cuerpo $\operatorname{GF}(2^n)$ como $\mathbb{Z}_2[x]/(a(x))$, con $a(x)$ un polinomio irreducible en $\mathbb{Z}/(a(x))$. Tenemos que la existencia del inverso de cualquier polinomio no nulo está asegurada por el algoritmo Extendido de Euclídes.\\ 
-Principalmente se trabaja con $\operatorname{GF}(2^n)$ debido a que la implementación de las operaciones de este es más sencilla que la implementación en las que se utilizan otros cuerpos. Ya que como hemos visto, es muy fácil implementar las operaciones. Por lo que teniendo el mismo orden de complejidad, se multiplica la velocidad permitiendo obtener sistemas con mejores prestaciones.\\
-A continuación presentaré el cuerpo $\operatorname{GF}(2^8)$ ya que será necesario para entender adecuadamente las operaciones utilizadas en AES. La información ha sido obtenida de \cite{criptografia} y \cite{dem1}.\\
+Principalmente se trabaja con $\operatorname{GF}(2^n)$ debido a que la implementación de las operaciones de este es más sencilla que la implementación en las que se utilizan otros cuerpos. Esta sencillez de implementación se traduce en unos algoritmos con tiempos de ejecución menores a pesar de tener el mismo orden de complejidad.\\
+A continuación presentaré el cuerpo $\operatorname{GF}(2^8)$, ya que será necesario para entender adecuadamente las operaciones utilizadas en AES. La información ha sido obtenida de \cite{criptografia} y \cite{dem1}.\\
 Tenemos que $\operatorname{GF}(2^8)=\mathbb{F}_{256}$ por lo que por comodidad trabajaremos con este último.\\
-Por definición tenemos que para $p$ número primo y $n$ se define el cuerpo $\mathbb{F}_{p^n}$ al único cuerpo existente con $p^n$ elementos. En particular para trabajar con $\mathbb{F}_{256}$ tomamos $p=2$ y $n=8$.\\
+Por definición tenemos que para $p$ número primo y $n$ un entero primitivo se define el cuerpo $\mathbb{F}_{p^n}$ al único cuerpo existente con $p^n$ elementos. En particular para trabajar con $\mathbb{F}_{256}$ tomamos $p=2$ y $n=8$.\\
 Para construir $\mathbb{F}_{256}$ necesitamos un polinomio de grado 8, con coeficientes en $\mathbb{Z}_2$ y que sea irreducible. En total hay 30 polinomios con esas características donde algunos de ellos son 
 $x^8+x^4+x^3+x+1$, $\:x^8+x^4+x^3+x^2+1$, $x^8+x^5+x^3+x+1$, $x^8+x^5+x^3+x^2+1$, $x^8+x^5+x^4+x^3+1$, $x^8+x^5+x^4+x^3+x^2+x+1$ y $x^8+x^6+x^3+x^2+1$.\\ 
 Cabe a destacar que cualquiera de los polinomios serviría para definir $\mathbb{F}_{256}$ y además no habría ninguna diferencia en la seguridad en los criptosistemas que lo utilicen. 
-Para AES se tomó el polinomio $x^8+x^4+x^3+x+1$, por lo que a partir de ahora trabajaremos con $\mathbb{Z}_{2_{x^8+x^4+x^3+x+1}}[x]$.\\
-Los elementos que conformarán al cuerpo serán clases de equivalencia de polinomios  de grado menor que 8. Cada elemento podrá ser representado de tres formas distintas además de la forma polinomial, como número binario, número hexadecimal y número decimal. Por ejemplo el polinomio $x^5+x+1$ quedaría representado como $00100011$ de manera decimal, $23$ en hexadecimal y $35$ en decimal.\\
+Para AES se tomó el polinomio $x^8+x^4+x^3+x+1$, por lo que a partir de ahora trabajaremos con $\mathbb{Z}_2[x]_{a(x)}$ siendo $a(x)$ el polinomio $x^8+x^4+x^3+x+1$.\\
+Los elementos que conformarán este cuerpo serán clases de equivalencia de polinomios  de grado menor que 8. Cada elemento podrá ser representado de tres formas distintas además de la forma polinomial, como número binario, número hexadecimal y número decimal. Por ejemplo el polinomio $x^5+x+1$ quedaría representado como $00100011$ de manera decimal, $23$ en hexadecimal y $35$ en decimal.\\
 Al ser $\mathbb{F}_{256}$ un cuerpo tenemos que tiene dos operaciones, la operación suma que representaremos como $+$ y la operación producto que representaremos como $\cdot$.\\
 La operación $+$ equivale a la suma en $\mathbb{Z}_2$ y usando la notación en binario, tendríamos que equivaldría con la operación XOR como ya he mencionado anteriormente. El opuesto para la suma de un elemento equivalente a sí mismo por lo que no habría diferencia entre sumar por un número o por su apuesto, luego tendríamos que la suma es la misma operación que la resta.\\
-La operación $\cdot$  es mucho más compleja ya que en principio habría que realizar la operación en notación polinomial y luego calcular el resto de dividir por $x^8+x^4+x^3+x+1$. Para calcular el inverso tendríamos que utilizar el algoritmo extendido de Euclídes. Ambos algoritmos tienen una complejidad algorítmica importante, pero se puede reducir. A continuación desarrollaré unos resultados de cuerpos finitos que nos permitirá obtener unos métodos que reducirán mucho esa complejidad.\\
+La operación $\cdot$  es mucho más compleja ya que en principio habría que realizar la operación en notación polinomial y luego calcular el resto de dividir por $x^8+x^4+x^3+x+1$. Para calcular el inverso tendríamos que utilizar el algoritmo extendido de Euclídes. Ambos algoritmos tienen una complejidad algorítmica importante, pero se puede reducir. A continuación recordaré unos resultados de cuerpos finitos que nos permitirán obtener unos métodos que reducirán mucho esa complejidad.\\
 \begin{definicion}
 	Sea $K=\mathbb{F}_q$ un cuerpo finito $(q=p^n)$. Un elemento primitivo de $K$ es un elemento $\alpha$ que tiene $q-1$ potencias distintas.
 \end{definicion}
 
 \begin{teorema}
-	(Teorema Fundamental de los Grupos Abelianos) Todo grupo abeliano finito $G$ es isomorfo a un producto directo de grupo cíclicos de la forma
-	$$
-		\mathbb{Z}_{p^{\alpha_1}_1}\times \dots \times \mathbb{Z}_{p^{\alpha_n}_n},
-	$$
-	donde los $p_i$ son primos no necesariamente diferentes.
+	El orden de todo elemento $\alpha \in \mathbb{F}^*_q$ divide a $q-1$.
 \end{teorema}
+\begin{proof}
+		Veamos que $\alpha^{q-1}=1$. Para ello tomamos el producto de todos los elementos no nulos de $\mathbb{F}_q$ y multiplicando cada miembro por $\alpha$ tenemos que \[ \prod_{\beta_i \in \mathbb{F}^*_q}\alpha\beta_i=\alpha^{q-1}\prod_{\beta_i \in \mathbb{F}^*_q}\beta_i\]
+		ya que hay $q-1$ elementos en $\mathbb{F}^*_q$ y por tanto $\alpha^{q-1}=1$.\\
+		A continuación llamamos $d$ al orden de $\alpha$ y suponemos que no divide a $q-1$, entonces tenemos que existe $r\in\mathbb{N}$ tal que $q-1=cd+r$ y por tanto se cumple que $\alpha^r=\alpha^{q-1-cd}=1$ llegando a una contradicción con la minimalidad del orden de $d$.
+\end{proof}
 
 \begin{teorema}
-		Si $G$ es un subgrupo finito de $F^*$, el grupo multiplicativo de elementos no nulos de un cuerpo $F$, entonces $G$ es cíclico.
-\end{teorema}\vspace*{-7mm}
+	Todo cuerpo finito tiene un generador. Si $g$ es un generador de $\mathbb{F}^{*}_q$, entonces $g^j$ es también un generador si y sólo si $\operatorname{gcd}(j,q-1)=1$. En particular, hay $\phi(q-1)$ generadores distintos de $\mathbb{F}^*_q$.
+\end{teorema}
 \begin{proof}
-		Sea $G$ un subgrupo finito de $F^*$ de orden $n$. Por el Teorema Fundamental de Grupos Abelianos tenemos,
-		$$
-			G \cong \mathbb{Z}_{p^{e_1}_1}\times \dots \times \mathbb{Z}_{p^{e_k}_k},
-		$$
-		donde $n = p^{e_1}_1 \dots p^{e_k}_k$ y los $p_1, \dots, p_k$ son primos no necesariamente distintos. Sea $m$ el mínimo común múltiplo de $p^{e_1}_1 \dots p^{e_k}_k$. Entonces $G$ contiene un elemento de orden $m$. Como todo $\alpha$ en $G$ satisface $x^r-1$ para algún $r$ que divide a $m$, $\alpha$ debe también ser raíz de $x^m-1$. Como $x^m-1$ tienen a lo más $m$ raíces en $F$, $n\leq m$. Por otra parte, sabemos que $m\leq |G|$, por lo tanto, $m=n$. Luego $G$ contiene un elemento de orden $n$ y tiene que ser cíclico.\qedhere
+		Supongamos $\alpha \in \mathbb{F}^*_q$ con orden $n$. Veamos primero $\alpha^j$ tiene orden $d$ si y solamente si $\operatorname{gcd}(j,d)=1$.\\
+		Para ver que es condición necesaria tomamos un $j$ que verifique $\operatorname{gcd}(j, d)=d'$ con $d'$\textgreater$ 1$, tenemos que $a=\frac{d}{d'}$ y $b=\frac{j}{d'}$ son números enteros y además se cumple que $(\alpha^j)^a=(\alpha^d)^b=1$. Luego se cumple que el orden de $\alpha^j$ es $a$\textless $d$.\\
+		Veamos que también es condición suficiente.\\ Para ello tomamos un $j$ que verifique $\operatorname{gcd}(j,d)=1$ y supongamos que $\alpha^j$ tiene orden $k$\textless $d$. Como se cumple que $1=(\alpha^j)^k=(a^k)^j$ y $d$ es el orden de $\alpha$ tenemos que $(\alpha^k)^d=(a^d)^k=1^k=1$.\\
+		Por tanto, se cumple que  $(\alpha^k)^1=(\alpha^k)^{\operatorname{gcd}(j,d)}=(\alpha^k)^{uj}(\alpha^k)^{vd}=1$. Llegando así a una contradicción, ya que hemos supuesto que $\alpha$ no tiene orden $d$.\\
+		Luego tenemos que el orden de $\alpha^j$ es $d$.\\
+		Como las potencias de $\alpha,(\alpha,\alpha^2,\dots,\alpha^d=1)$ cumplen la ecuación $X^d=1$ y son raíces de las misma, se cumple que no hay más elementos con orden $d$. Luego $\mathbb{F}^*_q$ tiene $\phi(d)$ elementos distintos de orden $d$.\\
+		Por último vamos a ver la existencia de un generador $g$ de $\mathbb{F}_q^*$.\\
+		Sabemos que la función \emph{phi de Euler} cumple en $q-1$ que $\sum_{d|q-1}\phi(d)=q-1$ y como se cumple que todo elemento de $\mathbb{F}^*_q$ tiene un orden $d$ divisor de $q-1$, necesariamente existen elementos de $\mathbb{F}^*_q$ con orden $d$ para todo $d|q-1$ y en particular se cumple la hipótesis del enunciado.
 \end{proof}
 
 \begin{corolario}
 		El grupo multiplicativo de todos los elementos no nulos de un cuerpo finito es cíclico.
 \end{corolario}
 
-Por lo que si $\alpha$ es un elemento primitivo de $\mathbb{F}_q$, los $q-1$ elementos de la forma\\
+Si $\alpha$ es un elemento primitivo de $\mathbb{F}_q$, los $q-1$ elementos de la forma\\
 $$
 	\alpha^0=1,\;\; \alpha^1=\alpha,\;\dots\; ,\alpha^{q-2}
 $$
-serán todos independientes, es decir, distintos y no nulos. Por tanto serán todos los elementos no nulos de $\mathbb{F}_q$. Además, se verifica que $\alpha^{q-1}=\alpha^0$ por lo que para cualquier $n \in \mathbb{Z}$ se cumple que $\alpha^n=\alpha^{n\mod q-1}$.\\
+serán todos distintos y no nulos. Por tanto serán todos los elementos no nulos de $\mathbb{F}_q$. Además, se verifica que $\alpha^{q-1}=\alpha^0$ por lo que para cualquier $n \in \mathbb{Z}$ se cumple que $\alpha^n=\alpha^{n\mod q-1}$.\\
 
 \begin{teorema}
 	Todo cuerpo finito tiene al menos un elemento primitivo.
