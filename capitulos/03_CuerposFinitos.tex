@@ -4,11 +4,68 @@ En este capítulo presentaré la teoría necesaria de aritmética modular y de c
 \section{Aritmética modular}
 La aritmética modular es una de las piezas fundamentales de la criptografía y es especialmente importante en algoritmos como RSA. A continuación voy presentar unos resultados  que serán relevantes a la hora de explicar los distintos algoritmos utilizados.
 \begin{definicion}
-Se conoce a la función $\phi(n)$ como la función de Euler. Esta es definida como $\phi(n)=|\mathbb{Z}^*_n|$ y se puede calcular como $$\phi(n)=n\prod_{p_i|n}\left(1-\frac{1}{p_i}\right).$$
+		Una función aritmética $f$ se dice que es multiplicativa si $f(mn)=f(m)(n)$ para cualesquiera enteros positivos que verifiquen $\operatorname{mcd}(n,m)=1$.
 \end{definicion}
+\begin{definicion}
+	Se define como función de Moebius a la función
+		\begin{equation}
+		  \mu(n) =
+			\begin{cases}
+				1 & \text{si } n= 1, \\
+				(-1)^k & \text{si } n \text{ es el producto de k primos distintos }, \\
+				0 & \text{si } n \text{ tiene algún divisor cuadrado mayor que 1 }.
+			\end{cases}       
+			\notag
+		\end{equation}
+\end{definicion}
+\begin{proposicion}
+	La función $\mu(n)$ es multiplicativa.
+\end{proposicion}
+\begin{proof}
+		Si se cumple $\operatorname{mcm}(m,n)=1$ entonces tenemos que $m=p_1^{\alpha_1}\dots p_r^{\alpha_r}$ y $n=q_1^{\beta_1}\dots q_s^{\beta_s}$ con $p_i \neq q_j$ para todo $i\in\{1\dots r\}$ y todo $j\in\{1\dots s\}$. Si algún $\alpha_i$ o algún $\beta_j$ es mayor que uno, tendríamos $m$ o $n$ tienen algún divisor cuadrado que también lo será de $mn$. Luego en este caso tendríamos que $\mu(mn)=\mu(m)\mu(n)=0$.\\
+		Si $\alpha_1=\dots=\alpha_r=\beta_1=\dots=\beta_s=1$ entonces tenemos que $\mu(m)=\mu(p_1,\dots,p_r)=(-1)^r$, $\mu(n)=\mu(q_1,\dots,q_s)=(-1)^s$ y por tanto $\mu(p_1\dots p_rq_1\dots q_s)=(-1)^{r+s}$.
+\end{proof}
+\begin{proposicion}
+		\begin{equation}
+		  \mu(n) =
+			\begin{cases}
+				1 & \text{si } n=1, \\
+				0 & \text{si } n \textgreater 1.
+			\end{cases}       
+			\notag
+		\end{equation}
+\end{proposicion}
+\begin{proof}
+		Como hemos visto en la proposición anterior, $\mu(n)$ es multiplicativa. Por lo tanto tenemos que la función $g(n)=\sum_{d|n}\mu(d)$ también lo es. Si $n=\prod_iq_i^{\alpha_i}$ entonces $g(n)=\prod_ig(q_i^{\alpha_i})$. Pero si $q_i$ es primo, entonces se cumple que $g(q_i^{\alpha_i})=\sum_{d|q_i}\mu(d)=\mu(1)+\mu(q_i)+\mu(q_i^2)+\dots\\\dots+\mu(q_i^{\alpha_i})=1-1+0+\dots+0=0$.
+\end{proof}
+\begin{definicion}
+Se conoce a la función $\phi(n)$ como la función de Euler. Esta es definida como $\phi(n)=|\mathbb{Z}^*_n|$ y calcula el número de enteros positivos que son menores que $n$ y son primos con este. 
+\end{definicion}
+\begin{proposicion}
+	La función $\phi(n)$ es multiplicativa.
+\end{proposicion}
+\begin{proof}
+		Por la proposición anterior tenemos que la función $\phi(n)$ se puede escribir como $$ \phi(n)=\sum_{k\leq n} \sum_{d|(k,n)}\mu(d)=\sum_{d|n}\mu(d)\frac{n}{d}=n\sum_{d|n}\frac{\mu(d)}{d}.$$ Como $\mu(d)$ es multiplicativa, tenemos que $\frac{\mu(d)}{d}$ también lo es. Luego $\frac{\phi(n)}{n}$ es multiplicativa y por tanto $\phi(n)$ también.
+\end{proof}
+\begin{corolario}
+	 $$\phi(n)=n\prod_{p_i|n}\left(1-\frac{1}{p_i}\right).$$ 
+\end{corolario}
+
+\begin{lema}
+		(Gauss) $\sum_{d|n}\phi(d)=n$
+\end{lema}
+\begin{proof}
+		La función $f(n)=\sum_{d|n}\phi(n)$   es multiplicativa. Por lo tanto solo nos quedaría ver que $f(p^m)=p^m$ para todo primo $p$ y para todo entero positivo $m$.\\ Para ello hacemos
+		$$
+			f(p^m)=\sum_{d|p^m}\phi(d)=\phi(1)+\phi(p)+\phi(p^2)+\dots+\phi(p^m)= 
+		$$\vspace*{-7mm}
+		$$
+			= 1+(p-1)+(p^2-p)+\dots+(p^m-p^{m-1})=p^m.
+		$$
+\end{proof}
 \begin{teorema}
 	(Teorema de Euler) Sean a,n $\in \mathbb{Z}$ primos relativos entre sí, entonces $a^{\phi(n)}\equiv 1 \mod n$.
-\end{teorema}\vspace*{-7mm}
+\end{teorema}
 \begin{proof}
 		Sea $n\in \mathbb{Z^+}$ que verifica que $\operatorname{mcd}(a,n)=1$ y definimos $S$ como el conjunto de las unidades modulo $n$, $S=\{u_1,u_2,\dots,u_{\phi(n)}\}$ donde $1\leq u_i\leq n-1$, $\operatorname{mcd}(u_i,n)=1$ y $u_i\neq u_j$ $\forall i,j \in \{1,\dots,\phi(n)\}$ con $ i\neq j$.\\
 	Multiplicando  los elementos de $S$ por $a$ obtenemos 
