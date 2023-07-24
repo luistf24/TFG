@@ -30,18 +30,7 @@ Se conoce a la función $\phi(n)$ como la función de Euler. Esta es definida co
 	$$
 		a^{p-1} \equiv 1 \mod p.
 	$$
-\end{teorema}\vspace*{-7mm}
-\begin{proof}
-		Sea $a \in \mathbb{Z}$. Tomamos los $p-1$ primeros múltiplos positivos de $a$ que serán de la forma $a, 2a,\dots,(p-1)a$. El resto resultante de dividir los $p-1$ múltiplos positivos de $a$ por $p$ corresponden a 1,2,3,$\dots,p-1$.\\
-	Multiplicando ahora todas las congruencias obtenemos 
-	$$
-		a^{p-1}·(p-1)! \equiv (p-1)! \mod p.
-	$$
-	Como tenemos que $p\nmid (p-1)!$ se cumple que $\operatorname{mcd}(p,p-1)=1$ y por tanto cancelando en la expresión anterior obtenemos
-	$$
-		a^{p-1} \equiv 1 \mod p. 
-	$$
-\end{proof}
+\end{teorema}
 
 Cabe a destacar que el Teorema de Fermat es un caso particular del Teorema de Euler.\\
 
@@ -67,7 +56,7 @@ Cabe a destacar que el Teorema de Fermat es un caso particular del Teorema de Eu
 	$$
 \end{teorema}
 \begin{proof}
-		Veamos la existencia de la solución. Sea $N=p\cdot q$. Como por hipótesis tenemos que $\operatorname{mcm}(p,q)=1$, por Bézout existen enteros $d_i$, $s_i$ con $i=1,2$ tales que $d_1p+s_1q=1$ y $d_2q+s_2p=1$. Tomando módulo $p$ y $q$ tenemos que 
+		Veamos la existencia de la solución. Sea $N=p\cdot q$. Como por hipótesis tenemos que $\operatorname{mcd}(p,q)=1$, por la identidad Bézout existen enteros $d_i$, $s_i$ con $i=1,2$ tales que $d_1p+s_1q=1$ y $d_2q+s_2p=1$. Tomando módulo $p$ y $q$ tenemos que 
 	$$
 		d_1\cdot p \equiv 1 \mod q,
 	$$
@@ -127,6 +116,19 @@ La operación $\cdot$  es mucho más compleja ya que en principio habría que re
 	Sea $K=\mathbb{F}_q$ un cuerpo finito $(q=p^n)$. Un elemento primitivo de $K$ es un elemento $\alpha$ que tiene $q-1$ potencias distintas.
 \end{definicion}
 
+\begin{definicion}
+		Sea $\alpha \in \mathbb{F}^*$ un elemento no nulo del cuerpo $\mahtbb{F}$, definimos orden de $\alpha$ como el menor $d\in \mathbb{N}$ que verifica $\alpha^d=1$.
+\end{definicion}
+
+\begin{teorema}
+	El orden de todo elemento $\alpha \in \mathbb{F}^*_q$ divide a $q-1$. 
+\end{teorema}
+\begin{proof}
+		Veamos que $\alpha^{q-1}=1$. Para ello tomamos el producto de todos los elementos no nulos de $\mathbb{F}_q$ y multiplicando cada miembro por $\alpha$ tenemos que \[ \prod_{\beta_i \in \mathbb{F}^*_q}\alpha\beta_i=\alpha^{q-1}\prod_{\beta_i \in \mathbb{F}^*_q}\beta_i\]
+		ya que hay $q-1$ elementos en $\mathbb{F}^*_q$ y por tanto $\alpha^{q-1}=1$.\\
+		A continuación llamamos $d$ al orden de $\alpha$ y suponemos que no divide a $q-1$, entonces tenemos que existe $r\in\mathbb{N}$ tal que $q-1=cd+r$ y por tanto se cumple que $\alpha^r=\alpha^{q-1-cd}=1$ llegando a una contradicción con la minimalidad del orden de $d$.
+\end{proof}
+
 \begin{proposicion}
 	Sea \mathbb{F} un cuerpo finito con $p^d$ elementos, donde $p$ es primo y $d\geq 1$, y sea
 	$$
@@ -138,27 +140,26 @@ La operación $\cdot$  es mucho más compleja ya que en principio habría que re
 		\item Para cada $i$, el número de elementos de $\mathbb{F}$ con polinomio mínimo $m_i(x)$ es igal al grado de $m_i(x)$.
 	\end{enumerate}
 \end{proposicion}
+
 \begin{proof}
 		Como cada elemento de $\mathbb{F}$ es una de las raíces de $x^{p^d}-x$, entonces cada $m_i(x)$ tiene que tener un número de raíces en $\mathbb{F}$ equivalente a su grado. Como $m_i(x)$ es irreducible, entonces tienen que haber un polinomio mínimo para cada una de esas raíces.
 \end{proof}
 
 \begin{teorema}
-	El orden de todo elemento $\alpha \in \mathbb{F}^*_q$ divide a $q-1$. 
+	Dos cuerpos finitos con el mismo número de elementos son isomorfos.
 \end{teorema}
 \begin{proof}
-		Veamos que $\alpha^{q-1}=1$. Para ello tomamos el producto de todos los elementos no nulos de $\mathbb{F}_q$ y multiplicando cada miembro por $\alpha$ tenemos que \[ \prod_{\beta_i \in \mathbb{F}^*_q}\alpha\beta_i=\alpha^{q-1}\prod_{\beta_i \in \mathbb{F}^*_q}\beta_i\]
-		ya que hay $q-1$ elementos en $\mathbb{F}^*_q$ y por tanto $\alpha^{q-1}=1$.\\
-		A continuación llamamos $d$ al orden de $\alpha$ y suponemos que no divide a $q-1$, entonces tenemos que existe $r\in\mathbb{N}$ tal que $q-1=cd+r$ y por tanto se cumple que $\alpha^r=\alpha^{q-1-cd}=1$ llegando a una contradicción con la minimalidad del orden de $d$.
+		Sean $\mathbb{F}_1$ y $\mathbb{F}_2$ dos cuerpos con $p^d$ elementos, donde $p$ es primo y $d\geq 1$. Sea $\alpha$ un generador de $\mathbb{F}_1$. Por la proposición anterior tenemos que el polinomio mínimo $m(x)$ de $\alpha$ tiene que ser un polinomio irreducible de $x^{p^d}-x$ en $\mahtbb{Z}_p[x]$. Además por la misma proposición tenemos que existe al menos un elemento $\beta \in \mathbb{F}_2$ tal que su polinomio mínimo sea $m(x)$. Como $\beta$ tiene grado $d$ se cumple que $\beta$ es generador de $\mathbb{F}_2$ y por tanto tenemos que $\mathbb{F}_1$ y $\mathbb{F}_2$ son isomorfos a $\mathbb{Z}_p[x]/m(x)$ y por tanto isomorfos.
 \end{proof}
 
 \begin{teorema}
 	Todo cuerpo finito tiene un generador. Si $g$ es un generador de $\mathbb{F}^{*}_q$, entonces $g^j$ es también un generador si y sólo si $\operatorname{gcd}(j,q-1)=1$. En particular, hay $\phi(q-1)$ generadores distintos de $\mathbb{F}^*_q$.
 \end{teorema}
 \begin{proof}
-		Supongamos $\alpha \in \mathbb{F}^*_q$ con orden $n$. Veamos primero $\alpha^j$ tiene orden $d$ si y solamente si $\operatorname{gcd}(j,d)=1$.\\
-		Para ver que es condición necesaria tomamos un $j$ que verifique $\operatorname{gcd}(j, d)=d'$ con $d'$\textgreater$ 1$, tenemos que $a=\frac{d}{d'}$ y $b=\frac{j}{d'}$ son números enteros y además se cumple que $(\alpha^j)^a=(\alpha^d)^b=1$. Luego se cumple que el orden de $\alpha^j$ es $a$\textless $d$.\\
+		Supongamos $\alpha \in \mathbb{F}^*_q$ con orden $d$. Veamos primero $\alpha^j$ tiene orden $d$ si y solamente si $\operatorname{gcd}(j,d)=1$.\\
+		Para ver que es condición necesaria tomamos un $j$ que verifique $\operatorname{gcd}(j, d)=d'$ con $d'$\textgreater$ 1$, tenemos que $a=\frac{d}{d'}$ y $b=\frac{j}{d'}$ son números enteros y además se cumple que $ja=bd'a=bd$ y por tanto $(\alpha^j)^a=(\alpha^d)^b=1$. Luego se cumple que el orden de $\alpha^j$ es $a$ lo mismo $a$\textless $d$.\\
 		Veamos que también es condición suficiente.\\ Para ello tomamos un $j$ que verifique $\operatorname{gcd}(j,d)=1$ y supongamos que $\alpha^j$ tiene orden $k$\textless $d$. Como se cumple que $1=(\alpha^j)^k=(a^k)^j$ y $d$ es el orden de $\alpha$ tenemos que $(\alpha^k)^d=(a^d)^k=1^k=1$.\\
-		Por tanto, se cumple que  $(\alpha^k)^1=(\alpha^k)^{\operatorname{gcd}(j,d)}=(\alpha^k)^{uj}(\alpha^k)^{vd}=1$. Llegando así a una contradicción, ya que hemos supuesto que $\alpha$ no tiene orden $d$.\\
+		Por tanto, se cumple que  $(\alpha^k)^1=(\alpha^k)^{\operatorname{gcd}(j,d)}=(\alpha)^{uj+rd}=(\alpha^k)^{uj}(\alpha^k)^{vd}=1$. Llegando así a una contradicción, ya que hemos supuesto que $\alpha$ no tiene orden $d$.\\
 		Luego tenemos que el orden de $\alpha^j$ es $d$.\\
 		Como las potencias de $\alpha,(\alpha,\alpha^2,\dots,\alpha^d=1)$ cumplen la ecuación $X^d=1$ y son raíces de las misma, se cumple que no hay más elementos con orden $d$. Luego $\mathbb{F}^*_q$ tiene $\phi(d)$ elementos distintos de orden $d$.\\
 		Por último vamos a ver la existencia de un generador $g$ de $\mathbb{F}_q^*$.\\
