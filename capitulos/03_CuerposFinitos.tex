@@ -1,0 +1,255 @@
+\chapter{Aritmética modular y cuerpos finitos}
+En este capítulo presentaré la teoría necesaria de aritmética modular y de cuerpos finitos para comprender adecuadamente las operaciones que se realizan en algoritmos como AES y RSA.
+
+\section{Aritmética modular}
+La aritmética modular es una de las piezas fundamentales de la criptografía y es especialmente importante en algoritmos como RSA. A continuación voy presentar unos resultados  que serán relevantes a la hora de explicar los distintos algoritmos utilizados.
+\begin{definicion}
+Se conoce a la función $\phi(n)$ como la función de Euler. Esta es definida como $\phi(n)=|\mathbb{Z}^*_n|$ y se puede calcular como $$\phi(n)=n\prod_{p_i|n}\left(1-\frac{1}{p_i}\right).$$
+\end{definicion}
+\begin{teorema}
+	(Teorema de Euler) Sean a,n $\in \mathbb{Z}$ primos relativos entre sí, entonces $a^{\phi(n)}\equiv 1 \mod n$.
+\end{teorema}\vspace*{-7mm}
+\begin{proof}
+		Sea $n\in \mathbb{Z^+}$ que verifica que $\operatorname{mcd}(a,n)=1$ y definimos $S$ como el conjunto de las unidades modulo $n$, $S=\{u_1,u_2,\dots,u_{\phi(n)}\}$ donde $1\leq u_i\leq n-1$, $\operatorname{mcd}(u_i,n)=1$ y $u_i\neq u_j$ $\forall i,j \in \{1,\dots,\phi(n)\}$ con $ i\neq j$.\\
+	Multiplicando  los elementos de $S$ por $a$ obtenemos 
+	$$
+		aS=\{au_1,au_2,\dots,au_{\phi(n)}\}
+	$$
+	Como $\operatorname{mcd}(a,n)=1$ entonces $a\mod n$ es una unidad y por tanto $aS$ será el conjunto de las unidades módulo $n$. Y dado que los elementos de $S$ y los de $aS$ coinciden módulo $n$, el producto de estos será el mismo módulo $n$ por lo que obtenemos 
+	$$
+		u_1u_2\dots u_{\phi(n)} \equiv (au_1)(au_2)\dots (au_{\phi(n)})\mod n.
+	$$
+	Sacando como factor común $a$ tenemos 
+	$$
+		u_1u_2\dots u_{\phi(n)} \equiv a^{\phi(n)}u_1u_2\dots u_{\phi(n)}\mod n. 
+	$$
+\end{proof}\\
+
+\begin{teorema}
+		(Teorema pequeño de Fermat) Sea $a \in \mathbb{Z}$ y $p$ un número primo tal que $\operatorname{mcd}(a,p)=1$. Entonces
+	$$
+		a^{p-1} \equiv 1 \mod p.
+	$$
+\end{teorema}\vspace*{-7mm}
+\begin{proof}
+		Sea $a \in \mathbb{Z}$. Tomamos los $p-1$ primeros múltiplos positivos de $a$ que serán de la forma $a, 2a,\dots,(p-1)a$. El resto resultante de dividir los $p-1$ múltiplos positivos de $a$ por $p$ corresponden a 1,2,3,$\dots,p-1$.\\
+	Multiplicando ahora todas las congruencias obtenemos 
+	$$
+		a^{p-1}·(p-1)! \equiv (p-1)! \mod p.
+	$$
+	Como tenemos que $p\nmid (p-1)!$ se cumple que $\operatorname{mcd}(p,p-1)=1$ y por tanto cancelando en la expresión anterior obtenemos
+	$$
+		a^{p-1} \equiv 1 \mod p. 
+	$$
+\end{proof}
+
+Cabe a destacar que el Teorema de Fermat es un caso particular del Teorema de Euler.\\
+
+\begin{teorema}
+		(Teorema Chino del Resto) Sean $a_1, a_2\in \mathbb{Z}$ y $p,q \in \mathbb{N}$ tales que $\operatorname{mcd}(p,q) = 1$. Entonces el sistema
+		$$
+			x\equiv a_1 \mod p,
+		$$\vspace*{-11mm}
+
+		$$
+			x\equiv a_2 \mod q,
+		$$
+	tiene solución única módulo $n=pq$. Además, la solución está dada por
+	$$
+		x\equiv a_1\cdot q\cdot d_1 +a_2\cdot p\cdot d_2 \mod n,
+	$$
+	donde se cumple
+	$$
+		q\cdot d_1 \equiv 1 \mod p,
+	$$
+	$$
+		p\cdot d_2 \equiv 1 \mod q.
+	$$
+\end{teorema}
+\begin{proof}
+		Veamos la existencia de la solución. Sea $N=p\cdot q$. Como por hipótesis tenemos que $\operatorname{mcm}(p,q)=1$, por Bézout existen enteros $d_i$, $s_i$ con $i=1,2$ tales que $d_1p+s_1q=1$ y $d_2q+s_2p=1$. Tomando módulo $p$ y $q$ tenemos que 
+	$$
+		d_1\cdot p \equiv 1 \mod q,
+	$$
+	$$
+		d_2\cdot q \equiv 1 \mod p.
+	$$
+	Definiendo 
+	$$
+		x :=  a_1\cdot q\cdot d_1 +a_2\cdot p\cdot d_2,
+	$$
+	se consigue que $x$ sea la solución del sistema. Además, trabajando módulo $p$ y $q$ obtenemos que $x\equiv a_1 \mod p$ y $x\equiv a_2 \mod q$.\\
+	Una vez vista la existencia de la solución quedaría demostrar la unicidad. Para ello supongamos que existen dos números enteros distintos $x$ e $y$ tales que 
+		\begin{equation}
+			\begin{split}
+				x \equiv a_1 \mod p,\notag\\
+				y \equiv a_1 \mod p.\notag
+			\end{split}
+		\end{equation}
+	Y también 
+		\begin{equation}
+			\begin{split}
+				x \equiv a_2 \mod q,\notag\\
+				y \equiv a_2 \mod q.\notag
+			\end{split}
+		\end{equation}
+	Esto implica que $x-y\equiv0 \mod p$ y $x-y\equiv0 \mod q$. Como $p$ y $q$ son coprimos, tenemos que $x-y\equiv 0 \mod N$, luego se da que $x\equiv y \mod N$ llegando así a una contradicción. \qedhere
+\end{proof}
+
+\begin{proposicion}
+	Sea $n = pq$, donde p y q son dos primos distintos. Si $x\equiv 1 \mod \phi(n)$, entonces $a^x\equiv a\mod n$ para todo $ a \n \in \mathbb{Z}$.
+\end{proposicion}\vspace*{-5mm}
+
+	\begin{proof}
+		Si $a$ es múltiplo de $n$, entonces se cumple que $a^x \equiv 0 \equiv a \mod n$. Si $a$ y $n$ son coprimos, $\operatorname{mcm}(a,n) = 1$. Entonces tendríamos que $a^x \equiv a \mod n$ por el Teorema de Euler.\\
+		Nos quedaría ver ocurre en el caso de $a$ sea múltiplo de $p$ o de $q$, pero no de ambos. Por simetría supondremos que a es múltiplo de $p$, pero no de $q$. En este caso tenemos que $a^x \equiv 0 \equiv a \mod p$  y $a^x \equiv a \mod q$ por el Teorema de Fermat. Como $p$ y $q$ son coprimos entre sí, aplicando el Teorema Chino del Resto se deduce que $a^x \equiv a \mod n$.\qedhere
+	\end{proof}
+
+\section{El cuerpo de Galois $\operatorname{GF}(2^n)$}
+Tanto para explicar el funcionamiento de las rondas de AES como para desarrollar la teoría de Curvas Elípticas en $\operatorname{GF}(2^n)$ es necesario introducir el cuerpo $\operatorname{GF}(2^n)$, el cual debido a las propiedades que tiene es muy utilizado en criptografía.\\
+Sea $\mathbb{Z}_2[x]$ el conjunto de polinomios con coeficientes en $\mathbb{Z}_2$, es decir, el conjunto de polinomios cuyos coeficientes solo valen 0 ó 1. Así los polinomios pueden ser representados por una cadena de bits.
+ Un ejemplo sería el polinomio $f(x)=x^4+x^3+x+1$ que quedaría representado como 11011. 
+Además si lo sumamos con otro polinomio como puede ser $g(x)=x^2+x+1$, tenemos que $f(x)+g(x)=x^4+x^3+x^2$, que equivale a hacer la operación XOR entre 11011 y 00111, por lo que a nivel computacional, es muy fácil implementar estas operaciones.\\
+Podemos definir el cuerpo $\operatorname{GF}(2^n)$ como $\mathbb{Z}_2[x]/(a(x))$, con $a(x)$ un polinomio irreducible en $\mathbb{Z}/(a(x))$. Tenemos que la existencia del inverso de cualquier polinomio no nulo está asegurada por el algoritmo Extendido de Euclídes.\\ 
+Principalmente se trabaja con $\operatorname{GF}(2^n)$ debido a que la implementación de las operaciones de este es más sencilla que la implementación en las que se utilizan otros cuerpos. Esta sencillez de implementación se traduce en unos algoritmos con tiempos de ejecución menores a pesar de tener el mismo orden de complejidad.\\
+A continuación presentaré el cuerpo $\operatorname{GF}(2^8)$, ya que será necesario para entender adecuadamente las operaciones utilizadas en AES. La información ha sido obtenida de \cite{criptografia} y \cite{dem1}.\\
+Tenemos que $\operatorname{GF}(2^8)=\mathbb{F}_{256}$ por lo que por comodidad trabajaremos con este último.\\
+Por definición tenemos que para $p$ número primo y $n$ un entero primitivo se define el cuerpo $\mathbb{F}_{p^n}$ al único cuerpo existente con $p^n$ elementos. En particular para trabajar con $\mathbb{F}_{256}$ tomamos $p=2$ y $n=8$.\\
+Para construir $\mathbb{F}_{256}$ necesitamos un polinomio de grado 8, con coeficientes en $\mathbb{Z}_2$ y que sea irreducible. En total hay 30 polinomios con esas características donde algunos de ellos son 
+$x^8+x^4+x^3+x+1$, $\:x^8+x^4+x^3+x^2+1$, $x^8+x^5+x^3+x+1$, $x^8+x^5+x^3+x^2+1$, $x^8+x^5+x^4+x^3+1$, $x^8+x^5+x^4+x^3+x^2+x+1$ y $x^8+x^6+x^3+x^2+1$.\\ 
+Cabe a destacar que cualquiera de los polinomios serviría para definir $\mathbb{F}_{256}$ y además no habría ninguna diferencia en la seguridad en los criptosistemas que lo utilicen. 
+Para AES se tomó el polinomio $x^8+x^4+x^3+x+1$, por lo que a partir de ahora trabajaremos con $\mathbb{Z}_2[x]_{a(x)}$ siendo $a(x)$ el polinomio $x^8+x^4+x^3+x+1$.\\
+Los elementos que conformarán este cuerpo serán clases de equivalencia de polinomios  de grado menor que 8. Cada elemento podrá ser representado de tres formas distintas además de la forma polinomial, como número binario, número hexadecimal y número decimal. Por ejemplo el polinomio $x^5+x+1$ quedaría representado como $00100011$ de manera decimal, $23$ en hexadecimal y $35$ en decimal.\\
+Al ser $\mathbb{F}_{256}$ un cuerpo tenemos que tiene dos operaciones, la operación suma que representaremos como $+$ y la operación producto que representaremos como $\cdot$.\\
+La operación $+$ equivale a la suma en $\mathbb{Z}_2$ y usando la notación en binario, tendríamos que equivaldría con la operación XOR como ya he mencionado anteriormente. El opuesto para la suma de un elemento equivalente a sí mismo por lo que no habría diferencia entre sumar por un número o por su apuesto, luego tendríamos que la suma es la misma operación que la resta.\\
+La operación $\cdot$  es mucho más compleja ya que en principio habría que realizar la operación en notación polinomial y luego calcular el resto de dividir por $x^8+x^4+x^3+x+1$. Para calcular el inverso tendríamos que utilizar el algoritmo extendido de Euclídes. Ambos algoritmos tienen una complejidad algorítmica importante, pero se puede reducir. A continuación recordaré unos resultados de cuerpos finitos que nos permitirán obtener unos métodos que reducirán mucho esa complejidad.\\
+\begin{definicion}
+	Sea $K=\mathbb{F}_q$ un cuerpo finito $(q=p^n)$. Un elemento primitivo de $K$ es un elemento $\alpha$ que tiene $q-1$ potencias distintas.
+\end{definicion}
+
+\begin{teorema}
+	El orden de todo elemento $\alpha \in \mathbb{F}^*_q$ divide a $q-1$. 
+\end{teorema}
+\begin{proof}
+		Veamos que $\alpha^{q-1}=1$. Para ello tomamos el producto de todos los elementos no nulos de $\mathbb{F}_q$ y multiplicando cada miembro por $\alpha$ tenemos que \[ \prod_{\beta_i \in \mathbb{F}^*_q}\alpha\beta_i=\alpha^{q-1}\prod_{\beta_i \in \mathbb{F}^*_q}\beta_i\]
+		ya que hay $q-1$ elementos en $\mathbb{F}^*_q$ y por tanto $\alpha^{q-1}=1$.\\
+		A continuación llamamos $d$ al orden de $\alpha$ y suponemos que no divide a $q-1$, entonces tenemos que existe $r\in\mathbb{N}$ tal que $q-1=cd+r$ y por tanto se cumple que $\alpha^r=\alpha^{q-1-cd}=1$ llegando a una contradicción con la minimalidad del orden de $d$.
+\end{proof}
+
+\begin{teorema}
+	Todo cuerpo finito tiene un generador. Si $g$ es un generador de $\mathbb{F}^{*}_q$, entonces $g^j$ es también un generador si y sólo si $\operatorname{gcd}(j,q-1)=1$. En particular, hay $\phi(q-1)$ generadores distintos de $\mathbb{F}^*_q$.
+\end{teorema}
+\begin{proof}
+		Supongamos $\alpha \in \mathbb{F}^*_q$ con orden $n$. Veamos primero $\alpha^j$ tiene orden $d$ si y solamente si $\operatorname{gcd}(j,d)=1$.\\
+		Para ver que es condición necesaria tomamos un $j$ que verifique $\operatorname{gcd}(j, d)=d'$ con $d'$\textgreater$ 1$, tenemos que $a=\frac{d}{d'}$ y $b=\frac{j}{d'}$ son números enteros y además se cumple que $(\alpha^j)^a=(\alpha^d)^b=1$. Luego se cumple que el orden de $\alpha^j$ es $a$\textless $d$.\\
+		Veamos que también es condición suficiente.\\ Para ello tomamos un $j$ que verifique $\operatorname{gcd}(j,d)=1$ y supongamos que $\alpha^j$ tiene orden $k$\textless $d$. Como se cumple que $1=(\alpha^j)^k=(a^k)^j$ y $d$ es el orden de $\alpha$ tenemos que $(\alpha^k)^d=(a^d)^k=1^k=1$.\\
+		Por tanto, se cumple que  $(\alpha^k)^1=(\alpha^k)^{\operatorname{gcd}(j,d)}=(\alpha^k)^{uj}(\alpha^k)^{vd}=1$. Llegando así a una contradicción, ya que hemos supuesto que $\alpha$ no tiene orden $d$.\\
+		Luego tenemos que el orden de $\alpha^j$ es $d$.\\
+		Como las potencias de $\alpha,(\alpha,\alpha^2,\dots,\alpha^d=1)$ cumplen la ecuación $X^d=1$ y son raíces de las misma, se cumple que no hay más elementos con orden $d$. Luego $\mathbb{F}^*_q$ tiene $\phi(d)$ elementos distintos de orden $d$.\\
+		Por último vamos a ver la existencia de un generador $g$ de $\mathbb{F}_q^*$.\\
+		Sabemos que la función \emph{phi de Euler} cumple en $q-1$ que $\sum_{d|q-1}\phi(d)=q-1$ y como se cumple que todo elemento de $\mathbb{F}^*_q$ tiene un orden $d$ divisor de $q-1$, necesariamente existen elementos de $\mathbb{F}^*_q$ con orden $d$ para todo $d|q-1$ y en particular se cumple la hipótesis del enunciado.
+\end{proof}
+
+\begin{corolario}
+		El grupo multiplicativo de todos los elementos no nulos de un cuerpo finito es cíclico.
+\end{corolario}
+
+Si $\alpha$ es un elemento primitivo de $\mathbb{F}_q$, los $q-1$ elementos de la forma\\
+$$
+	\alpha^0=1,\;\; \alpha^1=\alpha,\;\dots\; ,\alpha^{q-2}
+$$
+serán todos distintos y no nulos. Por tanto serán todos los elementos no nulos de $\mathbb{F}_q$. Además, se verifica que $\alpha^{q-1}=\alpha^0$ por lo que para cualquier $n \in \mathbb{Z}$ se cumple que $\alpha^n=\alpha^{n\mod q-1}$.\\
+%\begin{teorema}
+	%Todo cuerpo finito tiene al menos un elemento primitivo.
+%\end{teorema}
+Salvo para $q=2$, el número de elementos primitivos de $\mathbb{F}_q$ es $\phi(q-1)$. Para el caso $q=13$ se tiene que $\phi(12)=\phi(2^2\cdot 3)=2\cdot2=4$, luego $\mathbb{Z}_{13}$ tiene 4 elementos primitivos que son 2, 6, 7 y 11. En $\mathbb{F}_{256}$ tenemos que hay $\phi(256)=128$ elementos primitivos.
+
+Ahora para multiplicar dos elementos pertenecientes a $\mathbb{Z}_{13}$ podemos usar su logaritmo en base 2, el exponente que hay que elevar 2 para obtener el número, sumar los logaritmos y reducirlos base 13 y elevar 2 al resultado. Un ejemplo sería:
+$$
+	10\cdot12=2^{10}\cdot2^{6}=2^{16}=2^3=8.
+$$
+Para calcular el inverso sería:
+$$
+	12^{-1}=(2^6)^{-1}=2^{12-6}=2^6=12.
+$$
+Esta es la idea que nos permite optimizar las multiplicaciones y los cálculos de inversos en $\mathbb{F}_{256}$. Para ello elegimos un elemento primitivo que nos servirá de generador, en este caso nosotros utilizaremos el más pequeño, que es $[x+1]$ en notación polinomial, 00000011 en binario, 03 en hexadecimal y 3 en binario. Por comodidad trabajaremos en hexadecimal. 
+
+\begin{table}[!htb]
+    %\begin{adjustwidth}{-.8in}{-.8in}  
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
+\hline
+\multicolumn{1}{|r|}{} & 0  & 1  & 2  & 3  & 4  & 5  & 6  & 7  & 8  & 9  & A  & B  & C  & D  & E  & F  \\ \hline
+0                      & 01 & 03 & 05 & 0F & 11 & 33 & 55 & FF & 1A & 2E & 72 & 96 & A1 & F8 & 13 & 35 \\ \hline
+1                      & 5F & E1 & 38 & 48 & D8 & 73 & 95 & A4 & F7 & 02 & 06 & 0A & 1E & 22 & 66 & AA \\ \hline
+2                      & E5 & 34 & 5C & E4 & 37 & 59 & EB & 26 & 6A & BE & D9 & 70 & 90 & AB & E6 & 31 \\ \hline
+3                      & 53 & F5 & 04 & 0C & 14 & 3C & 44 & CC & 4F & D1 & 68 & B8 & D3 & 6E & B2 & CD \\ \hline
+4                      & 4C & D4 & 67 & A9 & E0 & 3B & 4D & D7 & 62 & A6 & F1 & 08 & 18 & 28 & 78 & 88 \\ \hline
+5                      & 83 & 9E & B9 & D0 & 6B & BD & DC & 7F & 81 & 98 & B3 & CE & 49 & DB & 76 & 9A \\ \hline
+6                      & B5 & C4 & 57 & F9 & 10 & 30 & 50 & F0 & 0B & 1D & 27 & 69 & BB & D6 & 61 & A3 \\ \hline
+7                      & FE & 19 & 2B & 7D & 87 & 92 & AD & EC & 2F & 71 & 93 & AE & E9 & 20 & 60 & A0 \\ \hline
+8                      & FB & 16 & 3A & 4E & D2 & 6D & B7 & C2 & 5D & E7 & 32 & 56 & FA & 15 & 3F & 41 \\ \hline
+9                      & C3 & 5E & E2 & 3D & 47 & C9 & 40 & C0 & 5B & ED & 2C & 74 & 9C & BF & DA & 75 \\ \hline
+A                      & 9F & BA & D5 & 64 & AC & EF & 2A & 7E & 82 & 9D & BC & DF & 7A & 8E & 89 & 80 \\ \hline
+B                      & 9B & B6 & C1 & 58 & E8 & 23 & 65 & AF & EA & 25 & 6F & B1 & C8 & 43 & C5 & 54 \\ \hline
+C                      & FC & 1F & 21 & 63 & A5 & F4 & 07 & 09 & 1B & 2D & 77 & 99 & B0 & CB & 46 & CA \\ \hline
+D                      & 45 & CF & 4A & DE & 79 & 8B & 86 & 91 & A8 & E3 & 3E & 42 & C6 & 51 & F3 & 0E \\ \hline
+E                      & 12 & 36 & 5A & EE & 29 & 7B & 8D & 8C & 8F & 8A & 85 & 94 & A7 & F2 & 0D & 17 \\ \hline
+F                      & 39 & 4B & DD & 7C & 84 & 97 & A2 & FD & 1C & 24 & 6C & B4 & C7 & 52 & F6 & 01 \\ \hline
+\end{tabular}}
+	\label{antilogaritmos}
+	%\end{adjustwidth}
+\caption{Tabla de los antilogaritmos de $[x+1]$}
+\end{table}
+Por ejemplo para calcular el resultado de $[x+1]^{125}=(03)^{125}$ lo que hacemos es escribir 125 en hexadecimal que es 7D. A continuación miramos en la tabla, la fila 7 y la columna D que nos da 20 luego tendríamos que $(03)^{125}=20$. Pasándolo a forma polinomial tenemos que $[x+1]^{125}=x^5$.\\
+Para construir la tabla es mejor usar la forma binaria.\\
+
+A continuación vamos a construir la tabla inversa de la anterior, esta nos permitirá calcular dado un $z \in \mathbb{F}_{256}$ con $z \neq 0$ el valor de $y$ que verifica $[x+1]^y=z$ que denominaremos $\log_{x+1}(z)$.
+\begin{table}[!htb]
+    %\begin{adjustwidth}{-.8in}{-.8in}  
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
+\hline
+  & 0  & 1  & 2  & 3  & 4  & 5  & 6  & 7  & 8  & 9  & A  & B  & C  & D  & E  & F  \\ \hline
+0 &    & 00 & 19 & 01 & 32 & 02 & 1A & C6 & 4B & C7 & 1B & 68 & 33 & EE & DF & 03 \\ \hline
+1 & 64 & 04 & E0 & 0E & 34 & 8D & 81 & EF & 4C & 71 & 08 & C8 & F8 & 69 & 1C & C1 \\ \hline
+2 & 7D & C2 & 1D & B5 & F9 & B9 & 27 & 6A & 4D & E4 & A6 & 72 & 9A & C9 & 09 & 78 \\ \hline
+3 & 65 & 2F & 8A & 05 & 21 & 0F & E1 & 24 & 12 & F0 & 82 & 45 & 35 & 93 & DA & 6E \\ \hline
+4 & 96 & 8F & DB & BD & 36 & D0 & CE & 94 & 13 & 5C & D2 & F1 & 40 & 46 & 83 & 38 \\ \hline
+5 & 66 & DD & FD & 30 & BF & 06 & 8B & 62 & B3 & 25 & E2 & 98 & 22 & 88 & 91 & 10 \\ \hline
+6 & 7E & 6E & 48 & C3 & A3 & B6 & 1E & 42 & 3A & 6B & 28 & 54 & FA & 85 & 3D & BA \\ \hline
+7 & 2B & 79 & 0A & 15 & 9B & 9F & 5E & CA & 4E & D4 & AC & E5 & F3 & 73 & A7 & 57 \\ \hline
+8 & AF & 58 & A8 & 50 & F4 & EA & D6 & 74 & 4F & AE & E9 & D5 & E7 & E6 & AD & E8 \\ \hline
+9 & 2C & D7 & 75 & 7A & EB & 16 & 0B & F5 & 59 & CB & 5F & B0 & 9C & A9 & 51 & A0 \\ \hline
+A & 7F & 0C & F6 & 6F & 17 & 74 & 49 & EC & D8 & 43 & 1F & 2D & A4 & 76 & 7B & B7 \\ \hline
+B & CC & BB & 3E & 5A & FB & 60 & B1 & 86 & 3B & 52 & A1 & BC & AA & 55 & 29 & 9D \\ \hline
+C & 97 & B2 & 87 & 90 & 61 & BE & DC & FC & B5 & 95 & CF & CD & 37 & 3F & 5B & D1 \\ \hline
+D & 53 & 39 & 84 & 3C & 41 & A2 & 6D & 47 & 14 & 2A & 9E & 5D & 56 & F2 & D3 & AB \\ \hline
+E & 44 & 11 & 92 & D9 & 23 & 20 & 2D & 89 & B4 & 7C & B8 & 26 & 77 & 99 & E3 & A5 \\ \hline
+F & 67 & 48 & ED & DE & C5 & 31 & FE & 18 & 0D & 63 & 8C & 80 & C0 & F7 & 70 & 07 \\ \hline
+\end{tabular}}
+	\label{potenciasinversas}
+    %\end{adjustwidth}
+\caption{Tabla de los logaritmos de $[x+1]$}
+\end{table}
+
+A partir de estas dos tablas ya podemos hacer sin mucha dificultad a nivel computacional multiplicaciones y cálculo de inversos. En general para realizar el producto de dos elementos $X$ e $Y$ lo haremos de la siguiente manera:
+$$
+	X\cdot Y = A\log((\log_{x+1}(X)+log_{x+1}(Y)) \mod 255).
+$$
+Donde $A\log$ es el antilogaritmo.\\
+Análogamente para calcular el inverso tenemos:
+$$
+	X^{-1} = A\log(FF-\log_{x+1}(X)).
+$$
+
+Por ejemplo para calcular $[x^7+x^6+x^4+x^2+x]\cdot[x^6+x^5+x^4+x^2+1]$ hacemos lo siguiente:
+\begin{enumerate}
+	\item Pasamos ambos polinomios a la forma hexadecimal como hemos visto anteriormente, en este caso nos quedaría $D6$ y $75$.
+	\item Nos vamos a la tabla de logaritmos y obtenemos que $\log_{03}(D6)=6D$ y $\log_{03}(75)=9F$.
+	\item Sumamos ambos resultados y lo reducimos módulo $255$, parar ello lo pasamos a decimal por comodidad $(109+159)\mod255=13$.
+	\item Calculamos el antilogaritmo de $13=0D$ con la tabla y tenemos que vale $F8$ por lo que tenemos que $D6\cdot 75 = F8$.
+\end{enumerate}
+
+Con esto visto ya tendríamos todas las herramientas necesarias para poder describir con mayor profundidad el funcionamiento de los distintos criptosistemas que se utilizan en las aplicaciones de mensajería.
+
