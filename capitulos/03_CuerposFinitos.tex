@@ -4,6 +4,9 @@ En este capítulo presentaré la teoría necesaria de aritmética modular y de c
 \section{Aritmética modular}
 La aritmética modular es una de las piezas fundamentales de la criptografía y es especialmente importante en algoritmos como RSA. A continuación voy presentar unos resultados  que serán relevantes a la hora de explicar los distintos algoritmos utilizados.
 \begin{definicion}
+	Se dice que dos elementos $a$ y $b$ están en la misma clase de congruencia si verifican $a \equiv b \mod n$ es decir si ambos tienen el mismo resto al dividir por $n$ o análogamente si $a-b$ es múltiplo de $n$.
+\end{definicion}
+\begin{definicion}
 		Una función aritmética $f$ se dice que es multiplicativa si $f(mn)=f(m)(n)$ para cualesquiera enteros positivos que verifiquen $\operatorname{mcd}(n,m)=1$.
 \end{definicion}
 \begin{definicion}
