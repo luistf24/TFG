@@ -37,14 +37,14 @@ Este programa consta de dos clases, diversos métodos y funciones repartidas en 
 \end{itemize}
 
 \subsection{Servidor}
-Este programa es más sencillo que el programa cliente, ya que como he mencionado anteriormente, no consta de interfaz gráfica. Además, como la aplicación es \textbf{P2P} no interviene en el encriptado y desencriptado de los mensajes. Consta de solo dos archivos y no tiene ninguna clase.
+Este programa es más sencillo que el programa cliente, ya que como he mencionado anteriormente, no consta de interfaz gráfica. Además, como la aplicación la he diseñado para que tenga un cifrado extremo a extremo no interviene en el encriptado y desencriptado de los mensajes. Consta de solo dos archivos y no tiene ninguna clase.
 \begin{itemize}
 	\item \textbf{src/servidor/servidor.py:} Es el programa principal y lo que hace es crear un socket por el que se conectaran todos los clientes, una función llamada \textbf{escuchar\textunderscore clientes} que se encarga de cada vez que recibe un mensaje, lo fragmenta y obtiene el emisor, el receptor, el mensaje encriptado y la etiqueta y el nonce usados en AES-128 con el modo GCM. Una vez fragmentado el mensaje se envia al usuario receptor. A continuación se crea un \textbf{Thread} con la función anterior para paralelizar la entrada de mensajes y el envío.
 	\item \textbf{src/servidor/biblioteca\textunderscore servidor.py:} Archivo en el que se almacenan algunas variables globales del programa, las más importantes son: \textbf{SERVER\textunderscore IP} variable que almacena la dirección del servidor, como se ejecuta en local, en este caso \textbf{0.0.0.0} y la variable \textbf{SERVER\textunderscore PORT}, variable que almacena el puerto que se va a usar y por defecto vale \textbf{3333}.
 \end{itemize}
 
 \subsection{Mensaje}
-Para codificar los mensajes he usado un string separando cada bloque con un substring llamado \textbf{separador} y vale \textless-\textgreater. El mensaje tiene la siguiente estructura
+Para codificar los mensajes he usado un string separando cada bloque con un substring llamado \textbf{separador} que vale \textless-\textgreater. El mensaje tiene la siguiente estructura.
 
 \begin{figure}[htb]
 	\centering
@@ -52,4 +52,23 @@ Para codificar los mensajes he usado un string separando cada bloque con un subs
 	\caption{Esquema de la codificación del mensaje.}
 	\label{mensajeapp}
 \end{figure}
+Donde \emph{emisor} es el identificador del usuario que envía los mensajes, \emph{receptor} es el identificador del usuario que los recibe, \emph{mensaje} es el mensaje que se envía, \emph{tag} es la etiqueta usada en AES-128 con el modo GCM para validar los mensajes y \emph{nonce} es un número arbitrario que se usa solo una vez para garantizar la seguridad del mensaje frente ataques \emph{playback}. 
 
+\section{Funcionamiento de la aplicación}
+Para ejecutar la aplicación, primero se tiene que ejecutar el servidor en algún dispositivo y mientras esté en funcionamiento, ejecutar el cliente.\\
+Para lanzar ambas aplicaciones hay que ejecutar el comando \emph{poe run}. Una vez ejecutado el cliente nos sale la primera interfaz donde introducimos el nombre de usuario con el que nos vamos a identificar y el nombre del usuario con el que nos vamos a comunicar \ref{appprimeraparte}.
+
+\begin{figure}[thb]
+	\centering
+	\includegraphics[width=400]{imagenes/mensapp1.png} 
+	\caption{Registro en la aplicación.}
+	\label{appprimeraparte}
+\end{figure}
+\newpage
+Una vez registrados entramos en el chat con el usuario receptor. El primer mensaje que se envía, similar a otras aplicaciones de mensajería, no esta cifrado pero servirá para sincronizar ambos clientes y realizar el intercambio de claves \emph{Diffie-Hellman}. Para el intercambio he elegido como número primo 13 y como generador 2.  Una vez realizado el intercambio, que se hace de manera automática y pasa desapercibido a los usuarios, se cifran todos los mensajes. En \ref{appsegundaparte} podemos ver un ejemplo de conversación entre dos usuarios. El código de la aplicación se encuentra en un \href{https://github.com/luistf24/MensApp-TFG}{repositorio} de GitHub.
+\begin{figure}[hbt]
+	\centering
+	\includegraphics[scale=0.45]{imagenes/mensapp2.png} 
+	\caption{Intercambio de mensajes en la aplicación.}
+	\label{appsegundaparte}
+\end{figure}
