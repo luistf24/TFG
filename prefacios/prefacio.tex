@@ -12,58 +12,62 @@
 %\thispagestyle{empty}
 
 \begin{center}
-{\large\bfseries Título del Proyecto: Subtítulo del proyecto}\\
+{\large\bfseries Criptosistemas en aplicaciones de mensajería}\\
 \end{center}
 \begin{center}
-Nombre Apellido1 Apellido2 (alumno)\\
+Luis Tormo Fabios\\
 \end{center}
 
 %\vspace{0.7cm}
-\noindent{\textbf{Palabras clave}: palabra\_clave1, palabra\_clave2, palabra\_clave3, ......}\\
+\noindent{\textbf{Palabras clave}: Criptografía simétrica, criptografía asimétrica, cuerpos finitos, intercambio de claves, curvas elípticas, funciones hash, protocolo criptográfico.}\\
 
 \vspace{0.7cm}
 \noindent{\textbf{Resumen}}\\
 
-Poner aquí el resumen.
+En esta memoria se realiza una descripción de los criptosistemas que utilizan las aplicaciones de mensajería instantáneas más populares. Para ello empiezo con un capítulo que introduce la criptografía simétrica y asimétrica. A continuación introduzco la teoría necesaria de aritmética modular y cuerpos finitos necesaria para entender el funcionamiento de las distintas operaciones que se realizan en los distintos criptosistemas. Después describo el funcionamiento del criptosistema simétrico \emph{AES} y posteriormente describo los criptosistemas asimétricos usados, en este caso \emph{RSA} y el intercambio de claves \emph{Diffie-Hellman}, como este tiene una versión usando Curvas Elípticas, también introduzco la teoría necesaria acerca de estas para describir el funcionamiento del intercambio en este cuerpo. Además, también dedico un capítulo a describir las funciones hash o resumen más usadas en los distintos criptosistemas. Para concluir explico el proceso criptográfico que siguen las aplicaciones de mensajería más populares y realizo una aplicación que implementa los criptosistemas más utilizados.
+
 \cleardoublepage
 
 
 \thispagestyle{empty}
 
 
-%\begin{center}
-%{\large\bfseries Project Title: Project Subtitle}\\
-%\end{center}
-%\begin{center}
-%First name, Family name (student)\\
-%\end{center}
-
-%%\vspace{0.7cm}
-%\noindent{\textbf{Keywords}: Keyword1, Keyword2, Keyword3, ....}\\
+\begin{center}
+{\large\bfseries Cryptography in messaging app}\\
+\end{center}
+\begin{center}
+Luis Tormo Fabios\\
+\end{center}
 
 %\vspace{0.7cm}
-%\noindent{\textbf{Abstract}}\\
+\noindent{\textbf{Keywords}: Symmetric cryptography, asymmetric cryptography, finite fields, key exchange, elliptic curves, hash functions, cryptographic protocol.}\\
 
-%Write here the abstract in English.
+\vspace{0.7cm}
+\noindent{\textbf{Abstract}}\\
 
-%\chapter*{}
-%\thispagestyle{empty}
+We live in an era in which social relationships cannot be conceived without thinking about social networks and in particular messaging applications. They allow us to connect with each other, independent of physical barriers.
+In this memory the problem that I have approached has been the development of a theoretical study of the cryptosystems used by the most used messaging applications nowadays. For this purpose, I have developed in a rigorous way the mathematical and computational tools used by messaging applications. This development covers an introduction to symmetric and asymmetric cryptography, as well as finite body theory and modular arithmetic necessary to properly understand the tools.
+An in-depth development of block ciphers and the \emph{AES} cipher in particular, a thorough explanation of \emph{RSA} and the \emph{Discrete Logarithm Problem} and as a result of this, the \emph{Diffie-Hellman} key exchange. Subsequently, I have introduced the theory of Elliptic Curves necessary to understand the analog of the above tools using this corpus.
+Then I have introduced the \emph{Hash Functions}, how to construct them using the \emph{Merkle-Damgård} construction and the families of functions most commonly used in today's messaging applications. After I have made a practical description of how the most popular messaging applications incorporate the cryptosystems seen above. Finally I have developed a messaging application in which I have applied what I have seen previously in the memory. 
+
+\chapter*{}
+\thispagestyle{empty}
 
 \noindent\rule[-1ex]{\textwidth}{2pt}\\[4.5ex]
 
-Yo, \textbf{Nombre Apellido1 Apellido2}, alumno de la titulación TITULACIÓN de la \textbf{Escuela Técnica Superior
-de Ingenierías Informática y de Telecomunicación de la Universidad de Granada}, con DNI XXXXXXXXX, autorizo la
+Yo, \textbf{Luis Tormo Fabios}, alumno del doble grado de Ingeniería Informática y Matemáticas de la \textbf{Escuela Técnica Superior
+de Ingenierías Informática y de Telecomunicación y la facultad de Ciencias de la Universidad de Granada}, con DNI XXXXXXXXX, autorizo la
 ubicación de la siguiente copia de mi Trabajo Fin de Grado en la biblioteca del centro para que pueda ser
 consultada por las personas que lo deseen.
 
 \vspace{6cm}
 
-\noindent Fdo: Nombre Apellido1 Apellido2
+\noindent Fdo: Luis Tormo Fabios
 
 \vspace{2cm}
 
 \begin{flushright}
-Granada a X de mes de 201 .
+Granada a X de Septiembre de 2023.
 \end{flushright}
 
 
@@ -72,12 +76,7 @@ Granada a X de mes de 201 .
 
 \noindent\rule[-1ex]{\textwidth}{2pt}\\[4.5ex]
 
-D. \textbf{Nombre Apellido1 Apellido2 (tutor1)}, Profesor del Área de XXXX del Departamento YYYY de la Universidad de Granada.
-
-\vspace{0.5cm}
-
-D. \textbf{Nombre Apellido1 Apellido2 (tutor2)}, Profesor del Área de XXXX del Departamento YYYY de la Universidad de Granada.
-
+D. \textbf{Pedro A. Garcı́a Sánchez}, Profesor del Área de Álgebra del Departamento Álgebra de la Universidad de Granada.
 
 \vspace{0.5cm}
 
@@ -85,13 +84,13 @@ D. \textbf{Nombre Apellido1 Apellido2 (tutor2)}, Profesor del Área de XXXX del 
 
 \vspace{0.5cm}
 
-Que el presente trabajo, titulado \textit{\textbf{Título del proyecto, Subtítulo del proyecto}},
-ha sido realizado bajo su supervisión por \textbf{Nombre Apellido1 Apellido2 (alumno)}, y autorizamos la defensa de dicho trabajo ante el tribunal
+Que el presente trabajo, titulado \textit{\textbf{Criptosistemas en aplicaciones de mensajería}},
+ha sido realizado bajo su supervisión por \textbf{Luis Tormo Fabios}, y autorizamos la defensa de dicho trabajo ante el tribunal
 que corresponda.
 
 \vspace{0.5cm}
 
-Y para que conste, expiden y firman el presente informe en Granada a X de mes de 201 .
+Y para que conste, expiden y firman el presente informe en Granada a X de Septiembre de 2023.
 
 \vspace{1cm}
 
