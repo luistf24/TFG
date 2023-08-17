@@ -87,7 +87,7 @@ En la última ronda se hacen solo los tres primeros pasos del algoritmo.
 		La función \emph{ByteSub} es una sustitución no lineal que se aplica a cada byte de la matriz de estado mediante una s-caja 8\texttimes8. Se obtiene componiendo dos transformaciones:
 		\begin{enumerate}
 			\item Cada byte se considera como un elemento del $\operatorname{GF}(2^8)$ generado por el polinomio irreducible $m(x)=x^8+x^4+x^3+x+1$ y es sustituido por su inversa multiplicativa quedando el valor cero inalterado. 
-			\item A continuación se aplica la siguiente transformación afín en $\operatorname{GF}(2)$ siendo $x_0, x_1,...,x_7$ los bits del byte correspondiente e $y_0, y_1,...,y_7$ los del resultado:
+			\item A continuación se aplica la siguiente transformación afín en $\operatorname{GF}(2^8)$ siendo $x_0, x_1,...,x_7$ los bits del byte correspondiente e $y_0, y_1,...,y_7$ los del resultado:
 
 				\begin{equation*} 
 					\begin{bmatrix} 

@@ -62,13 +62,13 @@ En caso de que no sea correcto, el cliente deberá generar una nueva sesión par
 En esta sección se describirán las distintas claves que entran en juego en el proceso de cifrado y descifrado de MTProto 2.0 \cite{telegram2}.
 
 \begin{description}
-	\item \textbf{Authorization Key (auth\textunderscore key)}\\
+	\item \textbf{Authorization Key (auth\_key)}\\
 	Es una clave de 2048 bit compartida por el dispositivo del cliente y el servidor, se crea durante el registro del usuario, se almacena en el dispositivo de este mediante el protocolo de intercambio de claves \emph{Diffie-Hellman} y nunca se transmite a través de la red. Cada \emph{Authorization key} es única y dependiente del usuario, aunque un usuario puede tener más de una ya que Telegram permite tener sesiones persistentes en diferentes dispositivos. En caso de ser necesario estas claves pueden ser bloqueadas para siempre. Por ejemplo podría pasar si un dispositivo con sesión persistente se pierde.
 
 	\item \textbf{Server Key}\\
 	Es una clave RSA de 2048 bits usada por el servidor para firmar sus mensajes durante el proceso de registro y la \emph{Authorization Key} todavía no se ha generado. La aplicación tiene una clave pública del servidor que puede ser utilizada para verificar la firmas pero no para firmar mensajes. La clave privada del servidor es almacenada en este y raramente cambia.
 
-	\item \textbf{Key Identifier (auth\textunderscore key\textunderscore id)}\\
+	\item \textbf{Key Identifier (auth\_key\_id)}\\
 	Se usan los 64 bits menos significativos del hash \emph{SHA1} de la \emph{Authorization Key} para indicar qué clave en particular se ha usado para cifrar el mensaje. Las claves tienen que ser identificadas unívocamente y en caso de colisión, la \emph{Authorization Key} se regenera. Un identificador Zero Key significa que el cifrado no se usa. Esto está permitido para muy pocos mensajes usados durante el registro para generar la clave en el intercambio \emph{Diffie-Hellman}.
 	
 	\item \textbf{Session}\\
@@ -78,7 +78,7 @@ En esta sección se describirán las distintas claves que entran en juego en el 
 	\item  \textbf{Server Salt}\\
 	Es un número de 64 bits generado aleatoriamente que cambia cada 30 minutos independiente de las sesiones. Se genera por una petición del servidor. Una vez generado el nuevo salt, todos los mensajes tienen que tenerlo. Si bien, se aceptan los mensajes con el salt previo. El \emph{Server Salt} es necesario para proteger ante ciertos ataques como podría ser ajustar el reloj de la víctima en un momento futuro.
 
-	\item \textbf{Message Identifier (msg\textunderscore id)}\\
+	\item \textbf{Message Identifier (msg\_id)}\\
 	Es un número de 64 bits dependiente del tiempo usado únicamente para identificar mensajes que no tienen asociada una clave de sesión \emph{(Session)}. Los \emph{Message Identifiers} del servidor módulo 4 dan 1 si el mensaje es una respuesta a un mensaje del cliente y dan 3 en otro caso. 
 	Los \emph{Message Identifiers} del cliente deben incrementarse monótonamente, igualmente con los del servidor y tienen que ser aproximadamente igual a $unixtime*2^{32}$, donde \emph{unixtime} es un sistema para la descripción de instantes de tiempo definida como la cantidad de segundos transcurridos desde la medianoche UTC del 1 de enero de 1970. 
 	De esta manera, el \emph{Message Identifier} señala el momento aproximado en el que el mensaje fue creado siendo rechazado alrededor de 300 segundos después o 30 segundos antes de ser creado (necesario como medida de protección de ataques de repetición).  
@@ -86,10 +86,10 @@ En esta sección se describirán las distintas claves que entran en juego en el 
 	\item \textbf{Content-related Message}\\
 	Un mensaje que requiere un reconocimiento explícito. Un reconocimiento explícito es un ack que envía el cliente al servidor para certificar que es él el que envía el mensaje. Esto incluye todos los mensajes de usuario y muchos de servicio, a excepción de contenedores y otros reconocimientos.
 
-	\item \textbf{Message Sequence Number (msg\textunderscore seqno)}\\
+	\item \textbf{Message Sequence Number (msg\_seqno)}\\
 	Un número de 32 bits igual o el doble del número de mensajes \emph{content-related} creados por el remitente antes de este mensaje y posteriormente se va incrementado en uno si el mensaje es del tipo \emph{cotent-related}. Un contenedor se genera siempre después de su contenido por lo que su \emph{Message Sequence Number} será siempre igual o mayor a los números de mensajes contenidos en él.
 
-	\item \textbf{Message Key (msg\textunderscore key)}\\
+	\item \textbf{Message Key (msg\_key)}\\
 	En el protocolo \textbf{MTProto 2.0}, la \emph{Message Key} se define como los 128 bits del medio del hash \emph{SHA-256} del mensaje que va a ser cifrado antepuesto por un fragmento de 32 bytes de la clave de autorización.\\
 	En el protocolo \textbf{MTProto 1.0}, la \emph{Message Key} se definía como los 128 bits menos significativos del hash \emph{SHA-1} del mensaje a ser cifrado, los bytes de relleno eran excluidos en el cálculo del hash. La \emph{Authorization Key} no estaba involucrada en este cálculo.
 
@@ -97,7 +97,7 @@ En esta sección se describirán las distintas claves que entran en juego en el 
 	Una cabecera de 16 bytes añadida antes de que el mensaje o el contenedor sea cifrado. Consiste en el \emph{Server Salt} de 64 bits y la \emph{Session} de 64 bits.
 
 	\item \textbf{External (cryptographic) Header}\\
-	Una cabecera de 24 bytes que se añade antes de que el mensaje o el contenedor sea cifrado. Consiste en la \emph{auth\textunderscore key\textunderscore id} de 64 bits y la \emph{msg\textunderscore key} de 128 bits.
+	Una cabecera de 24 bytes que se añade antes de que el mensaje o el contenedor sea cifrado. Consiste en la \emph{auth\_key\_id} de 64 bits y la \emph{msg\_key} de 128 bits.
 
 	\item \textbf{Payload}\\
 	Es el \emph{External Header} + mensaje cifrado o contenedor.
@@ -120,108 +120,108 @@ Una vez introducidos los formatos que seguirán las consultas y los números vea
 	
 	\item El servidor le responde enviando 
 	\begin{itemize}
-		\item \emph{server\textunderscore nonce}: Es un número aleatorio \emph{int128} generado por el servidor que sirve para que el cliente lo identifique y al igual que el \emph{nonce} no será secreto e irá incluido en las siguientes consultas y respuestas. 
+		\item \emph{server\_nonce}: Es un número aleatorio \emph{int128} generado por el servidor que sirve para que el cliente lo identifique y al igual que el \emph{nonce} no será secreto e irá incluido en las siguientes consultas y respuestas. 
 		\item \emph{pq}: Es una representación de un número natural en formato \emph{big endian} que es el producto de dos números primos, \emph{pq} por lo general verifica $pq \leq 2^{63}-1$
-		\item \emph{server\textunderscore public\textunderscore key\textunderscore fingerprints}: Es una lista de \emph{fingerprints}, secuencias únicas de letras y números usadas para identificar las claves RSA públicas.
+		\item \emph{server\_public\_key\_fingerprints}: Es una lista de \emph{fingerprints}, secuencias únicas de letras y números usadas para identificar las claves RSA públicas.
 	\end{itemize}
 
 	\item El cliente descompone \emph{pq} en factores primos tal que $p$\textless$q$. Una vez hecho esto empieza el intercambio de claves Diffie-Hellman. Este paso es la prueba de trabajo.
 
-	\item En este paso se presentan las pruebas de trabajo. Para ello se genera \emph{encrypted\textunderscore data} como sigue.
+	\item En este paso se presentan las pruebas de trabajo. Para ello se genera \emph{encrypted\_data} como sigue.
 	\begin{enumerate}
-		\item Se genera \emph{new\textunderscore nonce} un número aleatorio generado por el cliente.
+		\item Se genera \emph{new\_nonce} un número aleatorio generado por el cliente.
 		\item Se genera \emph{data} que es una serialización de:
 		\begin{itemize}
 			\item \emph{pq},
 			\item \emph{p},
 			\item \emph{q},
-			\item \emph{server\textunderscore nonce},
-			\item \emph{new\textunderscore nonce},
+			\item \emph{server\_nonce},
+			\item \emph{new\_nonce},
 			\item \emph{dc}, que es la id del servidor con el que se está haciendo el intercambio de claves.
 		\end{itemize}
-		\item Se genera \emph{encrypted\textunderscore data} como el resultado de la función $RSA\textunderscore PAD(data, server\textunderscore public\textunderscore key)$. Esta es una variación de RSA cuyo funcionamiento es el siguiente.
+		\item Se genera \emph{encrypted\_data} como el resultado de la función $RSA\_PAD(data, server\_public\_key)$. Esta es una variación de RSA cuyo funcionamiento es el siguiente.
 		\begin{itemize}
-			\item Se genera \emph{data\textunderscore with\textunderscore padding:=data+random\textunderscore padding\textunderscore bytes}, donde \emph{random\textunderscore padding\textunderscore bytes} se escoge de manera que \emph{data\textunderscore with\textunderscore padding} tenga un tamaño final de 192 bytes.
-			\item Luego se crea la variable \emph{data\textunderscore pad\textunderscore reversed} como resultado de la función $BYTE\textunderscore REVERSE(data\textunderscore with\textunderscore padding)$, función la cual revierte el orden de los bytes.
-			\item Se genera un número aleatorio de 32 bytes que se denomina como \emph{temp\textunderscore key}.
-	\item Se genera $data\textunderscore with\textunderscore hash:=data\textunderscore pad\textunderscore reversed + \\ + SHA256(temp\textunderscore key + data\textunderscore with\textunderscore padding)$. Después de esta operación \emph{data\textunderscore with\textunderscore hash} tiene exactamente una longitud de 224 bytes.
-	\item Después de este paso se encripta \emph{data\textunderscore with\textunderscore hash} a partir de \emph{temp\textunderscore key} usando AES-256 y se almacena el resultado en la variable \emph{aes\textunderscore encrypted}.
-	\item Se ajusta \emph{aes\textunderscore encrypted} a 32 bytes usando la función SHA-256 y a continuación se realiza la operación XOR con \emph{temp\textunderscore key} almacenándose el resultado en \emph{temp\textunderscore key\textunderscore xor}.
-	\item Se combinan \emph{temp\textunderscore key\textunderscore xor} con \emph{aes\textunderscore encrypted} y se almacena el resultado en \emph{key\textunderscore aes\textunderscore encrypted}. Esta tiene un tamaño de 256 bytes. 
-	\item Se compara el tamaño \emph{key\textunderscore aes\textunderscore encrypted} con \emph{RSA-modulus} de \emph{server\textunderscore pub\textunderscore key} en formato big endian de 2048 bits. Si \emph{key\textunderscore aes\textunderscore encrypted} es mayor que \emph{RSA-modulus}, se empieza de nuevo el proceso eligiendo un nuevo \emph{random\textunderscore temp\textunderscore key}.
-	\item Por último se genera \emph{encrypted\textunderscore data} como resultado de aplicar RSA a \emph{key\textunderscore aes\textunderscore encrypted} y a \emph{server\textunderscore pub\textunderscore key}.
+			\item Se genera \emph{data\_with\_padding:=data+random\_padding\_bytes}, donde \emph{random\_padding\_bytes} se escoge de manera que \emph{data\_with\_padding} tenga un tamaño final de 192 bytes.
+			\item Luego se crea la variable \emph{data\_pad\_reversed} como resultado de la función $BYTE\_REVERSE(data\_with\_padding)$, función la cual revierte el orden de los bytes.
+			\item Se genera un número aleatorio de 32 bytes que se denomina como \emph{temp\_key}.
+	\item Se genera $data\_with\_hash:=data\_pad\_reversed + \\ + SHA256(temp\_key + data\_with\_padding)$. Después de esta operación \emph{data\_with\_hash} tiene exactamente una longitud de 224 bytes.
+	\item Después de este paso se encripta \emph{data\_with\_hash} a partir de \emph{temp\_key} usando AES-256 y se almacena el resultado en la variable \emph{aes\_encrypted}.
+	\item Se ajusta \emph{aes\_encrypted} a 32 bytes usando la función SHA-256 y a continuación se realiza la operación XOR con \emph{temp\_key} almacenándose el resultado en \emph{temp\_key\_xor}.
+	\item Se combinan \emph{temp\_key\_xor} con \emph{aes\_encrypted} y se almacena el resultado en \emph{key\_aes\_encrypted}. Esta tiene un tamaño de 256 bytes. 
+	\item Se compara el tamaño \emph{key\_aes\_encrypted} con \emph{RSA-modulus} de \emph{server\_pub\_key} en formato big endian de 2048 bits. Si \emph{key\_aes\_encrypted} es mayor que \emph{RSA-modulus}, se empieza de nuevo el proceso eligiendo un nuevo \emph{random\_temp\_key}.
+	\item Por último se genera \emph{encrypted\_data} como resultado de aplicar RSA a \emph{key\_aes\_encrypted} y a \emph{server\_pub\_key}.
 		\end{itemize}
 	\end{enumerate}
-	Una vez hecho esto, se envía \emph{encrypted\textunderscore data} al servidor.
+	Una vez hecho esto, se envía \emph{encrypted\_data} al servidor.
 	Después de este paso alguien podría interceptar la consulta y modificarla con una cosulta suya haciendo un ataque \textbf{man-in-the-middle}. 
-	Este ataque no sería muy efectivo, ya que el único elemento que podría modificar sería \emph{new\textunderscore nonce} porque los demás están cifrados y el resultado sería que el atacante genere una \emph{Authorization\textunderscore key} propia independiente de la del cliente haciendo que el ataque no sea efectivo.
+	Este ataque no sería muy efectivo, ya que el único elemento que podría modificar sería \emph{new\_nonce} porque los demás están cifrados y el resultado sería que el atacante genere una \emph{Authorization\_key} propia independiente de la del cliente haciendo que el ataque no sea efectivo.
 
 	\item El servidor responde enviando
 		\begin{itemize}
 			\item \emph{nonce}.
-			\item \emph{server\textunderscore nonce}.
-			\item \emph{encrypted\textunderscore answer}: Respuesta cifrada que es del tipo \emph{string} y a su vez contiene
+			\item \emph{server\_nonce}.
+			\item \emph{encrypted\_answer}: Respuesta cifrada que es del tipo \emph{string} y a su vez contiene
 			\begin{itemize}
-				\item \emph{new\textunderscore nonce\textunderscore hash}: Son los 128 bits menos significativos de \emph{SHA-1(new\textunderscore nonce)}.
-				\item \emph{answer}: Es una serialización de \emph{nonce}, \emph{server\textunderscore nonce}, \emph{g}, \emph{dh\textunderscore prime}, \emph{g\textunderscore a} y \emph{server\textunderscore time}. Donde \emph{dh\textunderscore prime} es un número primo seguro de 2048 bits, \emph{g} un generador de un subgrupo cíclico de orden $\frac{p-1}{2}$, $g_a$ es la clave que envía el servidor al cliente que al elevarla a $b$ módulo \emph{dh\textunderscore prime} el cliente obtendría la clave final.
-\item \emph{answer\textunderscore with\textunderscore hash}: Es una generación con la función hash \emph{HASH1} quedando como \emph{SHA-1(answer)}+\emph{answer}+\emph{(0-15 bytes aleatorios)} de manera que la longitud sea divisible por 16, es del tipo \emph{string}.
-				\item \emph{answer\textunderscore aes\textunderscore key}: \emph{SHA-1(new\textunderscore nonce + server\textunderscore nonce) +\\+ substr(SHA-1(server\textunderscore nonce + new\textunderscore nonce), 0, 12)} y es del tipo \emph{string}. Donde \emph{substr} es una función que devuelve caracteres del \emph{string} desde una posición hasta otra, en este caso desde la posición $0$ hasta $12$.
-				\item \emph{tmp\textunderscore aes\textunderscore iv}: \emph{substr(SHA-1(server\textunderscore nonce + new\textunderscore nonce), 12, 8) + SHA-1(new\textunderscore nonce + new\textunderscore nonce) + substr(new\textunderscore, 0, 4)}
-				\item \emph{encrypted\textunderscore answer}: \emph{AES256\textunderscore ige\textunderscore encrypt(answer\textunderscore with\textunderscore hash,\\ tmp\textunderscore aes\textunderscore key, tmp\textunderscore aes\textunderscore iv)} donde:
+				\item \emph{new\_nonce\_hash}: Son los 128 bits menos significativos de \emph{SHA-1(new\_nonce)}.
+				\item \emph{answer}: Es una serialización de \emph{nonce}, \emph{server\_nonce}, \emph{g}, \emph{dh\_prime}, \emph{g\_a} y \emph{server\_time}. Donde \emph{dh\_prime} es un número primo seguro de 2048 bits, \emph{g} un generador de un subgrupo cíclico de orden $\frac{p-1}{2}$, $g_a$ es la clave que envía el servidor al cliente que al elevarla a $b$ módulo \emph{dh\_prime} el cliente obtendría la clave final.
+\item \emph{answer\_with\_hash}: Es una generación con la función hash \emph{HASH1} quedando como \emph{SHA-1(answer)}+\emph{answer}+\emph{(0-15 bytes aleatorios)} de manera que la longitud sea divisible por 16, es del tipo \emph{string}.
+				\item \emph{answer\_aes\_key}: \emph{SHA-1(new\_nonce + server\_nonce) +\\+ substr(SHA-1(server\_nonce + new\_nonce), 0, 12)} y es del tipo \emph{string}. Donde \emph{substr} es una función que devuelve caracteres del \emph{string} desde una posición hasta otra, en este caso desde la posición $0$ hasta $12$.
+				\item \emph{tmp\_aes\_iv}: \emph{substr(SHA-1(server\_nonce + new\_nonce), 12, 8) + SHA-1(new\_nonce + new\_nonce) + substr(new\_nonce, 0, 4)}
+				\item \emph{encrypted\_answer}: \emph{AES256\_ige\_encrypt(answer\_with\_hash,\\ tmp\_aes\_key, tmp\_aes\_iv)} donde:
 				\begin{itemize}
-					\item \emph{tmp\textunderscore aes\textunderscore key}: Es una clave de 256 bits
-					\item \emph{tmp\textunderscore aes\textunderscore iv}: Es un vector de inicialización de 256 bits.
+					\item \emph{tmp\_aes\_key}: Es una clave de 256 bits
+					\item \emph{tmp\_aes\_iv}: Es un vector de inicialización de 256 bits.
 				\end{itemize}
 				Al igual que en el resto de las instancias que usan el cifrado AES, a los datos cifrados se le añaden bytes aleatorios de forma que el tamaño sea divisible por 16.
 			\end{itemize}
 		\end{itemize}
-	Después de este paso \emph{new\textunderscore nonce} sigue siendo únicamente conocido por el cliente y el servidor de esta manera el cliente garantiza que el servidor es el que está al otro lado de la comunicación y que la respuesta de este es correcta, ya que los datos están cifrados usando \emph{new\textunderscore nonce}.\\
-	El cliente comprueba que $p=dh\textunderscore prime$, es un número primo seguro de 2048 bits, es decir, se tiene que verificar que \emph{p} y $\frac{p-1}{2}$ son primos, además, $2^{2047}$\textless \emph{p} \textless $2^{2048}$, y \emph{g} genera un subgrupo cíclico con orden primo $\frac{p-1}{2}$.$g$ siempre vale 2, 3, 4, 5, 6, o 7.\\
+	Después de este paso \emph{new\_nonce} sigue siendo únicamente conocido por el cliente y el servidor de esta manera el cliente garantiza que el servidor es el que está al otro lado de la comunicación y que la respuesta de este es correcta, ya que los datos están cifrados usando \emph{new\_nonce}.\\
+	El cliente comprueba que $p=dh\_prime$, es un número primo seguro de 2048 bits, es decir, se tiene que verificar que \emph{p} y $\frac{p-1}{2}$ son primos, además, $2^{2047}$\textless \emph{p} \textless $2^{2048}$, y \emph{g} genera un subgrupo cíclico con orden primo $\frac{p-1}{2}$.$g$ siempre vale 2, 3, 4, 5, 6, o 7.\\
 	Si la verificación tarda mucho tiempo, cosa que ocurre en dispositivos antiguos, se ejecutarían solo 15 iteraciones en el algoritmo de Miller-Rabin para garantizar que \emph{p} y $\frac{p-1}{2}$ sean primos con una probabilidad de error muy baja, alrededor de una millonésima, y dejar el resto de iteraciones para después, ejecutándose estas de fondo.
 
 	\item El cliente genera un número aleatorio \emph{b} de 2048 bits y lo envía al servidor en un mensaje que contiene:
 		\begin{itemize}
 			\item \emph{nonce}.
-			\item \emph{server\textunderscore nonce}.
-			\item \emph{encrypted\textunderscore data} que se descifra de la siguiente manera:
+			\item \emph{server\_nonce}.
+			\item \emph{encrypted\_data} que se descifra de la siguiente manera:
 				\begin{itemize}
-					\item \emph{g\textunderscore b} = $g^b$ mod \emph{dh\textunderscore prime}
+					\item \emph{g\_b} = $g^b$ mod \emph{dh\_prime}
 					\item \emph{data} que es una serialización donde
 						\begin{itemize}
 							\item \emph{nonce}
-							\item \emph{server\textunderscore nonce}
-							\item \emph{retry\textunderscore id} que vale 0 en el primer intento y en caso contrario, vale \emph{auth\textunderscore key\textunderscore aux\textunderscore hash} del intento fallido anterior y es del tipo \emph{long}.
-							\item \emph{g\textunderscore b} que es del tipo \emph{string}.
+							\item \emph{server\_nonce}
+							\item \emph{retry\_id} que vale 0 en el primer intento y en caso contrario, vale \emph{auth\_key\_aux\_hash} del intento fallido anterior y es del tipo \emph{long}.
+							\item \emph{g\_b} que es del tipo \emph{string}.
 						\end{itemize}
-					\item \emph{data\textunderscore with\textunderscore hash} que es: \emph{SHA-1(data)+data+(0-15 bytes aleatorios de manera que el tamaño sea divisible por 16)}.
-					\item \emph{encrypted\textunderscore data} que es: \emph{AES256\textunderscore ige\textunderscore encrypt(data\textunderscore with\textunderscore hash, tmp\textunderscore aes\textunderscore key, tmp\textunderscore aes\textunderscore iv)}. Donde el modo IGE es una variación de modo CBC [\ref{esquemacbc}] de los cifrados de bloque. En este modo se garantiza que si un bloque del mensaje encriptado es cambiado, no se pueda desencriptar correctamente el mensaje completo.
+					\item \emph{data\_with\_hash} que es: \emph{SHA-1(data)+data+(0-15 bytes aleatorios de manera que el tamaño sea divisible por 16)}.
+					\item \emph{encrypted\_data} que es: \emph{AES256\_ige\_encrypt(data\_with\_hash, tmp\_aes\_key, tmp\_aes\_iv)}. Donde el modo IGE es una variación de modo CBC [\ref{esquemacbc}] de los cifrados de bloque. En este modo se garantiza que si un bloque del mensaje encriptado es cambiado, no se pueda desencriptar correctamente el mensaje completo.
 				\end{itemize}
 		\end{itemize}
-	\item Una vez hecho los pasos previos tendríamos que \emph{auth\textunderscore key} vale $g^{ab}$ mod \emph{dh\textunderscore prime}, en el servidor se calcula como \emph{$g\textunderscore b^{a}$ mod \emph{dh\textunderscore prime}} y en el cliente se calcula como $g\textunderscore a^b$ mod \emph{dh\textunderscore prime}.
-	\item \emph{auth\textunderscore key\textunderscore hash} se calcula como los 64 bits de menor prioridad de \emph{SHA-1(auth\textunderscore key)}. El servidor comprueba si existe alguna otra clave con el mismo \emph{auth\textunderscore hash} y responde de alguna de las siguientes tres formas
+	\item Una vez hecho los pasos previos tendríamos que \emph{auth\_key} vale $g^{ab}$ mod \emph{dh\_prime}, en el servidor se calcula como \emph{$g\_b^{a}$ mod \emph{dh\_prime}} y en el cliente se calcula como $g\_a^b$ mod \emph{dh\_prime}.
+	\item \emph{auth\_key\_hash} se calcula como los 64 bits de menor prioridad de \emph{SHA-1(auth\_key)}. El servidor comprueba si existe alguna otra clave con el mismo \emph{auth\_hash} y responde de alguna de las siguientes tres formas
 	\begin{enumerate}
 		\item Una serialización de: 
 			\begin{itemize}
 				\item \emph{nonce},
-				\item \emph{server\textunderscore nonce},
-				\item \emph{new\textunderscore nonce\textunderscore hash1}.
+				\item \emph{server\_nonce},
+				\item \emph{new\_nonce\_hash1}.
 			\end{itemize}
 		\item Una serialización de:
 			\begin{itemize}
 				\item \emph{nonce},	
-				\item \emph{server\textunderscore nonce},
-				\item \emph{new\textunderscore nonce\textunderscore hash2}.
+				\item \emph{server\_nonce},
+				\item \emph{new\_nonce\_hash2}.
 			\end{itemize}
 		\item Una serialización de:
 			\begin{itemize}
 				\item \emph{nonce},	
-				\item \emph{server\textunderscore nonce},
-				\item \emph{new\textunderscore nonce\textunderscore hash3}.
+				\item \emph{server\_nonce},
+				\item \emph{new\_nonce\_hash3}.
 			\end{itemize}
 	\end{enumerate}
-	Donde \emph{new\textunderscore nonce\textunderscore hash1}, \emph{new\textunderscore nonce\textunderscore hash2} y \emph{new\textunderscore nonce\textunderscore hash3} son los 128 bits menos significativos de SHA-1 de la cadena de bytes obtenida al añadir a \emph{new\textunderscore nonce} un byte con el valor 1,2 o 3 respectivamente y seguido de \emph{auth\textunderscore key\textunderscore hash}.\\
-	\emph{Auth\textunderscore key\textunderscore aux\textunderscore hash} son los 64 bits más significativos del resultado de la función hash \emph{SHA-1(auth\textunderscore key)}.\\
-	Si algo falla durante estos pasos, el cliente volvería al paso 6 y generándose un nuevo \emph{b}. Al mismo tiempo se define \emph{server\textunderscore salt} como \emph{substr(new\textunderscore nonce, 0, 8)} XOR \emph{substr(server\textunderscore nonce, 0, 8)}.\\
+	Donde \emph{new\_nonce\_hash1}, \emph{new\_nonce\_hash2} y \emph{new\_nonce\_hash3} son los 128 bits menos significativos de SHA-1 de la cadena de bytes obtenida al añadir a \emph{new\_nonce} un byte con el valor 1,2 o 3 respectivamente y seguido de \emph{auth\_key\_hash}.\\
+	\emph{Auth\_key\_aux\_hash} son los 64 bits más significativos del resultado de la función hash \emph{SHA-1(auth\_key)}.\\
+	Si algo falla durante estos pasos, el cliente volvería al paso 6 y generándose un nuevo \emph{b}. Al mismo tiempo se define \emph{server\_salt} como \emph{substr(new\_nonce, 0, 8)} XOR \emph{substr(server\_nonce, 0, 8)}.\\
 	
 \end{enumerate}
 \textbf{Gestión de errores}
@@ -229,21 +229,21 @@ Una vez introducidos los formatos que seguirán las consultas y los números vea
 Si el cliente no obtiene alguna respuesta del servidor en un intervalo de tiempo determinado se repite la consulta, análogamente ocurre con el servidor. Sin embargo si el servidor no obtiene una segunda respuesta del cliente en 10 minutos, reiniciará la conexión y el cliente tendrá que empezar de nuevo.
 
 \subsection{Generando la clave y el vector de inicialización de AES}
-En esta sección hablaré de como se generan la clave de autorización (\emph{auth\textunderscore key}) y de la clave del mensaje (\emph{msg\textunderscore key}) necesarias para calcular la clave de AES (\emph{aes\textunderscore key}) y el vector de inicialización de 256 bits (\emph{iv\textunderscore aes}) usados para cifrar los mensajes en MTProto 2.0.\\
+En esta sección hablaré de como se generan la clave de autorización (\emph{auth\_key}) y de la clave del mensaje (\emph{msg\_key}) necesarias para calcular la clave de AES (\emph{aes\_key}) y el vector de inicialización de 256 bits (\emph{iv\_aes}) usados para cifrar los mensajes en MTProto 2.0.\\
 El algoritmo sigue los siguientes pasos.
 \begin{enumerate}
-	\item Calculamos \emph{msg\textunderscore key\textunderscore large} como \emph{SHA-256(substr(auth\textunderscore key, 88+x, 32)+plaintext+random\textunderscore padding)}.
-	\item Calculamos \emph{msg\textunderscore key} como \emph{substr(msg\textunderscore key\textunderscore large, 8, 16)}.
-	\item Calculamos \emph{sha256\textunderscore a} como \emph{SHA-256(msg\textunderscore key+substr(auth\textunderscore key, x, 36))}.
-	\item Calculamos \emph{sha256\textunderscore b} como \emph{SHA-256(substr(auth\textunderscore key, 40+x,\\ 36)+msg\textunderscore key)}.
+	\item Calculamos \emph{msg\_key\_large} como \emph{SHA-256(substr(auth\_key, 88+x, 32)+plaintext+random\_padding)}.
+	\item Calculamos \emph{msg\_key} como \emph{substr(msg\_key\_large, 8, 16)}.
+	\item Calculamos \emph{sha256\_a} como \emph{SHA-256(msg\_key+substr(auth\_key, x, 36))}.
+	\item Calculamos \emph{sha256\_b} como \emph{SHA-256(substr(auth\_key, 40+x,\\ 36)+msg\_key)}.
 \end{enumerate}
 Y una vez hechos estos pasos, ya podemos calcular la clave para AES y el vector de inicialización.
 \begin{itemize}
-	\item \textbf{\emph{aes\textunderscore key}}: \emph{substr(sha256\textunderscore a, 0, 8)+substr(sha256\textunderscore b, 8, 16)+\\+substr(sha256\textunderscore a, 24, 8)}.
-	\item \textbf{\emph{aes\textunderscore iv}}: \emph{substr(sha256\textunderscore b, 0, 8) + substr(sha256\textunderscore a, 8 16)+\\+substr(sha256\textunderscore b, 24, 8)}.
+	\item \textbf{\emph{aes\_key}}: \emph{substr(sha256\_a, 0, 8)+substr(sha256\_b, 8, 16)+\\+substr(sha256\_a, 24, 8)}.
+	\item \textbf{\emph{aes\_iv}}: \emph{substr(sha256\_b, 0, 8) + substr(sha256\_a, 8 16)+\\+substr(sha256\_b, 24, 8)}.
 \end{itemize}
 \emph{x} vale 0 cuando los mensajes van del cliente al servidor y 8 cuando los mensajes van del servidor al cliente.\\
-Los 1024 bits menos significativos de la \emph{auth\textunderscore key} no se utilizan para el cálculo ya que estos se usan para cifrar la copia local de los datos recibidos del servidor además, los 512 bits menos significativos no se almacenan en el servidor por lo que si el cliente pierde la clave o la contraseña del dispositivo, no se podrán descifrar los datos locales. Un esquema del proceso se puede ver en \ref{mtproto2}.
+Los 1024 bits menos significativos de la \emph{auth\_key} no se utilizan para el cálculo ya que estos se usan para cifrar la copia local de los datos recibidos del servidor además, los 512 bits menos significativos no se almacenan en el servidor por lo que si el cliente pierde la clave o la contraseña del dispositivo, no se podrán descifrar los datos locales. Un esquema del proceso se puede ver en \ref{mtproto2}.
 %\newpage
 \begin{figure}[htb]
 	\centering
@@ -332,8 +332,8 @@ Etapa inicial consistente en añadir dispositivos asociados al cliente, como se 
 		\item El dispositivo principal escanea el código QR y almacena $I_{companion}$ en el disco.
 		\item El dispositivo principal carga su propia \emph{Identity Key} como $I_{primary}$.
 		\item El dispositivo genera los metadatos de la vinculación ($L_{metadata}$) y actualiza la lista de datos de dispositivos para que contenga un nuevo dispositivo compañero como ($L_{istData}$).
-		\item El dispositivo principal genera una firma de la cuenta para el compañero, $$A_{signature}=CURVE25519\textunderscore SIGN(I_{primary} || L_{metadata} || I_{companion}).$$
-		\item El dispositivo principal genera una firma para la lista de dispositivos que permitirá actualizar la propia lista de dispositivos. $$ListSignature = CURVE25519\textunderscore SIGN(I_{primary}, 0x0602 || ListData).$$
+		\item El dispositivo principal genera una firma de la cuenta para el compañero, $$A_{signature}=CURVE25519\_SIGN(I_{primary} || L_{metadata} || I_{companion}).$$
+		\item El dispositivo principal genera una firma para la lista de dispositivos que permitirá actualizar la propia lista de dispositivos. $$ListSignature = CURVE25519\_SIGN(I_{primary}, 0x0602 || ListData).$$
 		\item El dispositivo principal agrupa los datos de la vinculación en $L_{data}$, conteniendo este $L_{metadata}$, $I_{primary}$ y $A_{signature}$.
 		\item El dispositivo principal genera una \emph{HMAC} para la vinculación y\\ una \emph{PHMAC} que será igual a $HMAC-SHA256(L_{companion}\\, L_{data})$. Una vez hecho esto enviará \emph{ListData}, \emph{ListSignature}, $L_{data}$ y la \emph{PHMAC} al servidor.
 		\item El servidor almacena \emph{ListData} y \emph{ListSignature} y reenvía $L_{data}$ y la \emph{PHMAC} al dispositivo compañero.
@@ -341,7 +341,7 @@ Etapa inicial consistente en añadir dispositivos asociados al cliente, como se 
 		\item El dispositivo compañero almacena $L_{metadata}$ e $I_{primary}$ en el disco.
 		\item A continuación este genera una firma del dispositivo por si mismo que es de la forma\\ 
 		\begin{aligned}
-			D_{signature}=CURVE25519\textunderscore SIGN(I_{companion}, 0x0601 || \\ || L_{metadata} || I_{companion} || I_{primary}).
+			D_{signature}=CURVE25519\_SIGN(I_{companion}, 0x0601 || \\ || L_{metadata} || I_{companion} || I_{primary}).
 		\end{aligned}
 		\item El dispositivo compañero sube al servidor de WhatsApp: $L_{metadata}$, $A_{signature}$, $D_{signature}$, $I_{companion}$, la \emph{Signed Pre Key} pública del dispositivo firmada y un lote de \emph{Pre Keys} de un solo uso.
 		\item El servidor almacena los datos subidos asociados con la identificación del usuario combinados con el identificador especifico del dispositivo.
@@ -362,8 +362,8 @@ Lo pasos que se siguen para establecer una conexión son los siguientes.
 \begin{enumerate}
 	\item El cliente que inicia la conexión solicita la \emph{identity key}, la \emph{Signed Pre key} y un lote de \emph{Pre keys} de un solo uso para cada dispositivo del receptor y los dispositivos adicionales que el mismo posee excluyendo el dispositivo desde el que se inicia la conexión. 
 	\item El servidor devuelve todo lo solicitado y elimina las \emph{Pre keys} enviadas ya que son de un solo uso. Sí el último lote de \emph{Pre keys} enviado es agotado y el receptor no los ha repuesto no se devuelve ninguna clave. Además, por cada dispositivo compañero que haya tanto del emisor como del receptor, el servidor devuelve $L_{metadata}$, $A_{signature}$ y $D_{signature}$ que fueron enviadas por el dispositivo compañero cuando se vinculó.
-	\item Por cada conjunto de claves devueltas, el emisor tiene que verificar \emph{Asignature} con\\ $CURVE25519\textunderscore VERIFY \textunderscore SIGNATURE(I_{primary}, 0x0600 || L_{metadata}\\ || I_{companion})$.\\
-	$D_{signature}$ es obtenida con\\ $CURVE25519\textunderscore VERIFY\textunderscore SIGNATURE(I_{companion},0x0601 ||\\ L_{metadata} || I_{companion} || I_{primary})$.
+	\item Por cada conjunto de claves devueltas, el emisor tiene que verificar \emph{Asignature} con\\ $CURVE25519\_VERIFY \_SIGNATURE(I_{primary}, 0x0600 || L_{metadata}\\ || I_{companion})$.\\
+	$D_{signature}$ es obtenida con\\ $CURVE25519\_VERIFY\_SIGNATURE(I_{companion},0x0601 ||\\ L_{metadata} || I_{companion} || I_{primary})$.
 	Si en algún momento la verificación falla, el emisor termina la sesión de cifrado y no envía ningún mensaje al dispositivo que ha fallado.
 \end{enumerate}
 Una vez obtenidas las claves del servidor y se ha verificado la identidad, el emisor inicia la sesión de encriptación con cada dispositivo individualmente. Para ello se siguen los siguientes pasos:
@@ -371,12 +371,12 @@ Una vez obtenidas las claves del servidor y se ha verificado la identidad, el em
 	\item El emisor almacena la \emph{Identity Key} del receptor como $I_{recipient}$, la \emph{Signed Pre Key} como $S_{recipient}$ y la \emph{Pre Key} de un solo uso como $O_{recipient}$.
 	\item El emisor genera un par de pares de claves efímeras \emph{Curve25519} llamada $E_{initiator}$.
 	\item El emisor carga su propia \emph{Identity Key} como $I_{initiator}$.
-	\item El emisor calcula el \emph{master\textunderscore secret} como \\
+	\item El emisor calcula el \emph{master\_secret} como \\
 	\begin{aligned}
-			master\textunderscore secret = ECDH(I_{initiator}, S_{recipient}) || ECDH(E_{initiator}, I_{recipient})||\\ || ECDH(E_{initiator}, S_{recipient}) || ECDH(E_{initiator}, O_{recipient}). &
+			master\_secret = ECDH(I_{initiator}, S_{recipient}) || ECDH(E_{initiator}, I_{recipient})||\\ || ECDH(E_{initiator}, S_{recipient}) || ECDH(E_{initiator}, O_{recipient}). &
 	\end{aligned}
 	Cabe a mencionar que \emph{ECDH} es el intercambio de claves \emph{Diffie-Hellman}.
-	\item El emisor usa \emph{HKDF} para crear una \emph{Root Key} y una \emph{Chain Key} de \emph{master\textunderscore secret}. Donde HKDF es una función de derivación de claves simple basada en el código de autenticación de mensajes \emph{HMAC}\cite{cekd}.
+	\item El emisor usa \emph{HKDF} para crear una \emph{Root Key} y una \emph{Chain Key} de \emph{master\_secret}. Donde HKDF es una función de derivación de claves simple basada en el código de autenticación de mensajes \emph{HMAC}\cite{cekd}.
 \end{enumerate}
 
 \subsection{Intercambio de mensajes}
@@ -393,7 +393,7 @@ Este último paso hace que la \emph{Chain key} cambie haciendo imposible que con
 \subsection{Cálculo de \emph{Chain Key} a partir de \emph{Root Key}}
 Cada vez que un mensaje es enviada una clave pública efímera \emph{Curve25519}. Una vez que la respuesta es definida se calcula una nueva \emph{Chain Key} y una nueva \emph{Root Key} de la siguiente forma:
 \begin{enumerate}
-	\item $ephemeral$\textunderscore $secret = ECDH(Ephemeral_{sender}, Ephemeral_{recipient})$.
+	\item $ephemeral$\_$secret = ECDH(Ephemeral_{sender}, Ephemeral_{recipient})$.
 	\item $Chain$ $Key$, $Root$ $Key$ $= HKDF(Root$ $Key, ephemeral$\textunderscore$secret)$.
 \end{enumerate}
 
@@ -465,9 +465,9 @@ El funcionamiento de cifrado de mensajes en \emph{Letter Sealing v2} es el sigui
 		$$
 			Key_{encrypt}=SHA256(SharedSecret||salt||"Key").
 		$$
-	\item Se calcula \emph{nonce} concadenando 8 bytes por cada contador de chat ($per\textunderscore chat_{counter}$) con 4 bytes generados aleatoriamente.
+	\item Se calcula \emph{nonce} concadenando 8 bytes por cada contador de chat ($per\_chat_{counter}$) con 4 bytes generados aleatoriamente.
 		$$
-			nonce[12]=per\textunderscore chat_{counter}[8] || random_{secure}(4).
+			nonce[12]=per\_chat_{counter}[8] || random_{secure}(4).
 		$$
 	\item Se encripta el payload (\emph{M}) del mensaje usando \emph{AES256-GCM}, usando $Key_{encrypt}$ y $nonce$. En \emph{Letter Sealing v2} se añade unos metadatos al mensaje (\emph{AAD}) para reforzar la integridad del mensaje. Se calcula de la siguiente manera.
 		$$

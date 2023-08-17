@@ -1,5 +1,5 @@
 \chapter{Introducción a la Criptografía}
-En este capítulo voy a introducir los objetivos y ataques de un criptosis-\\tema, los criptosistemas simétricos y los distintos modos de funcionamiento de estos, así como los criptosistemas asimétricos y el uso de estos  criptosistemas en las aplicaciones de mensajería .
+En este capítulo voy a introducir los objetivos y ataques de un criptosis-\\tema, los criptosistemas simétricos y los distintos modos de funcionamiento de estos, así como los criptosistemas asimétricos y el uso de estos  criptosistemas en las aplicaciones de mensajería.
 
 \section{Objetivos de un criptosistema y posibles ataques}
 Todo criptosistema se construye con la finalidad de cumplir una serie de objetivos así como de protegerse de unos ataques. A continuación voy explicar de cuales se trata.
@@ -23,7 +23,7 @@ Los posibles ataques son:
 		\item \textbf{Criptograma.} El adversario conoce el criptograma, es decir, el mensaje cifrado o un fragmento de este.
 		\item \textbf{Mensaje Conocido.} El atacante conoce parejas mensaje/criptograma cifradas con una misma clave.
 		\item \textbf{Mensaje escogido.} El atacante puede generar criptogramas para mensajes de su elección. Una vez obtenidas dichas parejas, trata de averiguar el mensaje correspondiente a un criptograma desconocido.
-		\item \textbf{Mensaje escogido-adaptativo.} El atacante no solo puede generar pareas mensaje/criptograma a su elección, sino que puede hacerlo tantas veces como quiera realizando los análisis que considere oportunos.
+		\item \textbf{Mensaje escogido-adaptativo.} El atacante no solo puede generar parejas mensaje/criptograma a su elección, sino que puede hacerlo tantas veces como quiera realizando los análisis que considere oportunos.
 		\item \textbf{Criptograma escogido y escogido-adaptativo.} Similar a los anteriores pero partiendo del criptograma, teniendo acceso a descifrar los criptogramas que desee, inicialmente o a lo largo del proceso. Lo que se busca en este ataque es la clave.
 \end{description}
 
@@ -259,7 +259,7 @@ Los distintos modos usados en los cifrados de bloque son:\\
 				(X_{m+n}\oplus(len(A)||len(C)))\cdot H & \text{si } i=m+n+1.
 			\end{cases}       
 			\notag
-		\end{equation}
+		\end{equation}\\
 
 		\item \textbf{\emph{Descifrado GCM}}
 		\begin{description}
@@ -282,8 +282,8 @@ Los distintos modos usados en los cifrados de bloque son:\\
 			\item $m_{[n]}=c_{[n]}\oplus MSB_u(E(Y_{[n]}))$
 			\item Devolvemos $m=m_{[1]},\dots,m_{[n]}$ y T'
 		\end{description}
-		Si T y T' coinciden entonces se devuelve el texto descifrado. Si no coinciden, entonces el texto no se devuelve ya que esto implicaría que el mensaje ha sido manipulado.
 	\newpage
+		Si T y T' coinciden entonces se devuelve el texto descifrado. Si no coinciden, entonces el texto no se devuelve ya que esto implicaría que el mensaje ha sido manipulado.
 	\end{itemize}
 		\begin{figure}[htb]
 			\centering

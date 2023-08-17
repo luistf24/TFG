@@ -12,7 +12,7 @@ Las propiedades esperadas de una función hash son:
 	\item Para el mismo conjunto de datos de entrada, el resultado siempre es el mismo.
 	\item Reconstruir el mensaje original a partir del generado tiene que ser muy complejo, idealmente imposible.
 	\item Una variación mínima del mensaje original tiene que producir un hash totalmente distinto, esta propiedad se denomina \emph{difusión}.
-	\item Dado un mensaje, tiene que ser muy difícil encontrar otro mensaje con la misma imagen que este \emph{colisión débil}.
+	\item Dado un mensaje, tiene que ser muy difícil encontrar otro mensaje con la misma imagen que este, recibe el nombre de \emph{colisión débil}.
 	\item Tiene que ser muy costoso encontrar dos mensajes que tengan la misma imagen, esta propiedad es denominada \emph{colisión fuerte}.
 	\item Dado un posible valor del espacio imagen, tiene que ser igual de probable que salga este u otro cualquiera. Es decir todos los valores tienen la misma probabilidad de salir.
 \end{itemize}
@@ -59,7 +59,7 @@ Este proceso se continua recursivamente, actualizando la variable cadena a parti
 	\caption{Esquema de los pasos seguidos en la construcción de Merkle-Damgård \cite{Tiwari2017}.}
 	\label{mdcon}
 \end{figure}
-
+\newpage
 \section{SHA-0}
 SHA-0 es una función hash que apareció publicada en el Federal Information Processing Standard (FIPS-180) por el NIST en 1993 \cite{Penard2008}. Está basada en \emph{MD4} y \emph{MD5}. El algoritmo transforma un mensaje de cualquier tamaño hasta $2^{64}$ bits y los transforma en un resumen de 160 bits.\\
 El funcionamiento de SHA-0 es el siguiente \cite{sha0}:
