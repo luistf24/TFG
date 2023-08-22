@@ -30,7 +30,7 @@ La aritmética modular es una de las piezas fundamentales de la criptografía y 
 \end{proof}
 \begin{proposicion}
 		\begin{equation}
-		  \mu(n) =
+		  \sum_{d|n}\mu(n) =
 			\begin{cases}
 				1 & \text{si } n=1, \\
 				0 & \text{si } n \textgreater 1.
@@ -197,7 +197,7 @@ La operación $\cdot$  es mucho más compleja ya que en principio habría que re
 	la factorización  de $x^{p^d}$ en polinomios irreducibles en $\mathbb{Z}_p[x]$. Entonces:
 	\begin{enumerate}
 		\item El polinomio mínimo de cada elemento de $\mathbb{F}$ es uno de los polinomios $m_1(x),\dots,m_n(x)$.
-		\item Para cada $i$, el número de elementos de $\mathbb{F}$ con polinomio mínimo $m_i(x)$ es igal al grado de $m_i(x)$.
+		\item Para cada $i$, el número de elementos de $\mathbb{F}$ con polinomio mínimo $m_i(x)$ es igual al grado de $m_i(x)$.
 	\end{enumerate}
 \end{proposicion}
 

@@ -164,7 +164,7 @@ Las curvas más utilizadas en criptografía son las curvas definidas sobre $\mat
 	$$
 		\frac{\partial F}{\partial y}=2y+x=x,
 	$$
-	el único punto donde puede haber una singularidad es $(0,0)$ que pertenece a la curva si y solo si b=0.
+	el único punto donde puede haber una singularidad es $(0,0)$ que pertenece a la curva si y solo si $b=0$.
 \end{proof}
 
 \begin{lema}
@@ -234,7 +234,7 @@ Las familias de curvas que tenemos que evitar utilizar son las siguientes.
 	\item Curvas sobre $\mathbb{F}_p$ tales que $|E|=p$. En este caso, Semaev, Smart y Satoh-Araki construyen un isomorfismo $E\cong\mathbb{F}_p$ mediante un algoritmo en tiempo polinomial, reduciendo el problema del logaritmo discreto al uso del algoritmo de Euclídes extendido en $\mathbb{F}_p$.
 \end{itemize}
 Teniendo en cuenta esto, la curva debe elegirse mediante una búsqueda aleatoria para evitar centrarse en familias que en un futuro pudieran ser comprobadas como inseguras. Por lo que el proceso sería elegir los parámetros $a,b\in \mathbb{F}_q$. A continuación se calcula $|E(a,b)|$ y se observa si $|E(a,b)|=hn$ para $h$ pequeño con $n$ primo. Por último se comprueba que no es vulnerable a los ataques anteriores.\\
-La parte más compleja del procedimiento es calcular el orden de la curva. Pero para ello podemos usar el Termoa de Hasse el cual nos da una cota de este.
+La parte más compleja del procedimiento es calcular el orden de la curva. Pero para ello podemos usar el Teorema de Hasse el cual nos da una cota de este.
 \begin{teorema}
 	(Hasse). Sea $E$ una curva elíptica sobre $\mathbb{F}_q$ dada por \eqref{eq:tipo1} y sea $t=q+1-|E|$. Entonces
 	$$

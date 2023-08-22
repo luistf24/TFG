@@ -27,13 +27,13 @@ Pueden estar abiertas varias conexiones a un servidor, los mensajes pueden ser e
 Cuando se usa el protocolo UDP, una respuesta puede ser devuelta por una dirección de IP distinta.\\
 Hay diferentes tipos de mensajes, estos son.
 \begin{itemize}
-		\item \textbf{LLamadas RPC(cliente-servidor):} LLamadas a los métodos de la API.
+		\item \textbf{Llamadas RPC(cliente-servidor):} Llamadas a los métodos de la API.
 		\item \textbf{Respuestas RPC(servidor-cliente):} Resultados de las llamadas RPC.
 		\item \textbf{Notificación del estado de los mensajes.}
 		\item \textbf{Consultas de estado de mensaje.}
 		\item \textbf{Mensaje multiparte o contenedor.}
 \end{itemize}
-Desde el punto de vista de protocolos de bajo nivel, un mensaje es un flujo de datos alineados con 4 ó 16 bytes de límite.
+Desde el punto de vista de protocolos de bajo nivel, un mensaje es un flujo de datos alineados con 4 o 16 bytes de límite.
 Los primeros campos en un mensaje están fijos y son usados por el sistema criptográfico o de autorización.\\
 Cada mensaje, consiste en un identificador del mensaje \emph{(Message Identifier)} de 64 bits, \emph{número de secuencia del mensaje dentro de una sesión}, \emph{longitud} de 32 bits y \emph{cuerpo del mensaje} de cualquier tamaño, siempre y cuando sea múltiplo de 4. 
 Además cuando un contenedor o un mensaje simple se envían, una \emph{cabecera interna} se añade al principio del mensaje, luego el mensaje es cifrado y se le añade una \emph{cabecera externa} la cual será una \emph{clave de identificación} de 64 bits y una \emph{clave del mensaje} de 128 bits.\\
@@ -53,7 +53,7 @@ Lo primero que tiene que hacer la aplicación cliente es crear una clave de auto
 Para prevenir potenciales ataques debido a la apropiación de la clave de autorización MTProto soporta \emph{Perfect Forward Secrecy} tanto en los chats en la nube como en los chats secretos.\\
 
 \subsubsection{Sincronización de la hora}
-Si la hora de un cliente difiere de la hora del servidor, el servidor podría empezar a ignorar los mensajes de este y recíprocamente el cliente a los mensajes del servidor debido a que el mensaje tenga un indentificador inválido del mensaje.\\
+Si la hora de un cliente difiere de la hora del servidor, el servidor podría empezar a ignorar los mensajes de este y recíprocamente el cliente a los mensajes del servidor debido a que el mensaje tenga un identificador inválido del mensaje.\\
 Bajo estas circunstancias, el servidor enviará un mensaje especial al cliente el cual contendrá la hora correcta, este mensaje será el primero en el caso de que también se envíe un grupo de mensajes.\\
 Habiendo recibido el mensaje, el cliente primero ejecutará una sincronización de la hora y después verificará la clave del mensaje\emph{(Message Key)} para ver si es correcto.\\
 En caso de que no sea correcto, el cliente deberá generar una nueva sesión para asegurar la monotonía de los \emph{Message Keys}.
@@ -323,7 +323,7 @@ Una vez introducido la terminología que se va a usar el la descripción del pro
 Etapa inicial consistente en añadir dispositivos asociados al cliente, como se ha visto anteriormente existen dos tipos de dispositivos: \emph{dispositivo principal} y \emph{dispositivos compañeros} y en función del tipo se registrarán de manera diferente.
 \begin{description}
 	\item \textbf{Dispositivo principal}\\
-	Durante el momento del registro, el cliente de WhatsApp envía al servidor su \emph{Identity Key}, su \emph{Signed Pre Key} con una firma y conjunto de \emph{One-Time Pre Keys}. Una vez enviadas el servidor de WhatsApp almacena estas estas claves públicas asociadas con el indentificador del usuario.
+	Durante el momento del registro, el cliente de WhatsApp envía al servidor su \emph{Identity Key}, su \emph{Signed Pre Key} con una firma y conjunto de \emph{One-Time Pre Keys}. Una vez enviadas el servidor de WhatsApp almacena estas estas claves públicas asociadas con el identificador del usuario.
 
 	\item \textbf{Dispositivo compañero}\\
 	Para vincular un nuevo dispositivo a la cuenta de WhatsApp, el dispositivo principal del usuario crea al principio una firma de la cuenta firmando la \emph{Identity Key} del nuevo dispositivo, a su vez, el dispositivo compañero que se quiere introducir firmando la \emph{Identity Key} pública del dispositivo principal. Una vez que se han realizado ambas firmas, ya se puede iniciar las sesión con el dispositivo compañero usando un cifrado \emph{end-to-end}.\\Los pasos seguidos son:
@@ -493,7 +493,7 @@ El funcionamiento de cifrado de mensajes en \emph{Letter Sealing v2} es el sigui
 \end{enumerate}
 Donde 
 \begin{description}
-	\item \textbf{Version, Content type} sirven para indentificar la version de \emph{Letter Sealing} que se ha utilizado.
+	\item \textbf{Version, Content type} sirven para identificar la version de \emph{Letter Sealing} que se ha utilizado.
 	\item \textbf{Sender Key ID} es utilizada por el receptor del mensaje para recuperar la clave pública usada en el cifrado del mensaje.
 	\item \textbf{Recipient key ID} es utilizada para verificar que el mensaje puede se desencriptado usando la clave privada actual.
 \end{description}

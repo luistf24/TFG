@@ -65,7 +65,7 @@ SHA-0 es una función hash que apareció publicada en el Federal Information Pro
 El funcionamiento de SHA-0 es el siguiente \cite{sha0}:
 \begin{enumerate}
 	\item Al igual que en MD5, el mensaje se rellena con un único bit '1' seguido de 0-511 bits '0'. A continuación se añade una representación de 64 bits de la longitud del mensaje donde el número de ceros es elegido para asegurar que la longitud total del mensaje es un múltiplo de 512 bits. El mensaje se divide en bloques de 512 bits: $M_1,...,M_n$.
-	\item Para la primera iteración se utiliza un buffer predefinido:
+	\item Para la primera iteración se utiliza un búffer predefinido:
 	$$
 		h_0=(67452301_x, EFCDAB89_x, 98BADCFE_x, 10325476_x, C3D2E1F0_x).
 	$$
@@ -147,7 +147,7 @@ La función SHA-256 pertenece a la familia SHA-2 que es un conjunto de funciones
 El funcionamiento de las función es el siguiente\cite{Function2016}:\\
 \begin{enumerate}
 	\item Al igual que en SHA-0 y SHA-1 se rellena el mensaje de la misma manera y se fragmenta en bloques de 512 bits: $M_1,...,M_n$.
-	\item Para la primera iteración se utiliza un buffer predefinido:
+	\item Para la primera iteración se utiliza un búffer predefinido:
 	$$
 		h_0=(H_1, H_2, H_3, H_4, H_5, H_6, H_7, H_8),
 	$$
