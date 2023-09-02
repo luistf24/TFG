@@ -10,7 +10,7 @@ La aritmética modular es una de las piezas fundamentales de la criptografía y 
 		Una función aritmética $f:\mathbb{Z}\rightarrow \mathbb{Z}$ se dice que es multipli-\\cativa si $f(mn)=f(m)(n)$ para cualesquiera enteros positivos que verifiquen $\operatorname{mcd}(n,m)=1$.
 \end{definicion}
 \begin{definicion}
-Se conoce a la función $\phi(n)$ como la función de Euler. Esta es definida como $\phi(n)=|\mathbb{Z}^*_n|$ y calcula el número de enteros positivos que son menores que $n$ y son primos con este. 
+		Se conoce a la función $\phi(n)$ como la función de Euler. Esta es definida como $\phi(n)=|\mathcal{U}(\mathbb{Z}_n)|$ y calcula el número de enteros positivos que son menores que $n$ y son primos con este. 
 \end{definicion}
 \begin{teorema}
 		(Teorema Chino del Resto) Sean $a_1, a_2\in \mathbb{Z}$ y $p,q \in \mathbb{N}$ tales que $\operatorname{mcd}(p,q) = 1$. Entonces el sistema
@@ -27,7 +27,7 @@ Se conoce a la función $\phi(n)$ como la función de Euler. Esta es definida co
 	donde se cumple
 	$$
 		q\cdot d_1 \equiv 1 \mod p,
-	$$\vspace*{-6mm}
+	$$\vspace*{-7mm}
 	$$
 		p\cdot d_2 \equiv 1 \mod q.
 	$$
@@ -36,7 +36,7 @@ Se conoce a la función $\phi(n)$ como la función de Euler. Esta es definida co
 		Veamos la existencia de la solución. Sea $N=p\cdot q$. Como por hipótesis tenemos que $\operatorname{mcd}(p,q)=1$, por la identidad Bézout existen enteros $d_i$, $s_i$ con $i=1,2$ tales que $d_1p+s_1q=1$ y $d_2q+s_2p=1$. Tomando módulo $p$ y $q$ tenemos que 
 	$$
 		d_1\cdot p \equiv 1 \mod q,
-	$$\vspace*{-6mm}
+	$$\vspace*{-7mm}
 	$$
 		d_2\cdot q \equiv 1 \mod p.
 	$$
@@ -70,7 +70,9 @@ Se conoce a la función $\phi(n)$ como la función de Euler. Esta es definida co
 \end{proposicion}
 \begin{proof}
 		Sea $d=\operatorname{gcd}(N,mn)$. Supongamos que $p^e|d$ entonces se cumple que o $p^e|m$ o $p^e|n$. Así pues, los divisores de las potencias primas de $d$ se dividen entre $m$ y $n$.
-\end{proof}
+\end{proof}\\
+
+Por el Teorema Chino del Resto tenemos que si $\operatorname{mcm}(m,n)=1$ entonces se cumple que $\mathbb{Z}_{mn}\equiv \mathbb{Z}_m\times\mathbb{Z}_n \Leftrightarrow \mathbb{Z}_{|(mn)}=\mathbb{Z}_{|(m)}\times\mathbb{Z}_{|(n)}$. Y aplicando esto en la función $\phi$ obtenemos que $\phi(mn)=|\mathcal{U}(\mathbb{Z}_{mn})|=|\mathcal{U}(\mathbb{Z}_{|m}\times\mathbb{Z}_{|n})|=|\mathcal{U}(\mathbb{Z}_{|m})\times\mathcal{U}(\mathbb{Z}_{|n})|=\phi(m)\phi(n)$.
 
 \begin{corolario}
 	La función $\phi(n)$ es multiplicativa.
