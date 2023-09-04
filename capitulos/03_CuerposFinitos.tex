@@ -119,7 +119,7 @@ La aritmética modular es una de las piezas fundamentales de la criptografía y 
 
 		Además tenemos que $\ker f=mn\mathbb{Z}$ por lo que tenemos que $f$ es sobreyectiva.
 		
-		Como $\operatorname{mcd}(m,n) = 1$ tenemos que existe $x$ e $y$ que verifican $xm+yn=1$ por la identidad de Bezout, luego tenemos que para $(s,t)\in \mathbb{Z}/m\mathbb{Z}\times\mathbb{Z}/n\mathbb{Z}$. Tomando $a \in \mathbb{Z}$ como $a=sxm+tyn$ tenemos que $xm \equiv 1 \mod n$ e $yn \equiv 1 \mod m$ luego tenemos que $f(a)=(t,s)$.
+		Como $\operatorname{mcd}(m,n) = 1$ tenemos que existe $x$ e $y$ que verifican $xm+yn=1$ por la identidad de Bezout. Luego se cumple que para cada $(s,t)\in \mathbb{Z}/m\mathbb{Z}\times\mathbb{Z}/n\mathbb{Z}$ podemos tomar $a \in \mathbb{Z}$ como $a=sxm+tyn$. Y como tenemos que $xm \equiv 1 \mod n$ e $yn \equiv 1 \mod m$ entonces se cumple que $f(a)=(t,s)$ y por tanto $f$ es un isomorfismo.
 \end{proof}
 
 Por la proposición anterior tenemos que si $\operatorname{mcm}(m,n)=1$ entonces se cumple que $\mathbb{Z}_{mn}$ es isomorfo a $\mathbb{Z}_m\times\mathbb{Z}_n$. Y aplicando esto en la función $\phi$ obtenemos que $\phi(mn)=|\mathcal{U}(\mathbb{Z}_{mn})|=|\mathcal{U}(\mathbb{Z}_{|m}\times\mathbb{Z}_{|n})|=|\mathcal{U}(\mathbb{Z}_{|m})\times\mathcal{U}(\mathbb{Z}_{|n})|=\phi(m)\phi(n)$.
