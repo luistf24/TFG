@@ -1,4 +1,5 @@
 \chapter{Implementación de una aplicación de mensajería}
+\label{chap:ocho}
 
 En este capítulo voy a explicar como he desarrollado una aplicación de mensajería utilizando las herramientas vistas en la memoria.\\
 Para desarrollar la aplicación he usado el lenguaje de programación \textbf{Python}. Aunque este lenguaje no es muy eficiente y consume muchos recursos, para la aplicación que he desarrollado no es necesario esto, ya que son dos programas independientes y ninguno de los dos necesita muchos recursos. Al igual que las aplicaciones vistas en el capítulo anterior, se ha seguido una arquitectura \textbf{cliente-servidor} por lo que se han diseñado dos aplicaciones distintas que se comunican entre si usando \textbf{sockets}. Una es la aplicación \textbf{Servidor}, esta no consta de interfaz gráfica y solo se tiene que ejecutar en un dispositivo. La otra aplicación es la aplicación \textbf{Cliente}, esta si consta de interfaz gráfica ya que es la que se va a utilizar como medio para escribir y leer los mensajes. Esta aplicación la tienen que ejecutar todos los usuarios que quieran usar el chat.

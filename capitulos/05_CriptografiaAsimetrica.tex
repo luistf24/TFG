@@ -1,4 +1,6 @@
 \chapter{Criptografía Asimétrica y Curvas Elípticas. RSA y DH}
+\label{chap:cinco}
+
 En esta capítulo voy a explicar de los criptosistemas asimétricos usados en las aplicaciones de mensajería hoy en día. Primero describiré el funcionamiento del cifrado RSA y la firma digital usando este. Después explicaré el problema del Logaritmo Discreto y el intercambio de claves \emph{Diffie-Helmman}. Y por último concluiré haciendo una introducción a la teoría de Curvas Elípticas, el problema del Logaritmo Discreto en estas y el intercambio de claves \emph{Diffie-Hellman} usando este cuerpo.\\
 
 \section{Criptosistema de Rivest-Shamir-Adleman, RSA}
@@ -73,13 +75,6 @@ Una vez visto el problema de logaritmo discreto, se explicará el intercambio de
 \subsection{Intercambio de claves Diffie-Hellman}
 Antes de explicar el intercambio de claves \emph{Diffie-Hellman} se introducirá el problema de Diffie-Hellman ya que es la base de este.\\
 
-%\begin{definicion}
-	%Dado el conjunto $\mathbb{Z}^*_{p'}$ con p primo, diremos que $\alpha \in \mathbb{Z}^*_p$ es un generador de $\mathbb{Z}^*_{p'}$ si se cumple:\\
-	%$$
-		%\forall b \in \mathbb{Z}^*_{p'},\: \exists i\: tal \: que \: \alpha^i = b
-	%$$
-%\end{definicion}
-
 \begin{definicion}
 	(El Problema Diffie-Hellman)\\ Dado un número primo p, un número $\alpha$ que sea un \emph{generador} de $\mathbb{Z}^*_{p}$, $\alpha^a$ y $\alpha^b$, encontrar $\alpha^{ab} \mod p$.  
 \end{definicion}
@@ -117,7 +112,7 @@ $$
 	y^2+a_1xy+a_3y = x^3+a_2x^2+a_4x+a_6,
 $$
 junto con un punto $\mathcal{O}$.\\
-Un ejemplo de curvas elípticas en $\mathbb{R}$ son:
+Un ejemplo de representación curvas elípticas en $\mathbb{R}$ se puede apreciar en la siguiente figura.
 \begin{figure}[htb]
 	\centering
 	\subfloat[\centering Curva $y^2=x^3-4x+1$]{{\includegraphics[width=5.9cm]{imagenes/ec1:y^2x^3-4x+1.png}}}

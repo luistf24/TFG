@@ -1,4 +1,6 @@
 \chapter{Aritmética modular y cuerpos finitos}
+\label{chap:tres}
+
 En este capítulo presentaré la teoría necesaria de aritmética modular y de cuerpos finitos para comprender adecuadamente las operaciones que se realizan en algoritmos como AES y RSA.
 
 \section{Aritmética modular}
@@ -7,10 +9,13 @@ La aritmética modular es una de las piezas fundamentales de la criptografía y 
 	Se dice que dos enteros $a$ y $b$ están en la misma clase de congruencia módulo un entero no nulo si verifican $a \equiv b \mod n$ es decir si ambos tienen el mismo resto al dividir por $n$ o análogamente si $a-b$ es múltiplo de $n$.
 \end{definicion}
 \begin{definicion}
+	(Unidad) Sea $A$ un anillo conmutativo. Se dice que $a\in A$ es una unidad si existe $a^{-1} \in A$ tal que $aa^{-1}=1$.
+\end{definicion}
+\begin{definicion}
 	(Ideal) Sea $A$ un anillo conmutativo, un subconjunto $\emptyset \neq I \subseteq A$ es un ideal si
 	\begin{enumerate}
-		\item $a, b \in I \rightarrow a+b \in I$.
-		\item $a\in I,x\in A \rightarrow ax\in I$.
+		\item Para todo $a, b \in I$ se tiene que $a+b \in I$.
+		\item Para todo $a\in I,x\in A$ se tiene que $ax\in I$.
 	\end{enumerate}
 \end{definicion}
 \begin{definicion}
@@ -24,15 +29,21 @@ La aritmética modular es una de las piezas fundamentales de la criptografía y 
 	Un dominio de ideales principales es un dominio de integridad en el cual todo ideal es principal.
 \end{definicion}
 \begin{teorema}
-		Si $A$ es un DIP, $\forall a,b\in A\; \exists d = \operatorname{mcd}(a,b)$. Además, $\exists u,v \in A$ que verifican $d=au+bv$. A esta igualdad se le llama Identidad de Bezout. Los coeficientes $u$ y $v$ se denominan coeficientes de Bezout y no son únicos.
+	$\mathbb{Z}$ es un dominio de ideales principales.
+\end{teorema}
+\begin{proof}
+		Sea $I$ un ideal de $\mathbb{Z}$. Como $I$ es un subanillo de $\mathbb{Z}$ tenemos que $(I,+)$ es un subgrupo de $(\mathbb{Z}, +)$. Además $(\mathbb{Z}, +)$ es un grupo cíclico generado por $1$ y como $(I,+)$ es un subgrupo suyo tenemos que $(I,+)$ también lo será para algún $m \in \mathbb{Z}$. Luego tenemos que $I=\{km:k\in\mathbb{Z}\}$ y esto por definición es un ideal principal.
+\end{proof}
+\begin{teorema}
+		Si $A$ es un DIP, para todo $a,b\in A$ existe $d = \operatorname{mcd}(a,b)$. Además, existe $u,v \in A$ que verifican $d=au+bv$. A esta igualdad se le llama Identidad de Bezout. Los coeficientes $u$ y $v$ se denominan coeficientes de Bezout y no son únicos.
 \end{teorema}
 \begin{proof}
 	Sea $\emptyset \neq I(a,b)=\{ax+by:x,y\inA\}\subseteq A$. Tenemos que se cumple\par
 	 $(ax+by)+(ax'+by')=a(x+x')+b(y+y')\in I(a,b)$.\par
 	 $(ax+by)z=a(xz)+b(xz)\in I(a,b)$.\\
-	 Como es un ideal tenemos que $\exists d \in A:I(a,b)=(d)$ con $(d)=\{dx:x\in A\}$. Y dado que $d\in I(a,b)$ se cumple que $\exists u,v \in A$ que verifican $d=au+bv$.\par
+	 Como es un ideal tenemos que existe $ d \in A:I(a,b)=(d)$ con $(d)=\{dx:x\in A\}$. Y dado que $d\in I(a,b)$ se cumple que existen $ u,v \in A$ que verifican $d=au+bv$.\par
 	 Veamos que $d$ es $\operatorname{mcd}$ de $a$ y $b$.\\ Como se cumple que $a\in I(a,b)$ y $b\in I(a,b)$ entonces $a\in (d)$ y $b\in (d)$ luego $d/a$ y $d/b$. Por lo que tenemos que $d$ es divisor común.\\
-	 Tomando $c\in I(a,b)$ de manera que $c/a$ y $c/b$ se cumple que $c/(au+bv)=d$ por lo que $c/d$. Encontrando así un divisor común que es dividido por cualquier divisor común, por lo que es el $\operatorname{mcd}$.
+	 Tomando $c\in I(a,b)$ de manera que $c|a$ y $c|b$ se cumple que $c|(au+bv)=d$ por lo que $c|d$. Encontrando así un divisor común que es dividido por cualquier divisor común, por lo que es el $\operatorname{mcd}$.
 \end{proof}
 \begin{definicion}
 		Una función aritmética $f:\mathbb{Z}\rightarrow \mathbb{Z}$ se dice que es multipli-\\cativa si $f(mn)=f(m)(n)$ para cualesquiera enteros positivos que verifiquen $\operatorname{mcd}(n,m)=1$.
@@ -100,7 +111,18 @@ La aritmética modular es una de las piezas fundamentales de la criptografía y 
 		Sea $d=\operatorname{gcd}(N,mn)$. Supongamos que $p^e|d$ entonces se cumple que o $p^e|m$ o $p^e|n$. Así pues, los divisores de las potencias primas de $d$ se dividen entre $m$ y $n$.
 \end{proof}\\
 
-Por el Teorema Chino del Resto tenemos que si $\operatorname{mcm}(m,n)=1$ entonces se cumple que $\mathbb{Z}_{mn}\equiv \mathbb{Z}_m\times\mathbb{Z}_n \Leftrightarrow \mathbb{Z}_{|(mn)}=\mathbb{Z}_{|(m)}\times\mathbb{Z}_{|(n)}$. Y aplicando esto en la función $\phi$ obtenemos que $\phi(mn)=|\mathcal{U}(\mathbb{Z}_{mn})|=|\mathcal{U}(\mathbb{Z}_{|m}\times\mathbb{Z}_{|n})|=|\mathcal{U}(\mathbb{Z}_{|m})\times\mathcal{U}(\mathbb{Z}_{|n})|=\phi(m)\phi(n)$.
+\begin{proposicion}
+		Si $\operatorname{mcd}(m,n)=1$ entonces $\mathbb{Z}_{mn}$ es isomorfo a $\mathbb{Z}_m\times\mathbb{Z}_n$.
+\end{proposicion}
+\begin{proof}
+		Definimos $f:\mathbb{Z}\rightarrow\mathbb{Z}/m\mathbb{Z}\times\mathbb{Z}/n\mathbb{Z}$ como $f(a)=(a\mod m, a\mod n)$ que es un homomorfismo de anillos.
+
+		Además tenemos que $\ker f=mn\mathbb{Z}$ por lo que tenemos que $f$ es sobreyectiva.
+		
+		Como $\operatorname{mcd}(m,n) = 1$ tenemos que existe $x$ e $y$ que verifican $xm+yn=1$ por la identidad de Bezout, luego tenemos que para $(s,t)\in \mathbb{Z}/m\mathbb{Z}\times\mathbb{Z}/n\mathbb{Z}$. Tomando $a \in \mathbb{Z}$ como $a=sxm+tyn$ tenemos que $xm \equiv 1 \mod n$ e $yn \equiv 1 \mod m$ luego tenemos que $f(a)=(t,s)$.
+\end{proof}
+
+Por la proposición anterior tenemos que si $\operatorname{mcm}(m,n)=1$ entonces se cumple que $\mathbb{Z}_{mn}$ es isomorfo a $\mathbb{Z}_m\times\mathbb{Z}_n$. Y aplicando esto en la función $\phi$ obtenemos que $\phi(mn)=|\mathcal{U}(\mathbb{Z}_{mn})|=|\mathcal{U}(\mathbb{Z}_{|m}\times\mathbb{Z}_{|n})|=|\mathcal{U}(\mathbb{Z}_{|m})\times\mathcal{U}(\mathbb{Z}_{|n})|=\phi(m)\phi(n)$.
 
 \begin{corolario}
 	La función $\phi(n)$ es multiplicativa.
@@ -217,16 +239,17 @@ A continuación recordaré unos resultados de cuerpos finitos que nos permitirá
 	Todo cuerpo finito tiene un generador. Si $g$ es un generador de $\mathbb{F}^{*}_q$, entonces $g^j$ es también un generador si y sólo si $\operatorname{gcd}(j,q-1)=1$. En particular, hay $\phi(q-1)$ generadores distintos de $\mathbb{F}^*_q$.
 \end{teorema}
 \begin{proof}
-		Supongamos $\alpha \in \mathbb{F}^*_q$ con orden $d$. Veamos primero $\alpha^j$ tiene orden $d$ si y solamente si $\operatorname{gcd}(j,d)=1$.\\
+		Supongamos $\alpha \in \mathbb{F}^*_q$ con orden $d$. Veamos primero $\alpha^j$ tiene orden $d$ si y solamente si $\operatorname{gcd}(j,d)=1$.
 
-		Para ver que es condición necesaria tomamos un $j$ que verifique $\operatorname{gcd}(j, d)=d'$ con $d'$\textgreater$ 1$, tenemos que $a=\frac{d}{d'}$ y $b=\frac{j}{d'}$ son números enteros y además se cumple que $ja=bd'a=bd$ y por tanto $(\alpha^j)^a=(\alpha^d)^b=1$. Luego se cumple que el orden de $\alpha^j$ es $a$ lo mismo $a$\textless $d$.\\
+		Para ver que es condición necesaria tomamos un $j$ que verifique $\operatorname{gcd}(j, d)=d'$ con $d'$\textgreater$ 1$, tenemos que $a=\frac{d}{d'}$ y $b=\frac{j}{d'}$ son números enteros y además se cumple que $ja=bd'a=bd$ y por tanto $(\alpha^j)^a=(\alpha^d)^b=1$. Luego se cumple que el orden de $\alpha^j$ es $a$ lo mismo $a$\textless $d$.
 
 		Veamos que también es condición suficiente.\\ Para ello tomamos un $j$ que verifique $\operatorname{gcd}(j,d)=1$ y supongamos que $\alpha^j$ tiene orden $k$\textless $d$. Como se cumple que $1=(\alpha^j)^k=(a^k)^j$ y $d$ es el orden de $\alpha$ tenemos que $(\alpha^k)^d=(a^d)^k=1^k=1$.\\
 		Por tanto, se cumple que  $(\alpha^k)^1=(\alpha^k)^{\operatorname{gcd}(j,d)}=(\alpha)^{uj+rd}$ por la identidad de Bezout y por tanto $(\alpha)^{uj+rd}=(\alpha^k)^{uj}(\alpha^k)^{vd}=1$. Llegando así a una contradicción, ya que hemos supuesto que $\alpha$ no tiene orden $d$.\\
-		Luego tenemos que el orden de $\alpha^j$ es $d$.\\
+		Luego tenemos que el orden de $\alpha^j$ es $d$.
 
 		Como las potencias de $\alpha,(\alpha,\alpha^2,\dots,\alpha^d=1)$ cumplen la ecuación $X^d=1$ y son raíces de las misma, se cumple que no hay más elementos con orden $d$. Luego $\mathbb{F}^*_q$ tiene $\phi(d)$ elementos distintos de orden $d$.\\
-		Por último vamos a ver la existencia de un generador $g$ de $\mathbb{F}_q^*$.\\
+		Por último vamos a ver la existencia de un generador $g$ de $\mathbb{F}_q^*$.
+
 		Sabemos que la función $\phi$ \emph{de Euler} cumple en $q-1$ que $\sum_{d|q-1}\phi(d)=q-1$ y como se cumple que todo elemento de $\mathbb{F}^*_q$ tiene un orden $d$ divisor de $q-1$, necesariamente existen elementos de $\mathbb{F}^*_q$ con orden $d$ para todo $d|q-1$ y en particular se cumple la hipótesis del enunciado.
 \end{proof}
 
