@@ -7,6 +7,34 @@ La aritmética modular es una de las piezas fundamentales de la criptografía y 
 	Se dice que dos enteros $a$ y $b$ están en la misma clase de congruencia módulo un entero no nulo si verifican $a \equiv b \mod n$ es decir si ambos tienen el mismo resto al dividir por $n$ o análogamente si $a-b$ es múltiplo de $n$.
 \end{definicion}
 \begin{definicion}
+	(Ideal) Sea $A$ un anillo conmutativo, un subconjunto $\emptyset \neq I \subseteq A$ es un ideal si
+	\begin{enumerate}
+		\item $a, b \in I \rightarrow a+b \in I$.
+		\item $a\in I,x\in A \rightarrow ax\in I$.
+	\end{enumerate}
+\end{definicion}
+\begin{definicion}
+	(Ideal principal) Sea $A$ un anillo conmutativo. Si $a\in A$,
+	$$
+		aA = (a) = \{ax:x\in A\}
+	$$
+	es el ideal principal generado por $a$.
+\end{definicion}
+\begin{definicion}
+	Un dominio de ideales principales es un dominio de integridad en el cual todo ideal es principal.
+\end{definicion}
+\begin{teorema}
+		Si $A$ es un DIP, $\forall a,b\in A\; \exists d = \operatorname{mcd}(a,b)$. Además, $\exists u,v \in A$ que verifican $d=au+bv$. A esta igualdad se le llama Identidad de Bezout. Los coeficientes $u$ y $v$ se denominan coeficientes de Bezout y no son únicos.
+\end{teorema}
+\begin{proof}
+	Sea $\emptyset \neq I(a,b)=\{ax+by:x,y\inA\}\subseteq A$. Tenemos que se cumple\par
+	 $(ax+by)+(ax'+by')=a(x+x')+b(y+y')\in I(a,b)$.\par
+	 $(ax+by)z=a(xz)+b(xz)\in I(a,b)$.\\
+	 Como es un ideal tenemos que $\exists d \in A:I(a,b)=(d)$ con $(d)=\{dx:x\in A\}$. Y dado que $d\in I(a,b)$ se cumple que $\exists u,v \in A$ que verifican $d=au+bv$.\par
+	 Veamos que $d$ es $\operatorname{mcd}$ de $a$ y $b$.\\ Como se cumple que $a\in I(a,b)$ y $b\in I(a,b)$ entonces $a\in (d)$ y $b\in (d)$ luego $d/a$ y $d/b$. Por lo que tenemos que $d$ es divisor común.\\
+	 Tomando $c\in I(a,b)$ de manera que $c/a$ y $c/b$ se cumple que $c/(au+bv)=d$ por lo que $c/d$. Encontrando así un divisor común que es dividido por cualquier divisor común, por lo que es el $\operatorname{mcd}$.
+\end{proof}
+\begin{definicion}
 		Una función aritmética $f:\mathbb{Z}\rightarrow \mathbb{Z}$ se dice que es multipli-\\cativa si $f(mn)=f(m)(n)$ para cualesquiera enteros positivos que verifiquen $\operatorname{mcd}(n,m)=1$.
 \end{definicion}
 \begin{definicion}
@@ -33,7 +61,7 @@ La aritmética modular es una de las piezas fundamentales de la criptografía y 
 	$$
 \end{teorema}
 \begin{proof}
-		Veamos la existencia de la solución. Sea $N=p\cdot q$. Como por hipótesis tenemos que $\operatorname{mcd}(p,q)=1$, por la identidad Bézout existen enteros $d_i$, $s_i$ con $i=1,2$ tales que $d_1p+s_1q=1$ y $d_2q+s_2p=1$. Tomando módulo $p$ y $q$ tenemos que 
+		Veamos la existencia de la solución. Sea $N=p\cdot q$. Como por hipótesis tenemos que $\operatorname{mcd}(p,q)=1$, por la identidad Bezout existen enteros $d_i$, $s_i$ con $i=1,2$ tales que $d_1p+s_1q=1$ y $d_2q+s_2p=1$. Tomando módulo $p$ y $q$ tenemos que 
 	$$
 		d_1\cdot p \equiv 1 \mod q,
 	$$\vspace*{-7mm}
@@ -170,7 +198,7 @@ A continuación recordaré unos resultados de cuerpos finitos que nos permitirá
 \end{proof}
 
 \begin{proposicion}
-	Sea \mathbb{F} un cuerpo finito con $p^d$ elementos, donde $p$ es primo y $d\geq 1$, y sea
+	Sea $\mathbb{F}$ un cuerpo finito con $p^d$ elementos, donde $p$ es primo y $d\geq 1$, y sea
 	$$
 		x^{p^d}-x=m_1(x)m_2(x)\dots m_n(x)
 	$$
@@ -194,7 +222,7 @@ A continuación recordaré unos resultados de cuerpos finitos que nos permitirá
 		Para ver que es condición necesaria tomamos un $j$ que verifique $\operatorname{gcd}(j, d)=d'$ con $d'$\textgreater$ 1$, tenemos que $a=\frac{d}{d'}$ y $b=\frac{j}{d'}$ son números enteros y además se cumple que $ja=bd'a=bd$ y por tanto $(\alpha^j)^a=(\alpha^d)^b=1$. Luego se cumple que el orden de $\alpha^j$ es $a$ lo mismo $a$\textless $d$.\\
 
 		Veamos que también es condición suficiente.\\ Para ello tomamos un $j$ que verifique $\operatorname{gcd}(j,d)=1$ y supongamos que $\alpha^j$ tiene orden $k$\textless $d$. Como se cumple que $1=(\alpha^j)^k=(a^k)^j$ y $d$ es el orden de $\alpha$ tenemos que $(\alpha^k)^d=(a^d)^k=1^k=1$.\\
-		Por tanto, se cumple que  $(\alpha^k)^1=(\alpha^k)^{\operatorname{gcd}(j,d)}=(\alpha)^{uj+rd}$ por la identidad de Bézout y por tanto $(\alpha)^{uj+rd}=(\alpha^k)^{uj}(\alpha^k)^{vd}=1$. Llegando así a una contradicción, ya que hemos supuesto que $\alpha$ no tiene orden $d$.\\
+		Por tanto, se cumple que  $(\alpha^k)^1=(\alpha^k)^{\operatorname{gcd}(j,d)}=(\alpha)^{uj+rd}$ por la identidad de Bezout y por tanto $(\alpha)^{uj+rd}=(\alpha^k)^{uj}(\alpha^k)^{vd}=1$. Llegando así a una contradicción, ya que hemos supuesto que $\alpha$ no tiene orden $d$.\\
 		Luego tenemos que el orden de $\alpha^j$ es $d$.\\
 
 		Como las potencias de $\alpha,(\alpha,\alpha^2,\dots,\alpha^d=1)$ cumplen la ecuación $X^d=1$ y son raíces de las misma, se cumple que no hay más elementos con orden $d$. Luego $\mathbb{F}^*_q$ tiene $\phi(d)$ elementos distintos de orden $d$.\\
