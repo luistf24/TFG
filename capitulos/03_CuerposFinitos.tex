@@ -143,6 +143,7 @@ Por la proposición anterior tenemos que si $\operatorname{mcm}(m,n)=1$ entonces
 
 \begin{corolario}
 	 $$\phi(n)=n\prod_{p_i|n}\left(1-\frac{1}{p_i}\right).$$ 
+	 Donde los distintos $p_i$ serán los factores primos de $n$.
 \end{corolario}
 
 \begin{lema}
@@ -152,7 +153,7 @@ Por la proposición anterior tenemos que si $\operatorname{mcm}(m,n)=1$ entonces
 		La función $f(n)=\sum_{d|n}\phi(n)$   es multiplicativa. Por lo tanto solo nos quedaría ver que $f(p^m)=p^m$ para todo primo $p$ y para todo entero positivo $m$.\\ Para ello hacemos
 		$$
 			f(p^m)=\sum_{d|p^m}\phi(d)=\phi(1)+\phi(p)+\phi(p^2)+\dots+\phi(p^m)= 
-		$$\vspace*{-7mm}
+		$$\vspace*{-5mm}
 		$$
 			= 1+(p-1)+(p^2-p)+\dots+(p^m-p^{m-1}).
 		$$
