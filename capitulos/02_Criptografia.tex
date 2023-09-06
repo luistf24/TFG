@@ -5,7 +5,7 @@ En este capítulo voy a introducir los objetivos y ataques de un criptosis-\\tem
 
 \section{Objetivos de un criptosistema y posibles ataques}
 Todo criptosistema se construye con la finalidad de cumplir una serie de objetivos así como de protegerse de unos ataques. A continuación voy explicar de cuales se trata.
-La información de este apartado ha sido obtenida de \cite{apuntesCriptografia}.\\ 
+La información de este apartado ha sido obtenida de \cite{apuntesCriptografia}.
 \subsection{Objetivos}
 Los objetivos que tiene que cumplir un criptosistema son los siguientes.
 \begin{description}
@@ -19,7 +19,8 @@ Los objetivos que tiene que cumplir un criptosistema son los siguientes.
 		El emisario de una información no puede negar haber realizado tal envío.
 \end{description}
 \subsection{Ataques}
-Para hablar de los ataques supondremos que se sigue el principio de \emph{Kerckhoffs}, el cual establece que el adversario conoce todos los detalles del criptosistema excepto la clave empleada.\\
+Para hablar de los ataques supondremos que se sigue el principio de \emph{Kerckhoffs}, el cual establece que el adversario conoce todos los detalles del criptosistema excepto la clave empleada.
+
 Los posibles ataques son:
 \begin{description}
 		\item \textbf{Criptograma.} El adversario conoce el criptograma, es decir, el mensaje cifrado o un fragmento de este.
@@ -41,7 +42,8 @@ Para evitar esto se suele complementar con métodos seguros para el intercambio 
 Los criptosistemas asimétricos son muy utilizados para la firma y autentificación de los mensajes, garantizando de esta manera la seguridad de la aplicación y se complementan con cifrados simétricos a la hora de cifrar los mensajes para garantizar de esta forma una eficiencia mucho mayor. Ya que uno de los principales problemas que tienen es su complejidad algorítmica a la hora de cifrar y descifrar los mensajes.\\
 
 \section{Criptosistema simétrico}
-Un criptosistema simétrico es un criptosistema en el cual se utiliza una sola clave para cifrar y descifrar un mensaje o es necesario conocer la clave secreta para desencriptar un mensaje. La importancia para garantizar la seguridad de los criptosistemas simétricos reside en el secreto de la clave, mientras que el conocer el algoritmo utilizado no es tan importante como medida de seguridad. Es decir, lo importante es que el atacante no conozca la clave, mientras que conozca el algoritmo usado no lo es tanto. La información ha sido obtenida de \cite{apuntesCriptografia}.\\
+Un criptosistema simétrico es un criptosistema en el cual se utiliza una sola clave para cifrar y descifrar un mensaje o es necesario conocer la clave secreta para desencriptar un mensaje. La importancia para garantizar la seguridad de los criptosistemas simétricos reside en el secreto de la clave, mientras que el conocer el algoritmo utilizado no es tan importante como medida de seguridad. Es decir, lo importante es que el atacante no conozca la clave, mientras que conozca el algoritmo usado no lo es tanto. La información ha sido obtenida de \cite{apuntesCriptografia}.
+
 Un criptosistema simétrico está formado por:
 \begin{itemize}
 	\item $\mathcal{M}$ el conjunto de los mensajes, elementos candidatos a ser encriptados.
@@ -69,8 +71,9 @@ Fijada la clave $k_p \in \mathcal{K}_p$ y su correspondiente $k_s \in \mathcal{K
 
 
 \subsection{Cifrados de bloque}
-A continuación voy a introducir los cifrados de bloque, ya que estos son fundamentales a la hora de cifrar los mensajes en las aplicaciones de mensajería debido a su eficiencia. El cifrado de bloque más utilizado actualmente es el cifrado \textbf{Rindael AES}. La información ha sido obtenida de \cite{apuntesCriptografia}.\\
-Los cifrados de bloque son criptosistemas de clave simétrica en los que la longitud de los bloques y claves es fija.\\
+A continuación voy a introducir los cifrados de bloque, ya que estos son fundamentales a la hora de cifrar los mensajes en las aplicaciones de mensajería debido a su eficiencia. El cifrado de bloque más utilizado actualmente es el cifrado \textbf{Rindael AES}. La información ha sido obtenida de \cite{apuntesCriptografia}.
+
+Los cifrados de bloque son criptosistemas de clave simétrica en los que la longitud de los bloques y claves es fija.
 Este criptosistema se define
 $$
 	E:\mathbb{B}^K\times\mathbb{B}^N\rightarrow \mathbb{B}^N,
@@ -78,9 +81,11 @@ $$
 $$
 	D:\mathbb{B}^K\times\mathbb{B}^N\rightarrow \mathbb{B}^N,
 $$
-donde $N$ es el tamaño del bloque y $K$ es el tamaño de la clave.\\
-Los cifrados tienen distintos modos de operación los cuales dependen solo del tamaño del bloque. Estos modos permiten garantizar la confidencialidad de los mensajes, si bien, no garantizan su integridad. La información para describir los modos la he complementado con \cite{bloquenuevo}.\\ 
-Los distintos modos usados en los cifrados de bloque son:\\
+donde $N$ es el tamaño del bloque y $K$ es el tamaño de la clave.
+
+Los cifrados tienen distintos modos de operación los cuales dependen solo del tamaño del bloque. Estos modos permiten garantizar la confidencialidad de los mensajes, si bien, no garantizan su integridad. La información para describir los modos la he complementado con \cite{bloquenuevo}.
+
+Los distintos modos usados en los cifrados de bloque son:
 \begin{itemize}
 	\item \textbf{Electronic CodeBook}\\
 	Modo en el cual para una clave dada, se le asigna un bloque de texto fijo cifrado por cada bloque de texto plano. Los pasos que se siguen para encriptar y desencriptar son:
@@ -310,7 +315,8 @@ Actualmente el más utilizado en las aplicaciones de mensajería es el modo CBC.
 
 \section{Criptosistema asimétrico}
 Un criptosistema asimétrico es un criptosistema en el cual se utilizan dos claves, una para cifrar el mensaje y otra para descifrarlo. La clave para cifrar es la que se conoce como \emph{clave pública}, mientras que la que se utiliza para descifrar es la \emph{clave privada}. Estos criptosistemas surgieron para paliar la debilidad de los criptosistemas simétricos, que es que la clave que cifra y descifra se tiene que compartir, pudiendo esta ser interceptada.  
-La seguridad de estos criptosistemas reside en que no se conozca la clave privada. La información ha sido obtenida de \cite{angelRiosMateos}.\\
+La seguridad de estos criptosistemas reside en que no se conozca la clave privada. La información ha sido obtenida de \cite{angelRiosMateos}.
+
 Un criptosistema asimétrico está formado por:
 \begin{itemize}
 	\item $\mathcal{M}$ es el conjunto de los mensajes.

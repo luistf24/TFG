@@ -5,7 +5,7 @@ En este capítulo voy a describir que son las funciones hash, como construirlas 
 \section{¿Que son las funciones hash?}
 Una función resumen o función hash es una función que se puede calcular mediante un algoritmo en el cual se transforma un conjunto arbitrario de datos en una nueva serie de caracteres con una longitud fija independiente del tamaño de los datos de entrada.
 Estas funciones son muy utilizadas en criptografía ya que como hemos visto, en el caso de RSA el tamaño del bloque puede suponer un problema debido a que aumenta considerablemente el tiempo de ejecución.
-Para ello se utilizan funciones hash, ya que mediante el uso de estas, se consigue reducir el tamaño del mensaje sin perder información.\\ La información para esta sección la he obtenido \cite{aepd}.\\
+Para ello se utilizan funciones hash, ya que mediante el uso de estas, se consigue reducir el tamaño del mensaje sin perder información.\\ La información para esta sección la he obtenido \cite{aepd}.
 
 Las propiedades esperadas de una función hash son:
 \begin{itemize}
@@ -27,19 +27,22 @@ Visto esto, en general, una función hash funciona de la siguiente forma:
 	\item Se repite de manera análoga con el resto de bloques hasta que se recorren todos.
 \end{enumerate}
 
-Las hash que explicaré serán: \emph{SHA-0} y \emph{SHA-1} que son las funciones antecesoras de la función \emph{SHA-256} que es la que se utiliza mayoritariamente en las funciones de mensajería en la actualidad. Algunas también pueden utilizar SHA-1\\
+Las hash que explicaré serán: \emph{SHA-0} y \emph{SHA-1} que son las funciones antecesoras de la función \emph{SHA-256} que es la que se utiliza mayoritariamente en las funciones de mensajería en la actualidad. Algunas también pueden utilizar SHA-1.
 
 \section{La construcción \emph{Merkle-Damgård}}
-Antes de desarrollar las funciones hash mencionadas anteriormente, voy a describir la construcción \emph{Merkle-Damgård}. Este es un método para construir funciones hash que sean resistentes a colisiones a partir de funciones de compresión unidireccionales. La información para este apartado ha sido obtenida de \cite{Tiwari2017}.\\
-Este método fue descubierto en 1989 por Merkle y Damgård de manera independiente. Es muy importante ya que gracias a este, se desarrollaron las funciones hash \emph{MD4,\:MD5,\:SHA-0,\:SHA-1 \text{ y }SHA-2} entre otras.\\
-Una función de compresión es una función que toma una entrada de longitud fija y produce un resumen de longitud fija. Esta recibe dos entradas: una variable cadena y un bloque del mensaje.\\
+Antes de desarrollar las funciones hash mencionadas anteriormente, voy a describir la construcción \emph{Merkle-Damgård}. Este es un método para construir funciones hash que sean resistentes a colisiones a partir de funciones de compresión unidireccionales. La información para este apartado ha sido obtenida de \cite{Tiwari2017}.
+
+Este método fue descubierto en 1989 por Merkle y Damgård de manera independiente. Es muy importante ya que gracias a este, se desarrollaron las funciones hash \emph{MD4,\:MD5,\:SHA-0,\:SHA-1 \text{ y }SHA-2} entre otras.
+
+Una función de compresión es una función que toma una entrada de longitud fija y produce un resumen de longitud fija. Esta recibe dos entradas: una variable cadena y un bloque del mensaje.
 
 \begin{figure}[htb]
 	\centering
 	\includegraphics[scale=0.3]{imagenes/md1.png} 
 	\caption{Construcción de Merkle-Damgård \cite{Tiwari2017}.}
 \end{figure}
-Sea $f:\{0,1\}^b\times\{0,1\}^n\rightarrow\{0,1\}^n$ una función de compresión que toma un bloque de mensajes de $b$ bits y un valor de encadenamiento de $n$ bits. Sea $h:\{0,1\}^*\rightarrow\{0,1\}^n$ una construcción \emph{MD} construida iterando la función de compresión $f$ para procesar un mensaje de longitud arbitraria. Para que esto sea posible lo que se hace es rellenar cualquier mensaje para que la longitud de este sea múltiplo de la longitud de bloque $b$ de $f$.\\
+Sea $f:\{0,1\}^b\times\{0,1\}^n\rightarrow\{0,1\}^n$ una función de compresión que toma un bloque de mensajes de $b$ bits y un valor de encadenamiento de $n$ bits. Sea $h:\{0,1\}^*\rightarrow\{0,1\}^n$ una construcción \emph{MD} construida iterando la función de compresión $f$ para procesar un mensaje de longitud arbitraria. Para que esto sea posible lo que se hace es rellenar cualquier mensaje para que la longitud de este sea múltiplo de la longitud de bloque $b$ de $f$.
+
 El relleno se realiza añadiendo después del último bit del último bloque del mensaje un único bit $1$ seguido del resto de bits necesarios a $0$.
 Por último, para terminar de rellenar el mensaje, se añade la codificación binaria de la longitud del mensaje.\\
 Una vez rellenado el mensaje, la entrada se divide en $t$ bloques, cada uno de longitud $b$. La función hash resultante puede describirse de la siguiente manera.
@@ -63,7 +66,8 @@ Este proceso se continua recursivamente, actualizando la variable cadena a parti
 \end{figure}
 \newpage
 \section{SHA-0}
-SHA-0 es una función hash que apareció publicada en el Federal Information Processing Standard (FIPS-180) por el NIST en 1993 \cite{Penard2008}. Está basada en \emph{MD4} y \emph{MD5}. El algoritmo transforma un mensaje de cualquier tamaño hasta $2^{64}$ bits y los transforma en un resumen de 160 bits.\\
+SHA-0 es una función hash que apareció publicada en el Federal Information Processing Standard (FIPS-180) por el NIST en 1993 \cite{Penard2008}. Está basada en \emph{MD4} y \emph{MD5}. El algoritmo transforma un mensaje de cualquier tamaño hasta $2^{64}$ bits y los transforma en un resumen de 160 bits.
+
 El funcionamiento de SHA-0 es el siguiente \cite{sha0}:
 \begin{enumerate}
 	\item Al igual que en MD5, el mensaje se rellena con un único bit '1' seguido de 0-511 bits '0'. A continuación se añade una representación de 64 bits de la longitud del mensaje donde el número de ceros es elegido para asegurar que la longitud total del mensaje es un múltiplo de 512 bits. El mensaje se divide en bloques de 512 bits: $M_1,...,M_n$.
@@ -119,8 +123,10 @@ Los pasos seguidos en la función de compresión son:
 \end{table}
 
 \section{SHA-1}
-La función SHA-1 es una función hash diseñada en 1995 por la \emph{National Security Agency} (NSA) dado que que se encontraron varias colisiones y vulnerabilidades en la función SHA-0 \cite{Penard2008}.\\
-Su funcionamiento es muy similar al de la función SHA-0 variando en las funciones y variables usadas en las distintas rondas de la función de compresión. En la tabla \ref{tablasha1} se pueden ver los nuevos valores utilizados.\\
+La función SHA-1 es una función hash diseñada en 1995 por la \emph{National Security Agency} (NSA) dado que que se encontraron varias colisiones y vulnerabilidades en la función SHA-0 \cite{Penard2008}.
+
+Su funcionamiento es muy similar al de la función SHA-0 variando en las funciones y variables usadas en las distintas rondas de la función de compresión. En la tabla \ref{tablasha1} se pueden ver los nuevos valores utilizados.
+
 \begin{table}[htb]
 	\begin{center}
 		\begin{tabular}{| l | l | l |}
@@ -145,8 +151,10 @@ En imagen \ref{sha01img} se puede observar un esquema del proceso para obtener u
 \end{figure}
 
 \section{SHA-256}
-La función SHA-256 pertenece a la familia SHA-2 que es un conjunto de funciones hash diseñadas por la NSA en 2001 \cite{Penard2008}. Esta familia está compuesta por las funciones SHA-224, SHA-256, SHA-384 y SHA-512 donde el número del final indica el tamaño de bloque en el que se dividirá el mensaje. Nos centraremos en la función SHA-256 que como he comentado anteriormente es la que se utiliza en las aplicaciones de mensajería actualmente.\\
-El funcionamiento de las función es el siguiente\cite{Function2016}:\\
+La función SHA-256 pertenece a la familia SHA-2 que es un conjunto de funciones hash diseñadas por la NSA en 2001 \cite{Penard2008}. Esta familia está compuesta por las funciones SHA-224, SHA-256, SHA-384 y SHA-512 donde el número del final indica el tamaño de bloque en el que se dividirá el mensaje. Nos centraremos en la función SHA-256 que como he comentado anteriormente es la que se utiliza en las aplicaciones de mensajería actualmente.
+
+El funcionamiento de las función es el siguiente\cite{Function2016}:
+
 \begin{enumerate}
 	\item Al igual que en SHA-0 y SHA-1 se rellena el mensaje de la misma manera y se fragmenta en bloques de 512 bits: $M_1,...,M_n$.
 	\item Para la primera iteración se utiliza un búffer predefinido:
@@ -215,7 +223,8 @@ $$
 	\sigma_1(x) = (x\ggg17)\oplus (x\ggg19)\oplus (x\lll10).
 $$
 
-En la imagen \ref{sha256img} podemos ver un esquema de los pasos seguidos en las funciones SHA-2.\\
+En la imagen \ref{sha256img} podemos ver un esquema de los pasos seguidos en las funciones SHA-2.
+
 \begin{figure}[htb]
 	\centering
 	\includegraphics[scale=0.5]{imagenes/sha2.png} 

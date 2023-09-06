@@ -81,7 +81,8 @@ Antes de explicar el intercambio de claves \emph{Diffie-Hellman} se introducirá
 \end{definicion}
 
 \subsubsection{Intercambio de claves \emph{Diffie-Hellman}}
-El intercambio de claves \emph{Diffie-Hellman} es un algoritmo asimétrico basado en el problema de \emph{Diffie-Hellman}, empleado para acordar una clave común en un canal inseguro. Los pasos que se siguen son:\\
+El intercambio de claves \emph{Diffie-Hellman} es un algoritmo asimétrico basado en el problema de \emph{Diffie-Hellman}, empleado para acordar una clave común en un canal inseguro. Los pasos que se siguen son:
+
 Sean $A$ y $B$ dos interlocutores que quieren compartir un valor $K$. Para ello se calcula un número primo $p$ y un generador $\alpha$ de $\mathbb{Z}_{p}\setminus\{0\}$ con $2\leq \alpha \leq p-2$. Esta información es pública y conocida por ambos.
 \begin{enumerate}
 	\item $A$ escoge un número aleatorio $x$, comprendido entre 1 y $p-2$ y envía a $B$ el valor 
@@ -99,20 +100,23 @@ Sean $A$ y $B$ dos interlocutores que quieren compartir un valor $K$. Para ello 
 Puesto que $x$ e $y$ son conocidos solamente por $A$ y $B$ respectivamente, tenemos que al final ambos acaban conociendo el valor de $K$.\\
 
 \section{Curvas Elípticas en Criptografía}
-A continuación se introducirá la teoría de curvas Elípticas ya que nos permitirá redefinir el intercambio de claves usando estas. Es el método que se usa actualmente en aplicaciones de mensajería que implementan el protocolo \emph{MTProto} y \emph{Signal}.\\
+A continuación se introducirá la teoría de curvas Elípticas ya que nos permitirá redefinir el intercambio de claves usando estas. Es el método que se usa actualmente en aplicaciones de mensajería que implementan el protocolo \emph{MTProto} y \emph{Signal}.
+
 La criptografía en Curvas Elípticas es considerada como uno de los campos con mayor potencial en la criptografía asimétrica.
 Esto es debido a sus propiedades que dan lugar a problemas muy complejos análogos a los que presenta la aritmética modular por lo que garantizan más la seguridad. 
 Esto permite que sean utilizadas en algunos algoritmos asimétricos como puede ser el intercambio de claves \emph{Diffie-Hellman} que se verá más adelante. 
 Aunque su estructura algebraica es más compleja que la de la aritmética modular sin embargo, al implementarlas suelen ser más eficientes y además, con claves más cortas alcanzan 
-el mismo nivel de seguridad.\\
-El uso de curvas elípticas en criptografía se presentó por primera vez en 1985 por Neal Koblitz y Víctor Miller de manera independiente.\\
-La información para esta sección se ha obtenido de \cite{En2011} y de \cite{apuntesCriptografia}.\\
+el mismo nivel de seguridad.
+
+El uso de curvas elípticas en criptografía se presentó por primera vez en 1985 por Neal Koblitz y Víctor Miller de manera independiente.
+La información para esta sección se ha obtenido de \cite{En2011} y de \cite{apuntesCriptografia}.
 
 Una curva elíptica $E$ sobre un cuerpo $\mathcal{K}$ es el conjunto de los $(x,y)\in \mathcal{K}^2$ tales que
 $$
 	y^2+a_1xy+a_3y = x^3+a_2x^2+a_4x+a_6,
 $$
-junto con un punto $\mathcal{O}$.\\
+junto con un punto $\mathcal{O}$.
+
 Un ejemplo de representación curvas elípticas en $\mathbb{R}$ se puede apreciar en la siguiente figura.
 \begin{figure}[htb]
 	\centering
@@ -206,7 +210,8 @@ Las curvas más utilizadas en criptografía son las curvas definidas sobre $\mat
 \end{proof}
 
 \subsection{Uso de las Curvas Elípticas en criptografía}
-Una vez introducidas las Curvas Elípticas y visto unos resultados necesarios para este apartado, voy a explicar los elementos que se necesitan para poder usar las Curvas Elípticas en criptografía.\\
+Una vez introducidas las Curvas Elípticas y visto unos resultados necesarios para este apartado, voy a explicar los elementos que se necesitan para poder usar las Curvas Elípticas en criptografía.
+
 Para poder utilizarlas necesitaremos los siguientes parámetros.
 \begin{itemize}
 	\item El cuerpo base sobre el que se definirán las curvas, $\mathbb{F}_q$
@@ -222,14 +227,16 @@ Para poder utilizarlas necesitaremos los siguientes parámetros.
 		Por el Teorema de Cassel, $E\cong \mathbb{Z}_{d_1}\times \mathbb{Z}_{d_2}$, con $d_1\:|\:d_2$. Como $h$\textless$n$ se cumple que $n\:|\:d_2$ pero $n \nmid d_1$. Luego $E_n$ se corresponde con el subgrupo $\{0\}\times \langle \frac{d_2}{n} \rangle\leq\mathbb{Z}_{d_1}\times\mathbb{Z}_{d_2}$.
 \end{proof}
 
-Una vez visto esto quedaría ver la selección de la curva a utilizar, ya que como se verá a continuación, no sirve cualquiera. Esto es debido a que necesitamos que el problema del logaritmo discreto sea difícil, es decir, que sea computacionalmente muy costoso de romper.\\
-Una vez seleccionada la curva tendríamos que seleccionar los puntos de la curva y la selección del punto base.\\
+Una vez visto esto quedaría ver la selección de la curva a utilizar, ya que como se verá a continuación, no sirve cualquiera. Esto es debido a que necesitamos que el problema del logaritmo discreto sea difícil, es decir, que sea computacionalmente muy costoso de romper.
+
+Una vez seleccionada la curva tendríamos que seleccionar los puntos de la curva y la selección del punto base.
 Las familias de curvas que tenemos que evitar utilizar son las siguientes.
 \begin{itemize}
 	\item \emph{Curvas supersingulares}, como pueden ser las que tienen la forma \eqref{eq:dos}. En estas curvas se cumple que $E_n\cong \mathbb{F}_{q^l}^*$ con $l$ pequeño. Esto fue demostrado por Menezes-Okamoto-Vanstone empleando el llamado \emph{par de Weil}. Aunque en realidad basta con ver que $n\nmid q^l-1$ para valores pequeños de $l$.
 	\item Curvas sobre $\mathbb{F}_p$ tales que $|E|=p$. En este caso, Semaev, Smart y Satoh-Araki construyen un isomorfismo $E\cong\mathbb{F}_p$ mediante un algoritmo en tiempo polinomial, reduciendo el problema del logaritmo discreto al uso del algoritmo de Euclídes extendido en $\mathbb{F}_p$.
 \end{itemize}
-Teniendo en cuenta esto, la curva debe elegirse mediante una búsqueda aleatoria para evitar centrarse en familias que en un futuro pudieran ser comprobadas como inseguras. Por lo que el proceso sería elegir los parámetros $a,b\in \mathbb{F}_q$. A continuación se calcula $|E(a,b)|$ y se observa si $|E(a,b)|=hn$ para $h$ pequeño con $n$ primo. Por último se comprueba que no es vulnerable a los ataques anteriores.\\
+Teniendo en cuenta esto, la curva debe elegirse mediante una búsqueda aleatoria para evitar centrarse en familias que en un futuro pudieran ser comprobadas como inseguras. Por lo que el proceso sería elegir los parámetros $a,b\in \mathbb{F}_q$. A continuación se calcula $|E(a,b)|$ y se observa si $|E(a,b)|=hn$ para $h$ pequeño con $n$ primo. Por último se comprueba que no es vulnerable a los ataques anteriores.
+
 La parte más compleja del procedimiento es calcular el orden de la curva. Pero para ello podemos usar el Teorema de Hasse el cual nos da una cota de este.
 \begin{teorema}
 	(Hasse). Sea $E$ una curva elíptica sobre $\mathbb{F}_q$ dada por \eqref{eq:tipo1} y sea $t=q+1-|E|$. Entonces
@@ -237,8 +244,9 @@ La parte más compleja del procedimiento es calcular el orden de la curva. Pero 
 		|t|\leq2\sqrt{q}.
 	$$
 \end{teorema}
-Gracias a un algoritmo desarrollado por Schoof-Elkies-Atkin para cuerpos primos y a Satoh para cuerpos binarios permite calcular dicho orden en tiempo polinomial.\\
-Para concluir tenemos que existen suficientes curvas con orden próximo a primo para que una búsqueda aleatoria sea efectiva en la práctica. Si el cuerpo base es primo, también existen muchas curvas de orden primo. En característica 2 tenemos que el orden es par.\\
+Gracias a un algoritmo desarrollado por Schoof-Elkies-Atkin para cuerpos primos y a Satoh para cuerpos binarios permite calcular dicho orden en tiempo polinomial.
+
+Para concluir tenemos que existen suficientes curvas con orden próximo a primo para que una búsqueda aleatoria sea efectiva en la práctica. Si el cuerpo base es primo, también existen muchas curvas de orden primo. En característica 2 tenemos que el orden es par.
 
 Para calcular los puntos de la curva tenemos que, para una curva elíptica $E=E(a,b)$ definida sobre $\mathbb{F}_q$ el morfismo
 $$
@@ -256,19 +264,22 @@ En este caso la curva elíptica $E=E(a,b)$ viene dada por la ecuación \eqref{eq
 $$
 	y^2+x_0y=x_0^3+ax_0^2+b.
 $$
+Y por último nos quedaría seleccionar el punto base.
 
-Y por último nos quedaría seleccionar el punto base.\\
-Para ello seleccionamos aleatoriamente $P\in E$ donde $E=E(a,b)$ es una curva elíptica tal que $|E|=hn$ con $n$ primo y $h$ pequeño. Una vez seleccionado calculamos $Q=hP$ y comprobamos si $Q\neq\mathcal{O}$. Como $n$ es primo y $nQ=\mathcal{O}$, $Q$ será un generador de $E_n$. Si $Q=\mathcal{O}$ tomamos un nuevo $P$ y repetimos la operación.\\
+Para ello seleccionamos aleatoriamente $P\in E$ donde $E=E(a,b)$ es una curva elíptica tal que $|E|=hn$ con $n$ primo y $h$ pequeño. Una vez seleccionado calculamos $Q=hP$ y comprobamos si $Q\neq\mathcal{O}$. Como $n$ es primo y $nQ=\mathcal{O}$, $Q$ será un generador de $E_n$. Si $Q=\mathcal{O}$ tomamos un nuevo $P$ y repetimos la operación.
+
 Con esto ya tenemos todo lo necesario para explicar el Problema del Logaritmo Discreto usando Curvas Elípticas.
 \section{El Problema del Logaritmo Discreto usando Curvas Elípticas. \emph{Diffie-Hellman}}
 En esta sección voy a describir el análogo del Problema del Logaritmo Discreto en Curvas Elípticas y como resultado un análogo del intercambio de claves \emph{Diffie-Hellman}.
 
 \subsection{El Problema del Logaritmo Discreto en Curvas Elípticas}
 Para todo punto $p$ definido en una curva elíptica, se define $\langle p\rangle$ al conjunto $\{\mathcal{O}, p, 2p, ... \}$.
-En $E(\operatorname{GF}(n))$ y $E(\operatorname{GF}(2^n))$ los conjutos como los que se han definido, tienen que ser finitos ya que los puntos de las curvas son finitos. Luego para todo punto $q\in \langle p\rangle$ tiene que existir un número $k \in \mathbb{Z}$ que verifique que $kp=q$.\\
+En $E(\operatorname{GF}(n))$ y $E(\operatorname{GF}(2^n))$ los conjutos como los que se han definido, tienen que ser finitos ya que los puntos de las curvas son finitos. Luego para todo punto $q\in \langle p\rangle$ tiene que existir un número $k \in \mathbb{Z}$ que verifique que $kp=q$.
+
 Por lo tanto, el problema del logaritmo discreto en curvas elípticas consiste en hallar dicho número $k$ a partir de $p$ y $q$.
 \subsection{Intercambio de claves \emph{Diffie-Hellman} en curvas elípticas}
-Una vez visto el Problema del Logaritmo Discreto en Curvas Elípticas, voy a explicar el intercambio de claves \emph{Diffie-Hellman} usando Curvas Elípticas. Para ello se explicaré previamente la conjetura \emph{Diffie-Hellman} en Curvas Elípticas. La información de este apartado la he obtenido de \cite{apuntesCriptografia}.\\
+Una vez visto el Problema del Logaritmo Discreto en Curvas Elípticas, voy a explicar el intercambio de claves \emph{Diffie-Hellman} usando Curvas Elípticas. Para ello se explicaré previamente la conjetura \emph{Diffie-Hellman} en Curvas Elípticas. La información de este apartado la he obtenido de \cite{apuntesCriptografia}.
+
 Fijamos una curva elíptica $E=E(a,b)$ tal que $|E|=hn$ con $n$ primo y $h$ pequeño como he explicado en la sección anterior. Esta curva puede estar definida sobre $\mathbb{F}_p$ o sobre $\mathbb{F}_{2^l}$. También se fija  $q$ un elemento de orden $n$, en función del cuerpo que elijamos lo fijamos de una forma u otra como ya hemos visto.
 \begin{definicion}
 	(Conjetura Diffie-Hellman). Conocidos $p_a=aq$ y $p_b=bq$ para ciertos $1\leq a,\: b\leq n$, calcular $abq$ es equivalente a nivel computacional a calcular $a=\log_q(p_a)$ o $b=\log_q(p_b)$.

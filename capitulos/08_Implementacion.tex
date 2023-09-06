@@ -1,7 +1,8 @@
 \chapter{Implementación de una aplicación de mensajería}
 \label{chap:ocho}
 
-En este capítulo voy a explicar como he desarrollado una aplicación de mensajería utilizando las herramientas vistas en la memoria.\\
+En este capítulo voy a explicar como he desarrollado una aplicación de mensajería utilizando las herramientas vistas en la memoria.
+
 Para desarrollar la aplicación he usado el lenguaje de programación \textbf{Python}. Aunque este lenguaje no es muy eficiente y consume muchos recursos, para la aplicación que he desarrollado no es necesario esto, ya que son dos programas independientes y ninguno de los dos necesita muchos recursos. Al igual que las aplicaciones vistas en el capítulo anterior, se ha seguido una arquitectura \textbf{cliente-servidor} por lo que se han diseñado dos aplicaciones distintas que se comunican entre si usando \textbf{sockets}. Una es la aplicación \textbf{Servidor}, esta no consta de interfaz gráfica y solo se tiene que ejecutar en un dispositivo. La otra aplicación es la aplicación \textbf{Cliente}, esta si consta de interfaz gráfica ya que es la que se va a utilizar como medio para escribir y leer los mensajes. Esta aplicación la tienen que ejecutar todos los usuarios que quieran usar el chat.
 
 \section{Herramientas utilizadas}
@@ -56,7 +57,8 @@ Para codificar los mensajes he usado un string separando cada bloque con un subs
 Donde \emph{emisor} es el identificador del usuario que envía los mensajes, \emph{receptor} es el identificador del usuario que los recibe, \emph{mensaje} es el mensaje que se envía, \emph{tag} es la etiqueta usada en AES-128 con el modo GCM para validar los mensajes y \emph{nonce} es un número arbitrario que se usa solo una vez para garantizar la seguridad del mensaje frente ataques \emph{playback}. 
 
 \section{Funcionamiento de la aplicación}
-Para ejecutar la aplicación, primero se tiene que ejecutar el servidor en algún dispositivo y mientras esté en funcionamiento, ejecutar el cliente.\\
+Para ejecutar la aplicación, primero se tiene que ejecutar el servidor en algún dispositivo y mientras esté en funcionamiento, ejecutar el cliente.
+
 Para lanzar ambas aplicaciones hay que ejecutar el comando \emph{poe run}. Una vez ejecutado el cliente nos sale la primera interfaz donde introducimos el nombre de usuario con el que nos vamos a identificar y el nombre del usuario con el que nos vamos a comunicar \ref{appprimeraparte}.
 
 \begin{figure}[thb]
