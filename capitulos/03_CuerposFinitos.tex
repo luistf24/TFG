@@ -136,9 +136,9 @@ Por la proposición anterior tenemos que si $\operatorname{mcm}(m,n)=1$ entonces
 		\end{enumerate}
 \end{proposicion}
 \begin{proof}
-		Para demostrar \emph{1.} partimos de que $p$ es primo por hipótesis por lo que se verifica que $\operatorname{mcd}(p,k)=1$ para todo $k<p$. Como en total hay $p-1$ números menores tenemos que $\phi(p)=p-1$.
+		Para demostrar \emph{1.} partimos de que $p$ es primo por hipótesis por lo que se verifica que $\operatorname{mcd}(p,k)=1$ para todo $k<p$. Como en total hay $p-1$ números enteros positivos menores que $p$ tenemos que, $\phi(p)=p-1$.
 
-		Para demostrar \emph{2.} tenemos que como $p$ es primo sólo sus múltiplos $np$ menores o iguales verifican $\operatorname{mcd}(ip,p)\neq 1$ con $i=\{1,\dots,p^{k-1}\}$. Como en total hay $p^{k-1}$ números que satisfacen esta propiedad tenemos que $\phi(p^k)=p^k-p^{k-1}=(p-1)p^{k-1}$.
+		Para demostrar \emph{2.} tenemos que como $p$ es primo sólo sus múltiplos $np$ menores o iguales verifican $\operatorname{mcd}(ip,p)\neq 1$ con $i=\{1,\dots,p^{k-1}\}$. Como en total hay $p^{k-1}$ números que satisfacen esta propiedad, tenemos que $\phi(p^k)=p^k-p^{k-1}=(p-1)p^{k-1}$.
 \end{proof}
 
 \begin{corolario}
@@ -302,7 +302,7 @@ Para calcular el inverso sería:
 $$
 	12^{-1}=(2^6)^{-1}=2^{12-6}=2^6=12.
 $$
-Esta es la idea que nos permite optimizar las multiplicaciones y los cálculos de inversos en $\mathbb{F}_{256}$. Para ello elegimos un elemento primitivo que nos servirá de generador, en este caso nosotros utilizaremos el más pequeño, que es $[x+1]$ en notación polinomial, 00000011 en binario, 03 en hexadecimal y 3 en binario. Por comodidad trabajaremos en hexadecimal. 
+Esta es la idea que nos permite optimizar las multiplicaciones y los cálculos de inversos en $\mathbb{F}_{256}$. Para ello elegimos un elemento primitivo que nos servirá de generador, en este caso nosotros utilizaremos el más pequeño, que es $[x+1]$ en notación polinomial, 00000011 en binario, 03 en hexadecimal y 3 en decimal. Por comodidad trabajaremos en hexadecimal. 
 
 \begin{table}[!htb]
     %\begin{adjustwidth}{-.8in}{-.8in}  

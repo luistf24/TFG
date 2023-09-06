@@ -9,7 +9,7 @@ La información para los siguientes apartados de AES la he obtenido de \cite{En2
 \newpage
 \section{Estructura de AES}
 AES es un algoritmo que se basa en aplicar un número determinado de rondas a un valor intermedio denominado \emph{estado} que puede ser representado por una matriz rectangular que posee cuatro filas y $N_{b}$ columnas. Análogamente, la clave tiene la misma estructura, una matriz de cuatro filas y $N_{k}$ columnas.
-El bloque a cifrar o descifrar se traslada directamente byte a byte sobre la matriz de estado de columna en columna ($a_{0,0}, a_{1,0}, a_{2,0}, a_{3,0}, a_{0,1} \dots$).
+El bloque a cifrar o descifrar se traslada directamente byte a byte sobre la matriz de estado de columna en columna ($a_{0,0}, a_{1,0}, a_{2,0},\\ a_{3,0}, a_{0,1} \dots$).
 
 \begin{table}[htb]
 	\begin{center}
@@ -57,8 +57,8 @@ Como las funciones usadas en cada ronda son invertibles, para descifrar aplicare
 				\hline
 				& $N_b = 4$(128 bits) & $N_b = 6$(192 bits)& $N_b = 8$(256 bits)\\ \hline
 				$N_k = 4$(128 bits)& 10 & 12 & 14\\ \hline
-				$N_k = 6$(128 bits)& 12 & 12 & 14\\ \hline
-				$N_k = 8$(128 bits)& 14 & 14 & 14\\ \hline
+				$N_k = 6$(192 bits)& 12 & 12 & 14\\ \hline
+				$N_k = 8$(256 bits)& 14 & 14 & 14\\ \hline
 		\end{tabular}
 		\caption{Número de rondas en función del tamaño de la clave y bloque.}
 		\label{rondas_aes}
@@ -83,7 +83,7 @@ Siendo $S$ la matriz de estado y $K_i$ la subclave correspondiente a la ronda $i
 	\item $S \leftarrow MezclarColumnas(S)$,
 	\item $S \leftarrow K_i \oplus S$.
 \end{enumerate}
-En la última ronda se hacen solo los tres primeros pasos del algoritmo.
+En la última ronda no se hace el tercer paso del algoritmo.
 
 	\subsubsection{ByteSub}
 		La función \emph{ByteSub} es una sustitución no lineal que se aplica a cada byte de la matriz de estado mediante una s-caja 8\texttimes8. Se obtiene componiendo dos transformaciones:

@@ -20,7 +20,8 @@ El conjunto de los mensajes sin cifrar es $\mathcal{M}$, el de los mensajes cifr
 	D_{k'}:\mathcal{C}\rightarrow\mathcal{M},\\
 	a \rightarrow a^d.
 \end{align*}
-Como hemos visto anteriormente, el tamaño del mensaje puede llegar a ser un problema ya que aumenta el tiempo de encriptación y desencriptación. Para solucionar esto se puede fragmentar el mensaje y usar métodos de operación en bloques. Lo más habitual es usar funciones resumen, que de hecho, es el método que se sigue en las aplicaciones de mensajería como veremos en el siguiente capítulo.\\
+Como hemos visto anteriormente, el tamaño del mensaje puede llegar a ser un problema ya que aumenta el tiempo de encriptación y desencriptación. Para solucionar esto se puede fragmentar el mensaje y usar métodos de operación en bloques. Lo más habitual es usar funciones resumen, que de hecho, es el método que se sigue en las aplicaciones de mensajería como veremos en el siguiente capítulo.
+
 Además RSA puede ser vulnerable en función de los números primos que se elijan y el tamaño de estos. 
 Por ejemplo para evitar \textbf{el ataque por módulo común}, es recomendable utilizar distinto módulo $n$ para cada clave. 
 Para evitar \textbf{el ataque por exponente pequeño} es recomendable utilizar unos números primos $p$ y $q$ grandes. Ya que si no se usan, se puede utilizar el Teorema Chino del Resto para factorizar $n$ y obtenerlos. 
@@ -30,8 +31,8 @@ Para evitar \textbf{el ataque por primos muy próximos} se recomienda usar núme
 La firma digital con RSA, es una herramienta muy utilizada en las aplicaciones de mensajería para garantizar el no repudio de los mensajes.
 Dados dos interlocutores A y B cada uno con sus claves públicas:
 \begin{itemize}
-	\item para A tenemos $n_A$, $d_A$ y $e_A$,  
-	\item para B tenemos $n_B$, $d_B$ y $e_B$.  
+	\item para A tenemos $n_A$, $d_A$ y $c_A$,  
+	\item para B tenemos $n_B$, $d_B$ y $c_B$.  
 \end{itemize}
 Para que B sepa que un mensaje \emph{m} ha sido enviado por A se siguen los siguientes pasos.
 \begin{enumerate}
@@ -41,16 +42,16 @@ Para que B sepa que un mensaje \emph{m} ha sido enviado por A se siguen los sigu
 		$$
 	\item A continuación encripta el mensaje firmado con la clave pública de B:
 		$$
-			C_B(S)=S^{e_B}\mod n_B.
+			C_B(S)=S^{c_B}\mod n_B.
 		$$
 		y se lo envía a B.
-	\item B recibe $C_B(S)=S^{e_B} \mod n_B$ y lo desencripta: 
+	\item B recibe $C_B(S)=S^{c_B} \mod n_B$ y lo desencripta: 
 		$$
-			D_B(S^{e_B})=S \mod n_B.
+			D_B(S^{c_B})=S \mod n_B.
 		$$
 	\item Una vez desencriptado la primera parte, B desencripta S con la clave pública de A:
 		$$
-			C_A(S)=C_A(D_A(m))=(m^{d_A})^{e_A}=m^{d_Ae_B}=m^{1+k\phi(n_A)}\equiv m \mod n_A.
+			C_A(S)=C_A(D_A(m))=(m^{d_A})^{c_A}=m^{d_Ac_B}=m^{1+k\phi(n_A)}\equiv m \mod n_A.
 		$$
 \end{enumerate}
 Una vez hecho esto, B podría afirmar casi con total seguridad que el mensaje ha sido enviado por A garantizando el no repudio del mensaje.\\
@@ -76,12 +77,12 @@ Una vez visto el problema de logaritmo discreto, se explicará el intercambio de
 Antes de explicar el intercambio de claves \emph{Diffie-Hellman} se introducirá el problema de Diffie-Hellman ya que es la base de este.\\
 
 \begin{definicion}
-	(El Problema Diffie-Hellman)\\ Dado un número primo p, un número $\alpha$ que sea un \emph{generador} de $\mathbb{Z}^*_{p}$, $\alpha^a$ y $\alpha^b$, encontrar $\alpha^{ab} \mod p$.  
+		(El Problema Diffie-Hellman)\\ Dado un número primo p, un número $\alpha$ que sea un \emph{generador} de $\mathbb{Z}_{p}\setminus\{0\}$, $\alpha^a$ y $\alpha^b$, encontrar $\alpha^{ab} \mod p$.  
 \end{definicion}
 
 \subsubsection{Intercambio de claves \emph{Diffie-Hellman}}
 El intercambio de claves \emph{Diffie-Hellman} es un algoritmo asimétrico basado en el problema de \emph{Diffie-Hellman}, empleado para acordar una clave común en un canal inseguro. Los pasos que se siguen son:\\
-Sean $A$ y $B$ dos interlocutores que quieren compartir un valor $K$. Para ello se calcula un número primo $p$ y un generador $\alpha$ de $\mathbb{Z}^*_{p}$ con $2\leq \alpha \leq p-2$. Esta información es pública y conocida por ambos.
+Sean $A$ y $B$ dos interlocutores que quieren compartir un valor $K$. Para ello se calcula un número primo $p$ y un generador $\alpha$ de $\mathbb{Z}_{p}\setminus\{0\}$ con $2\leq \alpha \leq p-2$. Esta información es pública y conocida por ambos.
 \begin{enumerate}
 	\item $A$ escoge un número aleatorio $x$, comprendido entre 1 y $p-2$ y envía a $B$ el valor 
 		$$
