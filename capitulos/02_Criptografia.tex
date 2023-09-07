@@ -301,6 +301,7 @@ Los distintos modos usados en los cifrados de bloque son:
 			\label{esquemagcm}
 		\end{figure}
 \end{itemize}
+
 Como podemos ver, el modo más sencillo es ECB ya que lo único que hace es fragmentar el mensaje en bloques y encriptar individualmente cada bloque. En CBC, CFB, OFB y GCM se parte de un bloque inicial y se generan bloques nuevos de manera recursiva operando con ellos de manera distinta en función de cada modo.
 
 En CBC se realiza la operación $\oplus$ de cada bloque generado encriptándose el bloque cifrado previo a esta con un bloque del mensaje, los nuevos bloques son los resultados de la operación anterior.

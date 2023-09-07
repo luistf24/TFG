@@ -204,19 +204,21 @@ Sea $\mathbb{Z}_2[x]$ el conjunto de polinomios con coeficientes en $\mathbb{Z}_
  Un ejemplo sería el polinomio $f(x)=x^4+x^3+x+1$ que quedaría representado como 11011. 
 Además si lo sumamos con otro polinomio como puede ser $g(x)=x^2+x+1$, tenemos que $f(x)+g(x)=x^4+x^3+x^2$, que equivale a hacer la operación XOR entre 11011 y 00111.
 
-Podemos definir el cuerpo $\operatorname{GF}(2^n)$ como $\mathbb{Z}_2[x]/(a(x))$, con $a(x)$ un polinomio irreducible en $\mathbb{Z}/(a(x))$. Tenemos que la existencia del inverso de cualquier polinomio no nulo está asegurada por el algoritmo Extendido de Euclides.\\ 
+Podemos definir el cuerpo $\operatorname{GF}(2^n)$ como $\mathbb{Z}_2[x]/(a(x))$, con $a(x)$ un polinomio irreducible en $\mathbb{Z}/(a(x))$. Tenemos que la existencia del inverso de cualquier polinomio no nulo está asegurada por el algoritmo Extendido de Euclides.
+
 Principalmente se trabaja con $\operatorname{GF}(2^n)$ debido a que la implementación de las operaciones de este es más sencilla que la implementación en las que se utilizan otros cuerpos. Esta sencillez de implementación se traduce en unos algoritmos con tiempos de ejecución menores a pesar de tener el mismo orden de complejidad.
 
-A continuación presentaré el cuerpo $\operatorname{GF}(2^8)$, ya que será necesario para entender adecuadamente las operaciones utilizadas en AES. La información ha sido obtenida de \cite{criptografia} y \cite{dem1}.\\
-Tenemos que $\operatorname{GF}(2^8)=\mathbb{F}_{256}$ por lo que por comodidad trabajaremos con este último.\\
-Por definición tenemos que para $p$ número primo y $n$ un entero primitivo se define el cuerpo $\mathbb{F}_{p^n}$ al único cuerpo existente con $p^n$ elementos. En particular para trabajar con $\mathbb{F}_{256}$ tomamos $p=2$ y $n=8$.\\
+A continuación presentaré el cuerpo $\operatorname{GF}(2^8)$, ya que será necesario para entender adecuadamente las operaciones utilizadas en AES. La información ha sido obtenida de \cite{criptografia} y \cite{dem1}.
+
+Tenemos que $\operatorname{GF}(2^8)=\mathbb{F}_{256}$ por lo que por comodidad trabajaremos con este último. Por definición tenemos que para $p$ número primo y $n$ un entero primitivo se define el cuerpo $\mathbb{F}_{p^n}$ al único cuerpo existente con $p^n$ elementos. En particular para trabajar con $\mathbb{F}_{256}$ tomamos $p=2$ y $n=8$.
+
 Para construir $\mathbb{F}_{256}$ necesitamos un polinomio de grado 8, con coeficientes en $\mathbb{Z}_2$ y que sea irreducible. En total hay 30 polinomios con esas características donde algunos de ellos son 
 $x^8+x^4+x^3+x+1$, $\:x^8+x^4+x^3+x^2+1$, $x^8+x^5+x^3+x+1$, $x^8+x^5+x^3+x^2+1$, $x^8+x^5+x^4+x^3+1$, $x^8+x^5+x^4+x^3+x^2+x+1$ y $x^8+x^6+x^3+x^2+1$.
 
-Cabe a destacar que cualquiera de los polinomios serviría para definir $\mathbb{F}_{256}$ y además no habría ninguna diferencia en la seguridad en los cripto-\\sistemas que lo utilicen. \\
-Para AES se tomó el polinomio $x^8+x^4+x^3+x+1$, por lo que a partir de ahora trabajaremos con $\mathbb{Z}_2[x]_{a(x)}$ siendo $a(x)$ el polinomio $x^8+x^4+x^3+x\\+1$.
+Cabe a destacar que cualquiera de los polinomios serviría para definir $\mathbb{F}_{256}$ y además no habría ninguna diferencia en la seguridad en los cripto-\\sistemas que lo utilicen. Para AES se tomó el polinomio $x^8+x^4+x^3+x+1$, por lo que a partir de ahora trabajaremos con $\mathbb{Z}_2[x]_{a(x)}$ siendo $a(x)$ el polinomio $x^8+x^4+x^3+x+1$.
 
-Los elementos que conformarán este cuerpo serán clases de equivalencia de polinomios  de grado menor que 8. Cada elemento podrá ser representado de tres formas distintas además de la forma polinomial, como número binario, número hexadecimal y número decimal. Por ejemplo el polinomio $x^5+x+1$ quedaría representado como $00100011$ de manera decimal, $23$ en hexadecimal y $35$ en decimal.\\
+Los elementos que conformarán este cuerpo serán clases de equivalencia de polinomios  de grado menor que 8. Cada elemento podrá ser representado de tres formas distintas además de la forma polinomial, como número binario, número hexadecimal y número decimal. Por ejemplo el polinomio $x^5+x+1$ quedaría representado como $00100011$ de manera decimal, $23$ en hexadecimal y $35$ en decimal.
+
 Al ser $\mathbb{F}_{256}$ un cuerpo tenemos que tiene dos operaciones, la operación suma que representaremos como $+$ y la operación producto que representaremos como $\cdot$.
 
 La operación $+$ equivale a la suma en $\mathbb{Z}_2$ y usando la notación en binario, tendríamos que equivaldría con la operación XOR como ya he mencionado anteriormente. El opuesto para la suma de un elemento equivalente a sí mismo por lo que no habría diferencia entre sumar por un número o por su apuesto, luego tendríamos que la suma es la misma operación que la resta.
@@ -302,7 +304,10 @@ Para calcular el inverso sería:
 $$
 	12^{-1}=(2^6)^{-1}=2^{12-6}=2^6=12.
 $$
-Esta es la idea que nos permite optimizar las multiplicaciones y los cálculos de inversos en $\mathbb{F}_{256}$. Para ello elegimos un elemento primitivo que nos servirá de generador, en este caso nosotros utilizaremos el más pequeño, que es $[x+1]$ en notación polinomial, 00000011 en binario, 03 en hexadecimal y 3 en decimal. Por comodidad trabajaremos en hexadecimal. 
+
+Esta es la idea que nos permite optimizar las multiplicaciones y los cálculos de inversos en $\mathbb{F}_{256}$. Para ello elegimos un elemento primitivo que nos servirá de generador, en este caso al igual que en \cite{criptografia} utilizaré el más pequeño, que es $[x+1]$ en notación polinomial, 00000011 en binario, 03 en hexadecimal y 3 en decimal. Por comodidad trabajaremos en hexadecimal para representar la tabla de antilogaritmos aunque dependiendo de las operaciones también trabajaremos en decimal y binario.
+
+Cabe a destacar que la elección del elemento primitivo no es muy relevante ya que todos acaban generando $\mathbb{F}_{256}$.  
 
 \begin{table}[!htb]
     %\begin{adjustwidth}{-.8in}{-.8in}  
@@ -329,12 +334,11 @@ F                      & 39 & 4B & DD & 7C & 84 & 97 & A2 & FD & 1C & 24 & 6C & 
 \end{tabular}}
 	\label{antilogaritmos}
 	%\end{adjustwidth}
-\caption{Tabla de los antilogaritmos de $[x+1]$}
+\caption{Tabla de los antilogaritmos de $[x+1]$\cite{criptografia}.}
 \end{table}
-Por ejemplo para calcular el resultado de $[x+1]^{125}=(03)^{125}$ lo que hacemos es escribir 125 en hexadecimal que es 7D. A continuación miramos en la tabla, la fila 7 y la columna D que nos da 20 luego tendríamos que $(03)^{125}=20$. Pasándolo a forma polinomial tenemos que $[x+1]^{125}=x^5$.\\
-Para construir la tabla es mejor usar la forma binaria.\\
+Por ejemplo para calcular el resultado de $[x+1]^{125}=(03)^{125}$ lo que hacemos es escribir 125 en hexadecimal que es 7D. A continuación miramos en la tabla, la fila 7 y la columna D que nos da 20 luego tendríamos que $(03)^{125}=20$. Pasándolo a forma polinomial tenemos que $[x+1]^{125}=x^5$.
 
-A continuación vamos a construir la tabla inversa de la anterior, esta nos permitirá calcular dado un $z \in \mathbb{F}_{256}$ con $z \neq 0$ el valor de $y$ que verifica $[x+1]^y=z$ que denominaremos $\log_{x+1}(z)$.
+A continuación voy a presentar la tabla inversa de la anterior, esta nos permitirá calcular dado un $z \in \mathbb{F}_{256}$ con $z \neq 0$ el valor de $y$ que verifica $[x+1]^y=z$ que denominaremos $\log_{x+1}(z)$.
 \begin{table}[!htb]
     %\begin{adjustwidth}{-.8in}{-.8in}  
 \resizebox{\textwidth}{!}{%
@@ -360,14 +364,17 @@ F & 67 & 48 & ED & DE & C5 & 31 & FE & 18 & 0D & 63 & 8C & 80 & C0 & F7 & 70 & 0
 \end{tabular}}
 	\label{potenciasinversas}
     %\end{adjustwidth}
-\caption{Tabla de los logaritmos de $[x+1]$}
+\caption{Tabla de los logaritmos de $[x+1]$\cite{criptografia}.}
 \end{table}
 
-A partir de estas dos tablas ya podemos hacer sin mucha dificultad a nivel computacional multiplicaciones y cálculo de inversos. En general para realizar el producto de dos elementos $X$ e $Y$ lo haremos de la siguiente manera:
+A partir de estas dos tablas ya se puede calcular sin mucha dificultad a nivel computacional multiplicaciones y cálculo de inversos. 
+
+Para calcular el producto de dos elementos $X$ e $Y$ hacemos:
 $$
 	X\cdot Y = A\log((\log_{x+1}(X)+log_{x+1}(Y)) \mod 255).
 $$
-Donde $A\log$ es el antilogaritmo.\\
+Donde $A\log$ es el antilogaritmo.
+
 Análogamente para calcular el inverso tenemos:
 $$
 	X^{-1} = A\log(FF-\log_{x+1}(X)).

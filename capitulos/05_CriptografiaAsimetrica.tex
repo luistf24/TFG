@@ -4,13 +4,16 @@
 En esta capítulo voy a explicar de los criptosistemas asimétricos usados en las aplicaciones de mensajería hoy en día. Primero describiré el funcionamiento del cifrado RSA y la firma digital usando este. Después explicaré el problema del Logaritmo Discreto y el intercambio de claves \emph{Diffie-Helmman}. Y por último concluiré haciendo una introducción a la teoría de Curvas Elípticas, el problema del Logaritmo Discreto en estas y el intercambio de claves \emph{Diffie-Hellman} usando este cuerpo.\\
 
 \section{Criptosistema de Rivest-Shamir-Adleman, RSA}
-RSA es llamado así en honor a sus creadores Ron Rivest, Adi Shamir y Loenard Adleman. Fue desarrollado en 1977. Cabe a destacar que en 1973 se desarrolló en secreto un criptosistema similar por Clifford Cocks para la \emph{Government Communications Headquarters}, que es la agencia de inteligencia de señales británica, y fue desclasificado en 1997\cite{cliffordCocks}.\\
-Una vez que tenemos herramientas necesarias vamos a describir el funcionamiento de RSA. El contenido de esta sección se basa en \cite{angelRiosMateos}.\\
+RSA es llamado así en honor a sus creadores Ron Rivest, Adi Shamir y Loenard Adleman. Fue desarrollado en 1977. Cabe a destacar que en 1973 se desarrolló en secreto un criptosistema similar por Clifford Cocks para la \emph{Government Communications Headquarters}, que es la agencia de inteligencia de señales británica, y fue desclasificado en 1997\cite{cliffordCocks}.
+
+Dado que tenemos ya las herramientas necesarias vamos a describir el funcionamiento de RSA. El contenido de esta sección se basa en \cite{angelRiosMateos}.\\
 
 \subsection{Funcionamiento de RSA}
 El usuario elige dos números primos distintos \emph{p} y \emph{q} de buen tamaño ya que mientras más grandes sean más seguro será el cifrado.
-Se calcula $n = pq$ y por tanto tenemos que $\phi(n) = (p-1)(q-1)$. A continuación se elige un elemento $c$ coprimo con $\phi(n)$ y se calcula el inverso $d = c^{-1}\mod \phi(n)$. La clave pública será $k=(n,c)$ y la clave privada $k'=(n,d)$.\\
-En un principio se consideraba que un tamaño de $n$ de 1024 bits era lo suficientemente grande para que fuera seguro, pero en 2003 Tromer y Shamir mostraron que es posible factorizar números de 1024 bits \cite{1024RSA} por lo que en la actualidad se considera 2048 bits como un tamaño seguro.\\
+Se calcula $n = pq$ y por tanto tenemos que $\phi(n) = (p-1)(q-1)$. A continuación se elige un elemento $c$ coprimo con $\phi(n)$ y se calcula el inverso $d = c^{-1}\mod \phi(n)$. La clave pública será $k=(n,c)$ y la clave privada $k'=(n,d)$.
+
+En un principio se consideraba que un tamaño de $n$ de 1024 bits era lo suficientemente grande para que fuera seguro, pero en 2003 Tromer y Shamir mostraron que es posible factorizar números de 1024 bits \cite{1024RSA} por lo que en la actualidad se considera 2048 bits como un tamaño seguro.
+
 El conjunto de los mensajes sin cifrar es $\mathcal{M}$, el de los mensajes cifrados será $\mathcal{C}$ y se verifica que $\mathcal{M} = \mathcal{C} = \mathbb{Z}_n$. Las funciones de cifrado y descifrado son respectivamente:
 \begin{align*}
 	E_{k}:\mathcal{M}\rightarrow\mathcal{C},\\
@@ -20,6 +23,7 @@ El conjunto de los mensajes sin cifrar es $\mathcal{M}$, el de los mensajes cifr
 	D_{k'}:\mathcal{C}\rightarrow\mathcal{M},\\
 	a \rightarrow a^d.
 \end{align*}
+
 Como hemos visto anteriormente, el tamaño del mensaje puede llegar a ser un problema ya que aumenta el tiempo de encriptación y desencriptación. Para solucionar esto se puede fragmentar el mensaje y usar métodos de operación en bloques. Lo más habitual es usar funciones resumen, que de hecho, es el método que se sigue en las aplicaciones de mensajería.
 
 Además RSA puede ser vulnerable en función de los números primos que se elijan y el tamaño de estos. 
@@ -54,11 +58,14 @@ Para que B sepa que un mensaje \emph{m} ha sido enviado por A se siguen los sigu
 			C_A(S)=C_A(D_A(m))=(m^{d_A})^{c_A}=m^{d_Ac_B}=m^{1+k\phi(n_A)}\equiv m \mod n_A.
 		$$
 \end{enumerate}
-Una vez hecho esto, B podría afirmar casi con total seguridad que el mensaje ha sido enviado por A garantizando el no repudio del mensaje.\\
+
+Una vez hecho esto, B podría afirmar casi con total seguridad que el mensaje ha sido enviado por A garantizando el no repudio del mensaje.
+
 Sin embargo este método tiene un inconveniente y es que para documentos muy largos, el proceso para firmar y verificar es muy lento. Para solucionarlo se utiliza una función hash o resumen de manera que en lugar de firmar el mensaje entero, se firma un resumen de este. La firma en este caso quedaría $fir(m)=h(m)^{d_A} \mod n$ y la comprobación sería $h(m)=fir(m)^{d_A} \mod n$ donde $h$ es una función hash o resumen.
 
 \section{El Problema del Logaritmo Discreto. Diffie-Hellman}
-El intercambio de claves \emph{Diffie-Hellman} es un método basado en el Problema del Logaritmo Discreto muy utilizado en las aplicaciones de mensajería al iniciar una conexión. La información de este apartado sobre el logaritmo discreto ha sido obtenida de \cite{angelRiosMateos} y la de \emph{Diffie-Hellman} ha sido obtenida de \cite{En2011}.\\
+El intercambio de claves \emph{Diffie-Hellman} es un método basado en el Problema del Logaritmo Discreto muy utilizado en las aplicaciones de mensajería al iniciar una conexión. La información de este apartado sobre el logaritmo discreto ha sido obtenida de \cite{angelRiosMateos} y la de \emph{Diffie-Hellman} ha sido obtenida de \cite{En2011}.
+
 El Problema del Logaritmo Discreto es definido de la siguiente forma:
 \begin{definicion}
 	Sea S un semigrupo finito. El Problema del Logaritmo Discreto en el semigrupo S es el de resolver una ecuación del tipo\\
@@ -69,9 +76,10 @@ El Problema del Logaritmo Discreto es definido de la siguiente forma:
 \end{definicion}
 
 La complejidad del Problema del Logaritmo Discreto depende en gran medida del semigrupo $S$ que se elija.
-Dado que si se eligiera como $S$ el grupo aditivo $\mathbb{Z}_n$ la solución se obtendría fácilmente resolviendo una ecuación de congruencias del tipo $aX \equiv b \mod n$ que equivaldría a resolver la ecuación diofántica $aX + nY = b$. Pero si ahora $S$ pasara a ser los semigrupos multiplicativos $\mathbb{Z}_n$ o $\mathbb{F}_q$ o sus grupos de unidades, el problema aumentaría su complejidad de manera significativa.\\
-Tenemos que $a^x = b$ tiene solución si y solamente si $b$ está en el semigrupo cíclico generado por $a$. Luego si $a$ es un elemento de orden finito de un grupo, se podría suponer en la práctica que $S$ es un grupo cíclico y por ello existiría un isomorfismo con ($\mathbb{Z}_n$, $+$). Luego la dificultad del problema no estaría en la estructura del grupo, sino en reconocer los elementos como potencias de enteros.\\
-Se cree que el problema de logaritmo discreto es $\mathbb{NP}$-completo, pero esta conjetura todavía no ha sido demostrada por lo que se considera un problema $\mathbb{NP}$-Intermedio. Estos problemas son llamados así porque no están dentro de los problemas $\mathbb{P}$ ni en los problemas $\mathbb{NP}$-completo \cite{NP-intermedio}.\\
+Dado que si se eligiera como $S$ el grupo aditivo $\mathbb{Z}_n$ la solución se obtendría fácilmente resolviendo una ecuación de congruencias del tipo $aX \equiv b \mod n$ que equivaldría a resolver la ecuación diofántica $aX + nY = b$. Pero si ahora $S$ pasara a ser los semigrupos multiplicativos $\mathbb{Z}_n$ o $\mathbb{F}_q$ o sus grupos de unidades, el problema aumentaría su complejidad de manera significativa.
+
+Se cree que el problema de logaritmo discreto es $\mathbb{NP}$-completo pero todavía no ha sido demostrado por lo que se considera un problema $\mathbb{NP}$-Intermedio. Estos problemas son llamados así porque no están dentro de los problemas $\mathbb{P}$ ni en los problemas $\mathbb{NP}$-completo \cite{NP-intermedio}.
+
 Una vez visto el problema de logaritmo discreto, se explicará el intercambio de claves \emph{Diffie-Hellman}.
 \subsection{Intercambio de claves Diffie-Hellman}
 Antes de explicar el intercambio de claves \emph{Diffie-Hellman} se introducirá el problema de Diffie-Hellman ya que es la base de este.\\
@@ -102,11 +110,10 @@ Puesto que $x$ e $y$ son conocidos solamente por $A$ y $B$ respectivamente, tene
 \section{Curvas Elípticas en Criptografía}
 A continuación se introducirá la teoría de curvas Elípticas ya que nos permitirá redefinir el intercambio de claves usando estas. Es el método que se usa actualmente en aplicaciones de mensajería que implementan el protocolo \emph{MTProto} y \emph{Signal}.
 
-La criptografía en Curvas Elípticas es considerada como uno de los campos con mayor potencial en la criptografía asimétrica.
-Esto es debido a sus propiedades que dan lugar a problemas muy complejos análogos a los que presenta la aritmética modular por lo que garantizan más la seguridad. 
-Esto permite que sean utilizadas en algunos algoritmos asimétricos como puede ser el intercambio de claves \emph{Diffie-Hellman} que se verá más adelante. 
-Aunque su estructura algebraica es más compleja que la de la aritmética modular sin embargo, al implementarlas suelen ser más eficientes y además, con claves más cortas alcanzan 
-el mismo nivel de seguridad.
+El uso de la criptografía en Curvas Elípticas está muy extendido en la actualidad.
+Esto es debido a sus propiedades que dan lugar a problemas muy complejos y muy similares a los que se tienen en la aritmética modular pero garantizando una complejidad mayor y por ende mayor seguridad. 
+El hecho de que generen problemas tan semejante hace que sean utilizadas en algunos algoritmos asimétricos como puede ser el intercambio de claves \emph{Diffie-Hellman} que se verá más adelante. 
+Aunque a nivel teórico su estructura algebraica es más compleja que la de la aritmética modular, en la práctica cuando se implementan suelen ser más eficientes. Además tienen la ventaja de que suelen usar claves más cortas.
 
 El uso de curvas elípticas en criptografía se presentó por primera vez en 1985 por Neal Koblitz y Víctor Miller de manera independiente.
 La información para esta sección se ha obtenido de \cite{En2011} y de \cite{apuntesCriptografia}.
@@ -229,13 +236,13 @@ Para poder utilizarlas necesitaremos los siguientes parámetros.
 
 Una vez visto esto quedaría ver la selección de la curva a utilizar, ya que como se verá a continuación, no sirve cualquiera. Esto es debido a que necesitamos que el problema del logaritmo discreto sea difícil, es decir, que sea computacionalmente muy costoso de romper.
 
-Una vez seleccionada la curva tendríamos que seleccionar los puntos de la curva y la selección del punto base.
-Las familias de curvas que tenemos que evitar utilizar son las siguientes.
+Las familias de curvas que generalmente se evita utilizar en criptografía son las siguientes.
 \begin{itemize}
-	\item \emph{Curvas supersingulares}, como pueden ser las que tienen la forma \eqref{eq:dos}. En estas curvas se cumple que $E_n\cong \mathbb{F}_{q^l}^*$ con $l$ pequeño. Esto fue demostrado por Menezes-Okamoto-Vanstone empleando el llamado \emph{par de Weil}. Aunque en realidad basta con ver que $n\nmid q^l-1$ para valores pequeños de $l$.
-	\item Curvas sobre $\mathbb{F}_p$ tales que $|E|=p$. En este caso, Semaev, Smart y Satoh-Araki construyen un isomorfismo $E\cong\mathbb{F}_p$ mediante un algoritmo en tiempo polinomial, reduciendo el problema del logaritmo discreto al uso del algoritmo de Euclídes extendido en $\mathbb{F}_p$.
+	\item \emph{Curvas supersingulares}, como pueden ser las que tienen la forma \eqref{eq:dos}. En estas curvas se cumple que $E_n\cong \mathbb{F}_{q^l}^*$ con $l$ pequeño. Esto fue demostrado por Menezes-Okamoto-Vanstone empleando el \emph{par de Weil}. Para solucionar esto habría que ver que $n\nmid q^l-1$ para valores pequeños de $l$.
+	\item Curvas sobre $\mathbb{F}_p$ tales que $|E|=p$. Esta familia es problemática ya que se puede construir un isomorfismo $E\cong\mathbb{F}_p$ mediante un algoritmo en tiempo polinomial, solucionado el problema del logaritmo discreto mediante el uso del algoritmo de Euclídes extendido en $\mathbb{F}_p$.
 \end{itemize}
-Teniendo en cuenta esto, la curva debe elegirse mediante una búsqueda aleatoria para evitar centrarse en familias que en un futuro pudieran ser comprobadas como inseguras. Por lo que el proceso sería elegir los parámetros $a,b\in \mathbb{F}_q$. A continuación se calcula $|E(a,b)|$ y se observa si $|E(a,b)|=hn$ para $h$ pequeño con $n$ primo. Por último se comprueba que no es vulnerable a los ataques anteriores.
+
+Teniendo en cuenta esto, la curva debe elegirse mediante una búsqueda aleatoria para evitar centrarse en familias que en un futuro pudieran pasar a ser inseguras. Por lo que el proceso sería elegir los parámetros $a,b\in \mathbb{F}_q$. A continuación se calcula $|E(a,b)|$ y se comprueba si $|E(a,b)|=hn$ para $h$ pequeño y $n$ un número primo. Por último se tiene que ver su resistencia frente a los ataques anteriores.
 
 La parte más compleja del procedimiento es calcular el orden de la curva. Pero para ello podemos usar el Teorema de Hasse el cual nos da una cota de este.
 \begin{teorema}
@@ -246,8 +253,6 @@ La parte más compleja del procedimiento es calcular el orden de la curva. Pero 
 \end{teorema}
 Gracias a un algoritmo desarrollado por Schoof-Elkies-Atkin para cuerpos primos y a Satoh para cuerpos binarios permite calcular dicho orden en tiempo polinomial.
 
-Para concluir tenemos que existen suficientes curvas con orden próximo a primo para que una búsqueda aleatoria sea efectiva en la práctica. Si el cuerpo base es primo, también existen muchas curvas de orden primo. En característica 2 tenemos que el orden es par.
-
 Para calcular los puntos de la curva tenemos que, para una curva elíptica $E=E(a,b)$ definida sobre $\mathbb{F}_q$ el morfismo
 $$
 	\pi:E\backslash\{\mathcal{O}\}\rightarrow\mathbb{F}_q,\: (x,y)\mapsto x,
@@ -255,7 +260,7 @@ $$
 no es sobreyectivo. Esto hace que no todos los elementos de $\mathbb{F}_q$ son primera coordenada de un punto de la curva.\\
 
 \textbf{Caso $\mathbb{F}_p$}\\
-La curva es del tipo \eqref{eq:tipo1}, por lo que debemos buscar valores $x_0\in \mathbb{F}_p$ que verifiquen $x_0^3+ax_0+b$ es un cuadrado perfecto. Por lo que necesitamos decidir si $\beta\in\mathbb{F}_p$ es residuo cuadrático y, en caso de serlo, calcular sus raíces. Para esto nos apoyamos del siguiente lema. 
+La curva es del tipo \eqref{eq:tipo1}, por lo que debemos buscar valores $x_0\in \mathbb{F}_p$ que verifiquen $x_0^3+ax_0+b$ es un cuadrado perfecto. Por lo que necesitamos decidir si $\beta\in\mathbb{F}_p$ es residuo cuadrático y, en caso de serlo, calcular sus raíces. Gracias al Criterio de Euler podemos simplificar esta tarea. 
 \begin{lema}
 		(Criterio de Euler). $\beta \in \mathbb{F}_p$ es residuo cuadrático si y solo si $\beta^{\frac{p-1}{2}}\equiv 1 \mod p$.
 \end{lema}
@@ -264,9 +269,8 @@ En este caso la curva elíptica $E=E(a,b)$ viene dada por la ecuación \eqref{eq
 $$
 	y^2+x_0y=x_0^3+ax_0^2+b.
 $$
-Y por último nos quedaría seleccionar el punto base.
 
-Para ello seleccionamos aleatoriamente $P\in E$ donde $E=E(a,b)$ es una curva elíptica tal que $|E|=hn$ con $n$ primo y $h$ pequeño. Una vez seleccionado calculamos $Q=hP$ y comprobamos si $Q\neq\mathcal{O}$. Como $n$ es primo y $nQ=\mathcal{O}$, $Q$ será un generador de $E_n$. Si $Q=\mathcal{O}$ tomamos un nuevo $P$ y repetimos la operación.
+Para elegir el punto base, seleccionamos aleatoriamente $P\in E$ donde $E=E(a,b)$ es una curva elíptica tal que $|E|=hn$ con $n$ primo y $h$ pequeño. Una vez seleccionado calculamos $Q=hP$ y comprobamos si $Q\neq\mathcal{O}$. Como $n$ es primo y $nQ=\mathcal{O}$, $Q$ será un generador de $E_n$. Si $Q=\mathcal{O}$ tomamos un nuevo $P$ y repetimos la operación.
 
 Con esto ya tenemos todo lo necesario para explicar el Problema del Logaritmo Discreto usando Curvas Elípticas.
 \section{El Problema del Logaritmo Discreto usando Curvas Elípticas. \emph{Diffie-Hellman}}
