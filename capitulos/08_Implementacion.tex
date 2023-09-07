@@ -8,7 +8,7 @@ Para desarrollar la aplicación he usado el lenguaje de programación \textbf{Py
 \section{Herramientas utilizadas}
 Las herramientas que he utilizado para desarrollar la aplicación han sido las siguientes.
 \begin{itemize}
-	\item \textbf{Gestor de dependencias:} El gestor de tareas que he utilizado ha sido \textbf{Poetry}. Este gestor es de los más usado en Python. Está muy bien documentado y como archivo de configuración utiliza un archivo del tipo \emph{.toml} por lo que es muy fácil de configurar. 
+	\item \textbf{Gestor de dependencias:} El gestor de dependencias que he utilizado ha sido \textbf{Poetry}. Este gestor es de los más usado en Python. Está muy bien documentado y como archivo de configuración utiliza un archivo del tipo \emph{.toml} por lo que es muy fácil de configurar. 
 	\item \textbf{Gestor de tareas:} El gestor de tareas que he usado ha sido \textbf{Poe the Poet}. Es un gestor de tareas de reciente aparición y permite automatizar las distintas tareas de una manera sencilla y con una fácil integración con Poetry. Me he decantado por este ya que esta muy actualizado, tiene una documentación exhaustiva y consta con una comunidad muy amplia.
 	\item \textbf{Tests runner:} Para ejecutar tests he usado \textbf{Pytest}. Pytest es un framework que utiliza una sintaxis muy sencilla para hacer tests, además es muy fácil de integrar con las herramientas vistas anteriormente.
 \end{itemize}
@@ -31,8 +31,8 @@ Este programa consta de dos clases, diversos métodos y funciones repartidas en 
 		\end{itemize}
 	\item \textbf{src/cliente/interfaz.py:} En este archivo se encuentran las clases con sus respectivos modos para ejecutar el programa usando Tkinter.
 		\begin{itemize}
-			\item \textbf{Clase Ventana1}, esta clase cuenta con los métodos \textbf{enviar} y \textbf{get\textunderscore mensaje}, estos se usan para enviar y recibir mensajes a través de sockets. Además cuenta con diversos atributos en los cuales se almacenan todos los objetos usados en la interfaz como son: \textbf{server\textunderscore socket} para almacenar el socket para conectarse al servidor, \textbf{txt} donde se imprimirán los mensajes y \textbf{entrada} por donde se introducirán los mensajes para enviarlos entre otros. Esta es la ventana principal de la aplicación.
-			\item \textbf{Clase Ventana2}, esta  clase cuenta con un solo método que servirá para recuperar los datos introducidos por el usuario y enviarlos al servidor, una vez hecho esto elimina la instacia actual y crea una nueva de la clase Ventana2.
+			\item \textbf{Clase Ventana1}, esta clase cuenta con los métodos \textbf{enviar} y \textbf{get\textunderscore mensaje}, estos se usan para enviar y recibir mensajes a través de sockets. Además cuenta con diversos atributos en los cuales se almacenan todos los objetos usados en la interfaz como son \textbf{server\textunderscore socket} para almacenar el socket para conectarse al servidor, \textbf{txt} donde se imprimirán los mensajes y \textbf{entrada} por donde se introducirán los mensajes para enviarlos entre otros. Esta es la ventana principal de la aplicación.
+			\item \textbf{Clase Ventana2}, esta  clase cuenta con un solo método que servirá para recuperar los datos introducidos por el usuario y enviarlos al servidor, una vez hecho esto elimina la instacia actual y crea una nueva de la clase Ventana1.
 					Además cuenta con diversos atributos necesarios para almacenar la información como son los atributos \textbf{emisor} que almacena el nombre de usuario o \textbf{receptor} que almacena el usuario con el que se intercambiarán los mensajes.
 		\end{itemize}
 	\item \textbf{src/cliente/cliente.py:} En este archivo se encuentra el programa principal, crea una instancia de la clase Ventana2 y crea un socket para conectarse con el servidor.
@@ -56,6 +56,8 @@ Para codificar los mensajes he usado un string separando cada bloque con un subs
 \end{figure}
 Donde \emph{emisor} es el identificador del usuario que envía los mensajes, \emph{receptor} es el identificador del usuario que los recibe, \emph{mensaje} es el mensaje que se envía, \emph{tag} es la etiqueta usada en AES-128 con el modo GCM para validar los mensajes y \emph{nonce} es un número arbitrario que se usa solo una vez para garantizar la seguridad del mensaje frente ataques \emph{playback}. 
 
+Cuando se realiza el intercambio de claves \emph{tag} vale \emph{intercambio} y \emph{nonce} almacena el valor generado para la futura clave una vez que se termina el intercambio.
+
 \section{Funcionamiento de la aplicación}
 Para ejecutar la aplicación, primero se tiene que ejecutar el servidor en algún dispositivo y mientras esté en funcionamiento, ejecutar el cliente.
 
@@ -67,11 +69,12 @@ Para lanzar ambas aplicaciones hay que ejecutar el comando \emph{poe run}. Una v
 	\caption{Registro en la aplicación.}
 	\label{appprimeraparte}
 \end{figure}
-\newpage
+
 Una vez registrados entramos en el chat con el usuario receptor. El primer mensaje que se envía, similar a otras aplicaciones de mensajería, no esta cifrado pero servirá para sincronizar ambos clientes y realizar el intercambio de claves \emph{Diffie-Hellman}. Para el intercambio he elegido como número primo 13 y como generador 2.  Una vez realizado el intercambio, que se hace de manera automática y pasa desapercibido a los usuarios, se cifran todos los mensajes. En \ref{appsegundaparte} podemos ver un ejemplo de conversación entre dos usuarios. El código de la aplicación se encuentra en un \href{https://github.com/luistf24/MensApp-TFG}{repositorio} de GitHub.
+
 \begin{figure}[hbt]
 	\centering
-	\includegraphics[scale=0.45]{imagenes/mensapp2.png} 
+	\includegraphics[scale=0.42]{imagenes/mensapp2.png} 
 	\caption{Intercambio de mensajes en la aplicación.}
 	\label{appsegundaparte}
 \end{figure}

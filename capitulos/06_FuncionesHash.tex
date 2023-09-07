@@ -232,4 +232,12 @@ En la imagen \ref{sha256img} podemos ver un esquema de los pasos seguidos en las
 	\label{sha256img}
 \end{figure}
 \newpage
-Con este capítulo concluye la parte de descripción de criptosistemas y herramientas utilizadas por las aplicaciones de mensajería. En el siguiente capítulo voy a describir como utilizan estas herramientas las aplicaciones de mensajería más populares para garantizar la seguridad y la privacidad de sus usuarios.
+\section{HMAC}
+Un \textbf{HMAC} es un código de autenticación usado por algunos criptosis-temas simétricos de bloques que usa una función hash. Puede expresarse como: 
+
+$$
+\operatorname{HMAC}_K(m)=h((K^+\oplus opad)||h((K^+\oplus ipad)||m)).
+$$
+
+Donde $h$ es la función hash, $K$ es la clave secreta y $K^+$ es el relleno con ceros a la izquierda que se inserta a $K$ para ajustarle el tamaño. Por otro lado tenemos que $ipad$ es el byte 36 en hexadecimal y $opad$ el byte 5C que se repiten para ajustarse al tamaño de $K^+$ \cite{criptografia}.
+

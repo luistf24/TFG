@@ -6,20 +6,20 @@ En este capítulo explicaré como usan las aplicaciones de mensajería los cript
 \section{Telegram (MTProto)}
 MTProto es el protocolo de datos con el Telegram cifra sus mensajes. Fue desarrollado por el matemático Nikolái Dúrov y financiado por Pável Dúrov. Al contrario que la mayoría de cifrados, MTProto esta enfocado en ser multisesión e independiente de la plataforma y el transporte de archivos independiente de su formato. MTProto tiene dos versiones.
 \begin{itemize}
-	\item \textbf{MTProto v1.} En esta versión los mensajes son cifrados con el algoritmo \emph{SHA-1}.
-	\item \textbf{MTProto v2.} En 2017 se actualizó MTProto, en esta versión se cambió el cifrado \emph{SHA-1} por \emph{SHA-256} debido a una vulnerabilidad encontrada en \emph{SHA-1}. Esta es la versión que se utiliza actualmente. 
+	\item \textbf{MTProto v1.} En esta versión se utilizaba la función hash \emph{SHA-1}.
+	\item \textbf{MTProto v2.} En 2017 se actualizó MTProto, en esta versión se cambió el uso de \emph{SHA-1} por \emph{SHA-256} debido a una vulnerabilidad encontrada en \emph{SHA-1}. Esta es la versión que se utiliza actualmente. 
 \end{itemize}
 La información técnica sobre MTProto que se desarrollará a continuación ha sido obtenida de \cite{Miculan2021} y \cite{WebProto}.
 
 \subsection{Descripción general y resumen de los componentes}
-MTProto 2.0 es una suite de protocolos criptográficos diseñados para implementar de manera rápida, escalable y segura intercambio de mensajes sin depositar esa responsabilidad en la seguridad del transporte debajo de dicho protocolo.
+MTProto 2.0 es una suite de protocolos criptográficos diseñados para implementar de manera rápida, escalable y segura intercambio de mensajes sin depender de la seguridad del canal por el que se envían.
 El protocolo esta subdividido en tres componentes virtuales independientes.
 \begin{itemize}
-	\item \textbf{Componente de alto nivel:} Define el método por el cual las consultas de la API y las respuestas se convierten en mensajes binarios. 
-	\item \textbf{Capa criptográfica (autorización):} Define el método por el cual los mensajes están cifrados antes de ser enviados a través del protocolo de transporte.
+	\item \textbf{Componente de alto nivel:} Define el método por el cual las consultas de la API y las respuestas se codifican en mensajes binarios. 
+	\item \textbf{Capa criptográfica (autorización):} Define el método por el cual los mensajes se encriptan antes de ser enviados.
 	\item \textbf{Componente de transporte:} Define el método por el cual el cliente y el servidor transmiten los mensajes sobre otro protocolo de red como HTTP, HTTPS, WS, WSS, TCP o UDP.
 \end{itemize}
-Y se pueden resumir como sigue.\\
+Y se pueden resumir como sigue.
 
 \subsubsection{Componentes de alto nivel(Lenguajes de consulta/API RPC)}
 Desde el punto de vista del componente de alto nivel, el cliente y el servidor intercambian mensajes dentro de una sesión.
@@ -27,8 +27,7 @@ Desde el punto de vista del componente de alto nivel, el cliente y el servidor i
 La sesión se adjunta al cliente en lugar de una conexión \emph{websocket/http/https/tcp.} 
 Además, cada sesión tiene asociada a clave ID de usuario mediante la cual se logra la autorización.
 
-Pueden estar abiertas varias conexiones a un servidor, los mensajes pueden ser enviados en cualquier dirección a través de cualquiera de las conexiones.
-Cuando se usa el protocolo UDP, una respuesta puede ser devuelta por una dirección de IP distinta.
+Pueden estar abiertas varias conexiones a un servidor, los mensajes pueden ser enviados en cualquier dirección a través de cualquiera de las conexiones haciendo así el envío de mensajes independiente del dispositivo que se use.
 
 Hay diferentes tipos de mensajes, estos son.
 \begin{itemize}
@@ -39,7 +38,7 @@ Hay diferentes tipos de mensajes, estos son.
 		\item \textbf{Mensaje multiparte o contenedor.}
 \end{itemize}
 Desde el punto de vista de protocolos de bajo nivel, un mensaje es un flujo de datos alineados con 4 o 16 bytes de límite.
-Los primeros campos en un mensaje están fijos y son usados por el sistema criptográfico o de autorización.
+Donde los primeros campos en un mensaje están fijos y son usados por el sistema criptográfico o de autorización.
 
 Cada mensaje, consiste en un identificador del mensaje \emph{(Message Identifier)} de 64 bits, \emph{número de secuencia del mensaje dentro de una sesión}, \emph{longitud} de 32 bits y \emph{cuerpo del mensaje} de cualquier tamaño, siempre y cuando sea múltiplo de 4. 
 Además cuando un contenedor o un mensaje simple se envían, una \emph{cabecera interna} se añade al principio del mensaje, luego el mensaje es cifrado y se le añade una \emph{cabecera externa} la cual será una \emph{clave de identificación} de 64 bits y una \emph{clave del mensaje} de 128 bits.
@@ -75,13 +74,13 @@ En esta sección se describirán las distintas claves que entran en juego en el 
 
 \begin{description}
 	\item \textbf{Authorization Key (auth\_key)}\\
-	Es una clave de 2048 bit compartida por el dispositivo del cliente y el servidor, se crea durante el registro del usuario, se almacena en el dispositivo de este mediante el protocolo de intercambio de claves \emph{Diffie-Hellman} y nunca se transmite a través de la red. Cada \emph{Authorization key} es única y dependiente del usuario, aunque un usuario puede tener más de una ya que Telegram permite tener sesiones persistentes en diferentes dispositivos. En caso de ser necesario estas claves pueden ser bloqueadas para siempre. Por ejemplo podría pasar si un dispositivo con sesión persistente se pierde.
+	Es una clave de 2048 bit compartida por el dispositivo del cliente y el servidor. Se crea durante el registro del usuario, se almacena en el dispositivo de este mediante el protocolo de intercambio de claves \emph{Diffie-Hellman} y nunca se transmite a través de la red. Cada \emph{Authorization key} es única y dependiente del usuario, aunque un usuario puede tener más de una ya que, como se ha mencionado anteriormente, Telegram permite tener sesiones persistentes en diferentes dispositivos. En caso de ser necesario estas claves pueden ser bloqueadas para siempre. Por ejemplo podría pasar si un dispositivo con sesión persistente se pierde.
 
 	\item \textbf{Server Key}\\
-	Es una clave RSA de 2048 bits usada por el servidor para firmar sus mensajes durante el proceso de registro y la \emph{Authorization Key} todavía no se ha generado. La aplicación tiene una clave pública del servidor que puede ser utilizada para verificar la firmas pero no para firmar mensajes. La clave privada del servidor es almacenada en este y raramente cambia.
+	Es una clave RSA de 2048 bits usada por el servidor para firmar sus mensajes durante el proceso de registro y antes de que la \emph{Authorization Key} haya sido generada. La aplicación tiene una clave pública del servidor que puede ser utilizada para verificar la firmas pero no para firmar mensajes. La clave privada del servidor es almacenada en este y raramente cambia.
 
 	\item \textbf{Key Identifier (auth\_key\_id)}\\
-	Se usan los 64 bits menos significativos del hash \emph{SHA1} de la \emph{Authorization Key} para indicar qué clave en particular se ha usado para cifrar el mensaje. Las claves tienen que ser identificadas unívocamente y en caso de colisión, la \emph{Authorization Key} se regenera. Un identificador Zero Key significa que el cifrado no se usa. Esto está permitido para muy pocos mensajes usados durante el registro para generar la clave en el intercambio \emph{Diffie-Hellman}.
+	Se usan los 64 bits menos significativos del hash \emph{SHA1} de la \emph{Authorization Key} para indicar qué clave en particular se ha usado para cifrar el mensaje. Las claves tienen que ser identificadas unívocamente y en caso de colisión, la \emph{Authorization Key} se regenera. Un identificador Zero Key significa que el cifrado no se usa. Esto solamente está permitido para muy pocos mensajes y únicamente durante el registro.
 	
 	\item \textbf{Session}\\
 	Es un número de 64 bits generado aleatoriamente por el cliente para distinguir entre sesiones individuales como pueden ser diferentes instancias de la aplicación creadas con la misma \emph{Authorization Key}, donde una instancia de la aplicación es la conjunción de la \emph{Key Identifier} y la \emph{Session}.\\
@@ -91,25 +90,24 @@ En esta sección se describirán las distintas claves que entran en juego en el 
 	Es un número de 64 bits generado aleatoriamente que cambia cada 30 minutos independiente de las sesiones. Se genera por una petición del servidor. Una vez generado el nuevo salt, todos los mensajes tienen que tenerlo. Si bien, se aceptan los mensajes con el salt previo. El \emph{Server Salt} es necesario para proteger ante ciertos ataques como podría ser ajustar el reloj de la víctima en un momento futuro.
 
 	\item \textbf{Message Identifier (msg\_id)}\\
-	Es un número de 64 bits dependiente del tiempo usado únicamente para identificar mensajes que no tienen asociada una clave de sesión \emph{(Session)}. Los \emph{Message Identifiers} del servidor módulo 4 dan 1 si el mensaje es una respuesta a un mensaje del cliente y dan 3 en otro caso. 
+	Es un número de 64 bits dependiente del tiempo. Se usa únicamente para identificar los mensajes que no tienen asociada una clave de sesión \emph{(Session)}. Los \emph{Message Identifiers} del servidor módulo 4 dan 1 si el mensaje es una respuesta a un mensaje del cliente y dan 3 en otro caso. 
 	Los \emph{Message Identifiers} del cliente deben incrementarse monótonamente, igualmente con los del servidor y tienen que ser aproximadamente igual a $unixtime*2^{32}$, donde \emph{unixtime} es un sistema para la descripción de instantes de tiempo definida como la cantidad de segundos transcurridos desde la medianoche UTC del 1 de enero de 1970. 
 	De esta manera, el \emph{Message Identifier} señala el momento aproximado en el que el mensaje fue creado siendo rechazado alrededor de 300 segundos después o 30 segundos antes de ser creado (necesario como medida de protección de ataques de repetición).  
 
 	\item \textbf{Content-related Message}\\
-	Un mensaje que requiere un reconocimiento explícito. Un reconocimiento explícito es un ack que envía el cliente al servidor para certificar que es él el que envía el mensaje. Esto incluye todos los mensajes de usuario y muchos de servicio, a excepción de contenedores y otros reconocimientos.
+	Un mensaje que requiere un reconocimiento explícito. Un reconocimiento explícito es un ack que envía el cliente al servidor para certificar que es él el que envía el mensaje. Esto incluye todos los mensajes de usuario y muchos de servicio, a excepción de contenedores.
 
 	\item \textbf{Message Sequence Number (msg\_seqno)}\\
-	Un número de 32 bits igual o el doble del número de mensajes \emph{content-related} creados por el remitente antes de este mensaje y posteriormente se va incrementado en uno si el mensaje es del tipo \emph{cotent-related}. Un contenedor se genera siempre después de su contenido por lo que su \emph{Message Sequence Number} será siempre igual o mayor a los números de mensajes contenidos en él.
+	Un número de 32 bits igual o el doble del número de mensajes \emph{content-related} creados por el remitente antes del primer mensaje y posteriormente se va incrementado en uno si el mensaje es del tipo \emph{cotent-related}. Cabe a destacar que un  contenedor se genera siempre después de su contenido por lo que su \emph{Message Sequence Number} será siempre igual o mayor a los números de mensajes contenidos en él.
 
 	\item \textbf{Message Key (msg\_key)}\\
-	En el protocolo \textbf{MTProto 2.0}, la \emph{Message Key} se define como los 128 bits del medio del hash \emph{SHA-256} del mensaje que va a ser cifrado antepuesto por un fragmento de 32 bytes de la clave de autorización.\\
-	En el protocolo \textbf{MTProto 1.0}, la \emph{Message Key} se definía como los 128 bits menos significativos del hash \emph{SHA-1} del mensaje a ser cifrado, los bytes de relleno eran excluidos en el cálculo del hash. La \emph{Authorization Key} no estaba involucrada en este cálculo.
+	Se define como los 128 bits intermedios del hash \emph{SHA-256} del mensaje que va a ser cifrado. Además, se añade un fragmento de 32 bytes de la clave de autorización al principio de este.
 
 	\item \textbf{Internal (cryptographic) Header}\\
-	Una cabecera de 16 bytes añadida antes de que el mensaje o el contenedor sea cifrado. Consiste en el \emph{Server Salt} de 64 bits y la \emph{Session} de 64 bits.
+	Se trata de una cabecera de 16 bytes añadida antes de que el mensaje o el contenedor sea cifrado. Consiste en el \emph{Server Salt} de 64 bits y la \emph{Session} de 64 bits.
 
 	\item \textbf{External (cryptographic) Header}\\
-	Una cabecera de 24 bytes que se añade antes de que el mensaje o el contenedor sea cifrado. Consiste en la \emph{auth\_key\_id} de 64 bits y la \emph{msg\_key} de 128 bits.
+	Es una cabecera de 24 bytes que se añade antes de que el mensaje o el contenedor sea cifrado. Consiste en la \emph{auth\_key\_id} de 64 bits y la \emph{msg\_key} de 128 bits.
 
 	\item \textbf{Payload}\\
 	Es el \emph{External Header} + mensaje cifrado o contenedor.
@@ -123,28 +121,28 @@ En esta sección se describirán las distintas claves que entran en juego en el 
 \end{figure}
 
 \subsection{Creación de la \emph{Authorization Key}}
-Como hemos visto en el apartado anterior la \emph{Authorization Key} se genera durante el registro del usuario en la aplicación. El formato de las consultas usa \emph{Binary Data Serialization}, que es un proceso en el cual se convierten los datos en binario, ya que MTProto requiere que los tipos de datos estén en formato binario y \emph{TL Language} que es un lenguaje de tipos usado para describir constructores, tipos y funciones existentes.
+Como hemos visto en el apartado anterior la \emph{Authorization Key} se genera durante el registro del usuario en la aplicación. El formato de las consultas usa \emph{Binary Data Serialization}, que es un proceso en el cual se convierten los datos en binario, ya que MTProto requiere que los tipos de datos estén en dicho formato. Además se usa \emph{TL Language} que es un lenguaje de tipos usado para describir constructores, tipos y funciones existentes.
 
-Los números de gran tamaño son transmitidos como cadenas que contienen la secuencias de bytes en formato \emph{big endian}, los números de menor tamaño como pueden ser los \emph{int, long int128...} usan normalmente el formato \emph{little endian}. Si pertenecen al hash generado con \emph{SHA-1} los bytes no son reorganizados.
+Los números de gran tamaño son transmitidos usando el formato \emph{big endian}, los números de menor tamaño como pueden ser los \emph{int, long int128...} usan normalmente el formato \emph{little endian}.
 
 Una vez introducidos los formatos que seguirán las consultas y los números veamos los pasos que se siguen en la creación de la \emph{Authorization Key}.
 
 \begin{enumerate}
-	\item El cliente envía una consulta al servidor, en esta consulta irá el \emph{nonce} que es un número aleatorio \emph{int128} generado por el cliente que servirá para para que el servidor lo identifique, este número no es secreto y a partir de ese momento irá incorporado en todas las consultas. Con este paso empieza el intercambio de claves \emph{Diffie-Hellman}.
+	\item El cliente envía una consulta al servidor, en esta consulta irá el \emph{nonce}. Este es un número aleatorio \emph{int128} generado por el cliente que servirá para para que el servidor lo identifique. No es secreto y desde el momento que se genera irá incorporado en todas las consultas. Con este paso empieza el intercambio de claves \emph{Diffie-Hellman}.
 	
 	\item El servidor le responde enviando 
 	\begin{itemize}
-		\item \emph{server\_nonce}: Es un número aleatorio \emph{int128} generado por el servidor que sirve para que el cliente lo identifique y al igual que el \emph{nonce} no será secreto e irá incluido en las siguientes consultas y respuestas. 
-		\item \emph{pq}: Es una representación de un número natural en formato \emph{big endian} que es el producto de dos números primos, \emph{pq} por lo general verifica $pq \leq 2^{63}-1$
-		\item \emph{server\_public\_key\_fingerprints}: Es una lista de \emph{fingerprints}, secuencias únicas de letras y números usadas para identificar las claves RSA públicas.
+		\item \emph{server\_nonce}: Es un número aleatorio del tipo \emph{int128} generado por el servidor. Sirve para que el cliente lo identifique y al igual que el \emph{nonce}, no es secreto. Además se incluye en las siguientes consultas y respuestas. 
+		\item \emph{pq}: Es una representación de un número natural en formato \emph{big endian} que es el producto de dos números primos. Su tamaño no suele superar $2^{63}-1$.
+		\item \emph{server\_public\_key\_fingerprints}: Es una lista de \emph{fingerprints}. Estas son secuencias únicas de letras y números usadas para identificar las claves RSA públicas.
 	\end{itemize}
 
-	\item El cliente descompone \emph{pq} en factores primos tal que $p$\textless$q$. Una vez hecho esto empieza el intercambio de claves Diffie-Hellman. Este paso es la prueba de trabajo.
+	\item El cliente descompone \emph{pq} en factores primos tal que $p<q$.
 
 	\item En este paso se presentan las pruebas de trabajo. Para ello se genera \emph{encrypted\_data} como sigue.
 	\begin{enumerate}
-		\item Se genera \emph{new\_nonce} un número aleatorio generado por el cliente.
-		\item Se genera \emph{data} que es una serialización de:
+		\item Se genera \emph{new\_nonce}. Este es un número aleatorio generado por el cliente.
+		\item Se genera \emph{data}. Es una serialización de:
 		\begin{itemize}
 			\item \emph{pq},
 			\item \emph{p},
@@ -157,18 +155,19 @@ Una vez introducidos los formatos que seguirán las consultas y los números vea
 		\begin{itemize}
 			\item Se genera \emph{data\_with\_padding:=data+random\_padding\_bytes}, donde \emph{random\_padding\_bytes} se escoge de manera que \emph{data\_with\_padding} tenga un tamaño final de 192 bytes.
 			\item Luego se crea la variable \emph{data\_pad\_reversed} como resultado de la función $BYTE\_REVERSE(data\_with\_padding)$, función la cual revierte el orden de los bytes.
-			\item Se genera un número aleatorio de 32 bytes que se denomina como \emph{temp\_key}.
-	\item Se genera $data\_with\_hash:=data\_pad\_reversed + \\ + SHA256(temp\_key + data\_with\_padding)$. Después de esta operación \emph{data\_with\_hash} tiene exactamente una longitud de 224 bytes.
-	\item Después de este paso se encripta \emph{data\_with\_hash} a partir de \emph{temp\_key} usando AES-256 y se almacena el resultado en la variable \emph{aes\_encrypted}.
-	\item Se ajusta \emph{aes\_encrypted} a 32 bytes usando la función SHA-256 y a continuación se realiza la operación XOR con \emph{temp\_key} almacenándose el resultado en \emph{temp\_key\_xor}.
-	\item Se combinan \emph{temp\_key\_xor} con \emph{aes\_encrypted} y se almacena el resultado en \emph{key\_aes\_encrypted}. Esta tiene un tamaño de 256 bytes. 
-	\item Se compara el tamaño \emph{key\_aes\_encrypted} con \emph{RSA-modulus} de \emph{server\_pub\_key} en formato big endian de 2048 bits. Si \emph{key\_aes\_encrypted} es mayor que \emph{RSA-modulus}, se empieza de nuevo el proceso eligiendo un nuevo \emph{random\_temp\_key}.
-	\item Por último se genera \emph{encrypted\_data} como resultado de aplicar RSA a \emph{key\_aes\_encrypted} y a \emph{server\_pub\_key}.
+			\item Se genera \emph{temp\_key}, un número aleatorio de 32 bytes.
+			\item Se genera $data\_with\_hash:=data\_pad\_reversed + \\ + SHA256(temp\_key + data\_with\_padding)$. Al concluir esta operación, \emph{data\_with\_hash} tiene exactamente una longitud de 224 bytes.
+			\item Después de este paso se encripta \emph{data\_with\_hash} a partir de \emph{temp\_key} usando AES-256 y se almacena el resultado en la variable \emph{aes\_encrypted}.
+			\item Se ajusta \emph{aes\_encrypted} a 32 bytes usando la función SHA-256 y a continuación se realiza la operación XOR con \emph{temp\_key} almacenándose el resultado en \emph{temp\_key\_xor}.
+			\item Se combinan \emph{temp\_key\_xor} con \emph{aes\_encrypted} y se almacena el resultado en \emph{key\_aes\_encrypted}. Esta tiene un tamaño de 256 bytes. 
+			\item Se compara el tamaño \emph{key\_aes\_encrypted} con \emph{RSA-modulus} de \emph{server\_pub\_key} en formato big endian de 2048 bits. Si \emph{key\_aes\_encrypted} es mayor que \emph{RSA-modulus}, se empieza de nuevo el proceso eligiendo un nuevo \emph{random\_temp\_key}.
+			\item Por último se genera \emph{encrypted\_data} como resultado de aplicar RSA a \emph{key\_aes\_encrypted} y a \emph{server\_pub\_key}.
 		\end{itemize}
 	\end{enumerate}
-	Una vez hecho esto, se envía \emph{encrypted\_data} al servidor.
+
+	Terminado este proceso, se envía \emph{encrypted\_data} al servidor.
 	Después de este paso alguien podría interceptar la consulta y modificarla con una cosulta suya haciendo un ataque \textbf{man-in-the-middle}. 
-	Este ataque no sería muy efectivo, ya que el único elemento que podría modificar sería \emph{new\_nonce} porque los demás están cifrados y el resultado sería que el atacante genere una \emph{Authorization\_key} propia independiente de la del cliente haciendo que el ataque no sea efectivo.
+	Sin embargo, este ataque no sería muy efectivo, ya que el único elemento que podría modificar sería \emph{new\_nonce}. Como resultado el atacante genera una \emph{Authorization\_key} propia e independiente de la del cliente.
 
 	\item El servidor responde enviando
 		\begin{itemize}
@@ -177,35 +176,36 @@ Una vez introducidos los formatos que seguirán las consultas y los números vea
 			\item \emph{encrypted\_answer}: Respuesta cifrada que es del tipo \emph{string} y a su vez contiene
 			\begin{itemize}
 				\item \emph{new\_nonce\_hash}: Son los 128 bits menos significativos de \emph{SHA-1(new\_nonce)}.
-				\item \emph{answer}: Es una serialización de \emph{nonce}, \emph{server\_nonce}, \emph{g}, \emph{dh\_prime}, \emph{g\_a} y \emph{server\_time}. Donde \emph{dh\_prime} es un número primo seguro de 2048 bits, \emph{g} un generador de un subgrupo cíclico de orden $\frac{p-1}{2}$, $g_a$ es la clave que envía el servidor al cliente que al elevarla a $b$ módulo \emph{dh\_prime} el cliente obtendría la clave final.
-\item \emph{answer\_with\_hash}: Es una generación con la función hash \emph{HASH1} quedando como \emph{SHA-1(answer)}+\emph{answer}+\emph{(0-15 bytes aleatorios)} de manera que la longitud sea divisible por 16, es del tipo \emph{string}.
+				\item \emph{answer}: Es una serialización de \emph{nonce}, \emph{server\_nonce}, \emph{g}, \emph{dh\_prime}, \emph{g\_a} y \emph{server\_time}. Donde \emph{dh\_prime} es un número primo seguro de 2048 bits, \emph{g} un generador de un subgrupo cíclico de orden $\frac{p-1}{2}$ y $g_a$ es la clave que envía el servidor al cliente. Al elevarla a $b$ módulo \emph{dh\_prime} el cliente obtiene la clave final.
+\item \emph{answer\_with\_hash}: Es el resultado de \emph{SHA-1(answer)}+\emph{an-\\swer}+\emph{(0-15 bytes aleatorios)}. Esto hace que su longitud sea divisible por 16. Es del tipo \emph{string}.
 				\item \emph{answer\_aes\_key}: \emph{SHA-1(new\_nonce + server\_nonce) +\\+ substr(SHA-1(server\_nonce + new\_nonce), 0, 12)} y es del tipo \emph{string}. Donde \emph{substr} es una función que devuelve caracteres del \emph{string} desde una posición hasta otra, en este caso desde la posición $0$ hasta $12$.
-				\item \emph{tmp\_aes\_iv}: \emph{substr(SHA-1(server\_nonce + new\_nonce), 12, 8) + SHA-1(new\_nonce + new\_nonce) + substr(new\_nonce, 0, 4)}
+				\item \emph{tmp\_aes\_iv}: \emph{substr(SHA-1(server\_nonce + new\_nonce), 12, 8) + SHA-1(new\_nonce + new\_nonce) + substr(new\_nonce, 0, 4)}.
 				\item \emph{encrypted\_answer}: \emph{AES256\_ige\_encrypt(answer\_with\_hash,\\ tmp\_aes\_key, tmp\_aes\_iv)} donde:
 				\begin{itemize}
-					\item \emph{tmp\_aes\_key}: Es una clave de 256 bits
+					\item \emph{tmp\_aes\_key}: Es una clave de 256 bits.
 					\item \emph{tmp\_aes\_iv}: Es un vector de inicialización de 256 bits.
 				\end{itemize}
-				Al igual que en el resto de las instancias que usan el cifrado AES, a los datos cifrados se le añaden bytes aleatorios de forma que el tamaño sea divisible por 16.
+
 			\end{itemize}
 		\end{itemize}
-	Después de este paso \emph{new\_nonce} sigue siendo únicamente conocido por el cliente y el servidor de esta manera el cliente garantiza que el servidor es el que está al otro lado de la comunicación y que la respuesta de este es correcta, ya que los datos están cifrados usando \emph{new\_nonce}.
 
-	El cliente comprueba que $p=dh\_prime$, es un número primo seguro de 2048 bits, es decir, se tiene que verificar que \emph{p} y $\frac{p-1}{2}$ son primos, además, $2^{2047}$\textless \emph{p} \textless $2^{2048}$, y \emph{g} genera un subgrupo cíclico con orden primo $\frac{p-1}{2}$.$g$ siempre vale 2, 3, 4, 5, 6, o 7.
+	Después de este paso \emph{new\_nonce} sigue siendo únicamente conocido por el cliente y el servidor. Esto garantiza  al cliente de que el servidor es el que está al otro lado de la comunicación y que la respuesta de este es correcta, ya que los datos están cifrados usando \emph{new\_nonce}.
 
-	Si la verificación tarda mucho tiempo, cosa que ocurre en dispositivos antiguos, se ejecutarían solo 15 iteraciones en el algoritmo de Miller-Rabin para garantizar que \emph{p} y $\frac{p-1}{2}$ sean primos con una probabilidad de error muy baja, alrededor de una millonésima, y dejar el resto de iteraciones para después, ejecutándose estas de fondo.
+	El cliente comprueba que $p=dh\_prime$, es un número primo seguro de 2048 bits, es decir, se tiene que verificar que \emph{p} y $\frac{p-1}{2}$ son primos. Además, $2^{2047}<p<2^{2048}$, y $g$ genera un subgrupo cíclico con orden primo $\frac{p-1}{2}$. $g$ siempre vale 2, 3, 4, 5, 6, o 7.
 
-	\item El cliente genera un número aleatorio \emph{b} de 2048 bits y lo envía al servidor en un mensaje que contiene:
+	%Si la verificación tarda mucho tiempo, cosa que ocurre en dispositivos antiguos, se ejecutarían solo 15 iteraciones en el algoritmo de Miller-Rabin para garantizar que $p$ y $\frac{p-1}{2}$ sean primos con una probabilidad de error muy baja, alrededor de una millonésima, y dejar el resto de iteraciones para después, ejecutándose estas de fondo.
+
+	\item El cliente genera un número aleatorio $b$ de 2048 bits y lo envía al servidor en un mensaje que contiene:
 		\begin{itemize}
 			\item \emph{nonce}.
 			\item \emph{server\_nonce}.
-			\item \emph{encrypted\_data} que se descifra de la siguiente manera:
+			\item \emph{encrypted\_data} que se desencripta como sigue.
 				\begin{itemize}
 					\item \emph{g\_b} = $g^b$ mod \emph{dh\_prime}
-					\item \emph{data} que es una serialización donde
+					\item \emph{data} que es una serialización de 
 						\begin{itemize}
-							\item \emph{nonce}
-							\item \emph{server\_nonce}
+							\item \emph{nonce}.
+							\item \emph{server\_nonce}.
 							\item \emph{retry\_id} que vale 0 en el primer intento y en caso contrario, vale \emph{auth\_key\_aux\_hash} del intento fallido anterior y es del tipo \emph{long}.
 							\item \emph{g\_b} que es del tipo \emph{string}.
 						\end{itemize}
@@ -213,7 +213,7 @@ Una vez introducidos los formatos que seguirán las consultas y los números vea
 					\item \emph{encrypted\_data} que es: \emph{AES256\_ige\_encrypt(data\_with\_hash, tmp\_aes\_key, tmp\_aes\_iv)}. Donde el modo IGE es una variación de modo CBC [\ref{esquemacbc}] de los cifrados de bloque. En este modo se garantiza que si un bloque del mensaje encriptado es cambiado, no se pueda desencriptar correctamente el mensaje completo.
 				\end{itemize}
 		\end{itemize}
-	\item Una vez hecho los pasos previos tendríamos que \emph{auth\_key} vale $g^{ab}$ mod \emph{dh\_prime}, en el servidor se calcula como \emph{$g\_b^{a}$ mod \emph{dh\_prime}} y en el cliente se calcula como $g\_a^b$ mod \emph{dh\_prime}.
+	\item Una vez hecho los pasos previos tendríamos que \emph{auth\_key} vale $g^{ab}$ mod \emph{dh\_prime}. El servidor la calcula como \emph{$g\_b^{a}$ mod \emph{dh\_prime}} y el cliente la calcula como $g\_a^b$ mod \emph{dh\_prime}.
 	\item \emph{auth\_key\_hash} se calcula como los 64 bits de menor prioridad de \emph{SHA-1(auth\_key)}. El servidor comprueba si existe alguna otra clave con el mismo \emph{auth\_hash} y responde de alguna de las siguientes tres formas
 	\begin{enumerate}
 		\item Una serialización de: 
@@ -246,7 +246,8 @@ Una vez introducidos los formatos que seguirán las consultas y los números vea
 Si el cliente no obtiene alguna respuesta del servidor en un intervalo de tiempo determinado se repite la consulta, análogamente ocurre con el servidor. Sin embargo si el servidor no obtiene una segunda respuesta del cliente en 10 minutos, reiniciará la conexión y el cliente tendrá que empezar de nuevo.
 
 \subsection{Generando la clave y el vector de inicialización de AES}
-En esta sección hablaré de como se generan la clave de autorización (\emph{auth\_key}) y de la clave del mensaje (\emph{msg\_key}) necesarias para calcular la clave de AES (\emph{aes\_key}) y el vector de inicialización de 256 bits (\emph{iv\_aes}) usados para cifrar los mensajes en MTProto 2.0.\\
+En esta sección hablaré de como se generan la clave de autorización (\emph{auth\_key}) y de la clave del mensaje (\emph{msg\_key}). Estas claves son necesarias para la creación de la clave de AES (\emph{aes\_key}) y también vector de inicialización (\emph{iv\_aes}).
+
 El algoritmo sigue los siguientes pasos.
 \begin{enumerate}
 	\item Calculamos \emph{msg\_key\_large} como \emph{SHA-256(substr(auth\_key, 88+x, 32)+plaintext+random\_padding)}.
@@ -254,13 +255,20 @@ El algoritmo sigue los siguientes pasos.
 	\item Calculamos \emph{sha256\_a} como \emph{SHA-256(msg\_key+substr(auth\_key, x, 36))}.
 	\item Calculamos \emph{sha256\_b} como \emph{SHA-256(substr(auth\_key, 40+x,\\ 36)+msg\_key)}.
 \end{enumerate}
+
 Y una vez hechos estos pasos, ya podemos calcular la clave para AES y el vector de inicialización.
 \begin{itemize}
 	\item \textbf{\emph{aes\_key}}: \emph{substr(sha256\_a, 0, 8)+substr(sha256\_b, 8, 16)+\\+substr(sha256\_a, 24, 8)}.
 	\item \textbf{\emph{aes\_iv}}: \emph{substr(sha256\_b, 0, 8) + substr(sha256\_a, 8 16)+\\+substr(sha256\_b, 24, 8)}.
 \end{itemize}
-\emph{x} vale 0 cuando los mensajes van del cliente al servidor y 8 cuando los mensajes van del servidor al cliente.\\
-Los 1024 bits menos significativos de la \emph{auth\_key} no se utilizan para el cálculo ya que estos se usan para cifrar la copia local de los datos recibidos del servidor además, los 512 bits menos significativos no se almacenan en el servidor por lo que si el cliente pierde la clave o la contraseña del dispositivo, no se podrán descifrar los datos locales. Un esquema del proceso se puede ver en \ref{mtproto2}.
+
+\emph{x} vale 0 cuando los mensajes van del cliente al servidor y 8 cuando los mensajes van del servidor al cliente.
+
+Los 1024 bits menos significativos de la \emph{auth\_key} no se utilizan para el cálculo ya que estos se usan para cifrar la copia local de los datos recibidos del servidor además. 
+
+Los 512 bits menos significativos no se almacenan en el servidor. Esto hace que en el caso de que el  cliente pierda la clave o la contraseña del dispositivo, no se puedan desencriptar los datos locales. 
+
+Un esquema del proceso anteriormente explicado se se puede ver en \ref{mtproto2}.
 %\newpage
 \begin{figure}[htb]
 	\centering
@@ -270,35 +278,26 @@ Los 1024 bits menos significativos de la \emph{auth\_key} no se utilizan para el
 \end{figure}
 
 \subsection{Envío de mensajes}
-Una vez realizado el intercambio de claves mediante \emph{Diffie-Hellman} y la generación de la clave y el vector de inicialización de AES ya se podrían enviar mensajes cifrados entre el cliente y el servidor utilizando \emph{AES256}.
-Los protocolos de transporte que están disponibles son los siguientes.
-\begin{itemize}
-	\item \emph{TCP}
-	\item \emph{WebSocket}
-	\item \emph{WebSocket} sobre \emph{HTTPS}
-	\item \emph{HTTP}
-	\item \emph{HTTPS}
-	\item \emph{UDP}
-\end{itemize}
+Una vez realizado el intercambio de claves mediante \emph{Diffie-Hellman} y la generación de la clave y el vector de inicialización de AES ya se podrían enviar mensajes cifrados entre el cliente y el servidor utilizando \emph{AES-256}.
 
+Algunos de los protocolos de transporte que MTProto2 permite utilizar son \emph{TCP}, \emph{WebSocket} y \emph{HTTP} entre otros.
 
-\section{WhatsApp, Facebook Menssenger y Signal (TextSecure Protocol)}
-El protocolo \emph{TextSecure Protocol} también conocido como \emph{Signal} fue desarrollado por Trevor Perrin y Moxie Marilinspike que trabajaban en la empresa Open Whisper Systems en 2013. Se implementó inicialmente en la aplicación de mensajería homónima \emph{Signal} aunque posteriormente se introdujo en otras aplicaciones de mensajería como \emph{WhatsApp} y \emph{Facebook Menssenger}.
+\section{WhatsApp, Facebook Menssenger y Signal (Signal Protocol)}
+El protocolo \emph{TextSecure Protocol} desde 2016 conocido como \emph{Signal} fue desarrollado por Trevor Perrin y Moxie Marilinspike que trabajaban en la empresa Open Whisper Systems en 2013. Se implementó inicialmente en la aplicación de mensajería homónima \emph{Signal} aunque posteriormente se introdujo en otras aplicaciones de mensajería como \emph{WhatsApp} y \emph{Facebook Menssenger}.
 
 Este protocolo ha tenido 3 versiones.
 \begin{itemize}
 	\item \textbf{TextSecure v1.} Es la primera versión del protocolo, que fue lanzada en 2013 y estaba basada en el protocolo \emph{Off-the-Record Messaging (OTR)}.
-	\item \textbf{TextSecure v2.} Es la segunda versión publicada el 24 de febrero de 2014. Esta versión extendió el protocolo con \emph{Double Ratchet Algorithm} el cual un intercambio de claves \emph{Diffie-Hellman} con una \emph{función de derivación de clave (KDF)} usando funciones hash, permitiendo extender las claves y aumentando la seguridad del protocolo.
+	\item \textbf{TextSecure v2.} Es la segunda versión publicada el 24 de febrero de 2014. Esta versión extendió el protocolo con \emph{Double Ratchet Algorithm} combinando un intercambio de claves \emph{Diffie-Hellman} con una \emph{función de derivación de clave (KDF)} usando funciones hash. Esto permitió extender las claves y por ende aumentar la seguridad del protocolo.
 	\item \textbf{TextSecure v3.} Esta tercera versión fue lanzada en octubre de 2014 y añadió algunos cambios a las primitivas criptográficas y al protocolo de red.
 \end{itemize}
-Cabe a mencionar que aunque el protocolo originalmente el protocolo se llamaba \emph{TextSecure} en 2016 fue renombrado como \emph{Signal Protocol} que es como lo conocemos hoy en día.
 
-La información técnica de este protocolo que voy a desarrollar a continuación ha sido obtenida de \cite{November2021b}.
+La información técnica de este protocolo ha sido obtenida de \cite{November2021b}.
 
 \subsection{Descripción general y dispositivos}
-El protocolo \emph{Signal} es un protocolo diseñado para prevenir que aplicaciones como \emph{WhatsApp, Signal y Facebook Messenger} sean vulneradas de manera que se pueda acceder a la información intercambiada en los mensajes y las llamadas. Este protocolo permite que un usuario tener diversos dispositivos cada uno con su propias claves garantizando que si se obtiene alguna de ellas, los mensajes enviados por alguno de los otros dispositivos no puedan ser descifrados. Además también es usado en el caso de \emph{WhatsApp} para cifrar el historial de mensajes y enviarlo a un nuevo dispositivo del mismo usuario.
+El protocolo \emph{Signal} es un protocolo diseñado para prevenir que aplicaciones como \emph{WhatsApp, Signal y Facebook Messenger} sean vulneradas accediendo a la información intercambiada en los mensajes y las llamadas. Este protocolo permite que un usuario tener diversos dispositivos cada uno con su propias claves garantizando que si se obtiene alguna de ellas, los mensajes enviados por alguno de los otros dispositivos no puedan ser descifrados. Además también es usado en el caso de \emph{WhatsApp} para cifrar el historial de mensajes y enviarlo a un nuevo dispositivo del mismo usuario.
 
-Por comodidad voy a explicar el protocolo para WhatsApp dado que para el resto de aplicaciones que lo usan hacen un uso igual de este.
+Voy a explicar el protocolo para WhatsApp dado que para el resto de aplicaciones que lo incorporan hacen un uso igual de este.
 
 \subsubsection{Tipo de dispositivos}
 Como he me mencionado anteriormente, el protocolo \emph{Signal} permite tener varios dispositivos asociados al usuario, si bien no todos los dispositivo son iguales. Se pueden distinguir dos tipos de dispositivos.
@@ -306,52 +305,52 @@ Como he me mencionado anteriormente, el protocolo \emph{Signal} permite tener va
 	\item \textbf{Dispositivo principal.} Dispositivo único utilizado para vincular una cuenta de \emph{WhatsApp} con un número de teléfono. Este dispositivo permite vincular dispositivos adicionales que serán los dispositivos compañeros.
 	\item \textbf{Dispositivo Compañero o Secundario.} Es un dispositivo vinculado a una cuenta existente de WhatsApp, a diferencia del dispositivo principal, este no tiene porque ser único.
 \end{itemize}
-Ciertas aplicaciones únicamente pueden ser usadas en dispositivos principales como pueden ser las aplicaciones para \emph{Android} y \emph{iOS}.
+
+Ciertas aplicaciones únicamente pueden ser usadas en dispositivos principales como son las aplicaciones diseñadas para \emph{Android} y \emph{iOS}.
 
 \subsection{Descripción de las claves}
-En este apartado hablaré acerca de las distintas claves que se utilizan para cifrar y descifrar los datos.
+En este apartado voy a describir las distintas claves que se utilizan para encriptar y desencriptar los datos.
 \begin{itemize}
 	\item \textbf{Claves públicas}
 		\begin{itemize}
-			\item \emph{Identity Key Pair}: Es un par de claves de largo plazo del tipo \emph{Curve25519} generadas en la instalación.
-			\item \emph{Signed Pre Key}: Es una clave de medio plazo del tipo \emph{Curve25519} generada durante la instalación y firmada por la \emp{Identity Key} que se va rotando de manera periódica a lo largo del tiempo.
-			\item \emph{One-Time Pre Keys}: Es un lote de pares de claves del tipo \emph{Curve25519} de un solo uso generadas en la instalación y siendo posible volver a generarlas en caso de ser necesario.
+			\item \emph{Identity Key Pair}: Es una pareja de claves de del tipo \emph{Curve25519} generadas en la instalación.
+			\item \emph{Signed Pre Key}: Es una clave del tipo \emph{Curve25519} generada durante la instalación y firmada por la \emph{Identity Key} que se va rotando de manera periódica a lo largo del tiempo.
+			\item \emph{One-Time Pre Keys}: Es un conjunto de pares de claves del tipo \emph{Curve25519} que solo se usan una vez. Son generadas en la instalación y es posible volver a generarlas en caso de ser necesario.
 		\end{itemize}
 	\item \textbf{Claves de Sesión}
 		\begin{itemize}
 			\item \emph{Root Key}: Clave de 32 bytes usada para generar \emph{Chain Key}.
 			\item \emph{Chain Key}: Clave de 32 bytes usada para generar \emph{Message Key}.
-			\item \emph{Message Key}: Clave de 80 bytes usada para cifrar los mensajes. Están formadas por 32 bytes usados para la clave \emph{AES256}, 32 bytes para la clave \emph{HMAC-SHA256} y 16 bytes para un \emph{IV}.
-		\end{itemize}
-	\item \textbf{Otras claves}
-		\begin{itemize}
-			\item \emph{Linking Secret Key}: Es una clave de 32 bytes generada en un \emph{dispositivo compañero} y que tiene que ser enviada por un canal seguro al \emph{dispositivo principal}. Se usa para verificar un \emph{HMAC} del intercambio durante la vinculación entre los dispositivos. Se envía escaneando un código QR.
+			\item \emph{Message Key}: Clave de 80 bytes usada para cifrar los mensajes. Están formadas por 32 bytes usados para la clave \emph{AES-256}, 32 bytes para la clave \emph{HMAC-SHA256} y 16 bytes para \emph{IV}, que es el vector de inicialización de \emph{AES}.
 		\end{itemize}
 \end{itemize}
 
+Otra clave que tiene especial relevancia es la \emph{Linking Secret Key}. Esta es una clave de 32 bytes generada en un \emph{dispositivo compañero} y que tiene que ser enviada por un canal seguro al \emph{dispositivo principal}. Se usa para verificar un \emph{HMAC} del intercambio durante la vinculación entre los dispositivos. Se envía escaneando un código \textbf{QR}.
+
 \subsection{Otros elementos relacionados con los dispositivos compañeros}
 \begin{itemize}
-	\item \emph{Linking Metadata}: cifrado de metadatos asignados a un dispositivo compañero durante la etapa de vinculación, se usa a la par que la \emph{Identity Key} para identificar un dispositivo compañero entre los dispositivos de WhatsApp.
+	\item \emph{Linking Metadata}: Cifrado de los metadatos asignados a un dispositivo compañero durante la etapa de vinculación. Se usa a la par que la \emph{Identity Key} para identificar un dispositivo compañero entre los dispositivos de WhatsApp.
 	\item \emph{Signed Device List Data}: Lista cifrada que identifica los dispositivos compañeros vinculados a la cuenta principal en el momento de la firma. Se firma con la \emph{Identity Key} del dispositivo principal usando 0x0602 como prefijo.
 	\item \emph{Account Signature}: Firma del tipo \emph{Curve25519} calculada a partir del prefijo 0x600, \emph{Linking Metadata} y la \emph{Identity Key} del dispositivo compañero usando la \emph{Identity Key} del dispositivo principal.
 	\item \emph{Device Signature}: Firma del tipo \emph{Curve25519} calculada a partir del prefijo 0x601, \emph{Linking Metadata}, la \emph{Identity Key} del dispositivo compañero y la \emph{Identity Key} del dispositivo principal usando la \emph{Identity Key} del dispositivo compañero. 
 \end{itemize}
 
-Una vez introducido la terminología que se va a usar el la descripción del protocolo \emph{Signal}, procederé a describir las etapas principales de este.\\
+Una vez descritas las claves que se van a usar en el protocolo \emph{Signal}, procederé a describir las operaciones principales que se llevan a cabo.
 
 \subsection{Registro de clientes}
-Etapa inicial consistente en añadir dispositivos asociados al cliente, como se ha visto anteriormente existen dos tipos de dispositivos: \emph{dispositivo principal} y \emph{dispositivos compañeros} y en función del tipo se registrarán de manera diferente.
+Es la etapa inicial consistente en añadir dispositivos asociados al cliente. Como se ha visto anteriormente, existen dos tipos de dispositivos el \emph{dispositivo principal} y los \emph{dispositivos compañeros}. En función del tipo se registran de manera diferente.
 \begin{description}
-	\item \textbf{Dispositivo principal}\\
-	Durante el momento del registro, el cliente de WhatsApp envía al servidor su \emph{Identity Key}, su \emph{Signed Pre Key} con una firma y conjunto de \emph{One-Time Pre Keys}. Una vez enviadas el servidor de WhatsApp almacena estas estas claves públicas asociadas con el identificador del usuario.
+	\item \textbf{Registro del dispositivo principal}
 
-	\item \textbf{Dispositivo compañero}\\
-	Para vincular un nuevo dispositivo a la cuenta de WhatsApp, el dispositivo principal del usuario crea al principio una firma de la cuenta firmando la \emph{Identity Key} del nuevo dispositivo, a su vez, el dispositivo compañero que se quiere introducir firmando la \emph{Identity Key} pública del dispositivo principal. Una vez que se han realizado ambas firmas, ya se puede iniciar las sesión con el dispositivo compañero usando un cifrado \emph{end-to-end}.\\Los pasos seguidos son:
+	Durante el momento del registro, el cliente envía al servidor su \emph{Identity Key}, su \emph{Signed Pre Key} con una firma y conjunto de \emph{One-Time Pre Keys}. Una vez enviadas el servidor las almacena.
+
+	\item \textbf{Registro de un dispositivo compañero}
+
+	Para vincular un nuevo dispositivo a la cuenta, el dispositivo principal crea al principio una firma de la cuenta, firmando la \emph{Identity Key} del nuevo dispositivo. A su vez, el dispositivo compañero firma la \emph{Identity Key} pública del dispositivo principal. Una vez que se han realizado ambas firmas, ya se puede iniciar las sesión con el dispositivo compañero usando un cifrado \emph{end-to-end}.\\Los pasos seguidos son:
 	\begin{enumerate}
-		\item El dispositivo muestra su \emph{Identity Key} ($I_{companion}$) y genera un una clave temporal para vincularse ($L_{companion}$) en un código QR. Esta clave nunca será enviada al servidor.
-		\item El dispositivo principal escanea el código QR y almacena $I_{companion}$ en el disco.
-		\item El dispositivo principal carga su propia \emph{Identity Key} como $I_{primary}$.
-		\item El dispositivo genera los metadatos de la vinculación ($L_{metadata}$) y actualiza la lista de datos de dispositivos para que contenga un nuevo dispositivo compañero como ($L_{istData}$).
+		\item El dispositivo compañero muestra su \emph{Identity Key} ($I_{companion}$) y genera un una clave temporal para vincularse ($L_{companion}$) en un código QR. Esta clave nunca será enviada al servidor.
+		\item El dispositivo principal escanea el código QR y almacena $I_{companion}$ en su memoria local.
+		\item El dispositivo principal carga su propia \emph{Identity Key} como $I_{primary}$. También genera los metadatos de la vinculación ($L_{metadata}$) y actualiza la lista de datos de dispositivos para que contenga un nuevo dispositivo compañero como ($L_{istData}$).
 		\item El dispositivo principal genera una firma de la cuenta para el compañero, $$A_{signature}=CURVE25519\_SIGN(I_{primary} || L_{metadata} || I_{companion}).$$
 		\item El dispositivo principal genera una firma para la lista de dispositivos que permitirá actualizar la propia lista de dispositivos. $$ListSignature = CURVE25519\_SIGN(I_{primary}, 0x0602 || ListData).$$
 		\item El dispositivo principal agrupa los datos de la vinculación en $L_{data}$, conteniendo este $L_{metadata}$, $I_{primary}$ y $A_{signature}$.
@@ -359,11 +358,9 @@ Etapa inicial consistente en añadir dispositivos asociados al cliente, como se 
 		\item El servidor almacena \emph{ListData} y \emph{ListSignature} y reenvía $L_{data}$ y la \emph{PHMAC} al dispositivo compañero.
 		\item El dispositivo compañero  verfica la \emph{PHMAC}, decodifica \emph{Ldata} en \emph{Lmetadata}, \emph{Iprimary} y \emph{Asignature} verificando esta última.
 		\item El dispositivo compañero almacena $L_{metadata}$ e $I_{primary}$ en el disco.
-		\item A continuación este genera una firma del dispositivo por si mismo que es de la forma\\ 
-		\begin{aligned}
-			D_{signature}=CURVE25519\_SIGN(I_{companion}, 0x0601 || \\ || L_{metadata} || I_{companion} || I_{primary}).
-		\end{aligned}
-		\item El dispositivo compañero sube al servidor de WhatsApp: $L_{metadata}$, $A_{signature}$, $D_{signature}$, $I_{companion}$, la \emph{Signed Pre Key} pública del dispositivo firmada y un lote de \emph{Pre Keys} de un solo uso.
+		\item A continuación este genera una firma del dispositivo por si mismo que es de la forma 
+		$	D_{signature}=CURVE25519\_SIGN(I_{companion}\\, 0x0601 || L_{metadata} || I_{companion} || I_{primary})$.
+		\item El dispositivo compañero sube al servidor de WhatsApp $L_{metadata}$, $A_{signature}$, $D_{signature}$, $I_{companion}$, la \emph{Signed Pre Key} pública del dispositivo firmada y un lote de \emph{Pre Keys} de un solo uso.
 		\item El servidor almacena los datos subidos asociados con la identificación del usuario combinados con el identificador especifico del dispositivo.
 	\end{enumerate}
 \end{description}
@@ -387,21 +384,24 @@ Lo pasos que se siguen para establecer una conexión son los siguientes.
 	$D_{signature}$ es obtenida con\\ $CURVE25519\_VERIFY\_SIGNATURE(I_{companion},0x0601 ||\\ L_{metadata} || I_{companion} || I_{primary})$.
 	Si en algún momento la verificación falla, el emisor termina la sesión de cifrado y no envía ningún mensaje al dispositivo que ha fallado.
 \end{enumerate}
+
 Una vez obtenidas las claves del servidor y se ha verificado la identidad, el emisor inicia la sesión de encriptación con cada dispositivo individualmente. Para ello se siguen los siguientes pasos:
 \begin{enumerate}
 	\item El emisor almacena la \emph{Identity Key} del receptor como $I_{recipient}$, la \emph{Signed Pre Key} como $S_{recipient}$ y la \emph{Pre Key} de un solo uso como $O_{recipient}$.
-	\item El emisor genera un par de pares de claves efímeras \emph{Curve25519} llamada $E_{initiator}$.
+	\item El emisor genera cuatro claves efímeras \emph{Curve25519} y las agrupa en una variable llamada $E_{initiator}$.
 	\item El emisor carga su propia \emph{Identity Key} como $I_{initiator}$.
-	\item El emisor calcula el \emph{master\_secret} como \\
+	\item El emisor calcula el \emph{master\_secret} como 
+
 	\begin{aligned}
 			master\_secret = ECDH(I_{initiator}, S_{recipient}) || ECDH(E_{initiator}, I_{recipient})||\\ || ECDH(E_{initiator}, S_{recipient}) || ECDH(E_{initiator}, O_{recipient}). &
 	\end{aligned}
+
 	Cabe a mencionar que \emph{ECDH} es el intercambio de claves \emph{Diffie-Hellman}.
 	\item El emisor usa \emph{HKDF} para crear una \emph{Root Key} y una \emph{Chain Key} de \emph{master\_secret}. Donde HKDF es una función de derivación de claves simple basada en el código de autenticación de mensajes \emph{HMAC}\cite{cekd}.
 \end{enumerate}
 
 \subsection{Intercambio de mensajes}
-Una vez que la sesión se ha establecido, los clientes intercambian los mensajes encriptados con \emph{Message Key} usando \emph{AES-256} con el modo \emph{CBC}[\ref{esquemacbc}] y para la autenticación \emph{HMAC-SHA256}. \emph{Message Key} cambia con cada mensaje que se envía y además es efímera para que esta no pueda ser reconstruida una vez que el mensaje sea transmitido y recibido. Esta clave se obtiene a partir de la \emph{Chain Key} del receptor que se regenera con cada intercambio de mensajes. 
+Una vez que la sesión se ha establecido, los clientes intercambian los mensajes encriptados con \emph{Message Key} usando \emph{AES-256} con el modo \emph{CBC}[\ref{esquemacbc}] y para la autenticación \emph{HMAC-SHA256}. \emph{Message Key} cambia con cada mensaje que se envía y además es efímera. Esto se hace así para que esta no pueda ser reconstruida. Esta clave se obtiene a partir de la \emph{Chain Key} del receptor, que se regenera con cada intercambio de mensajes. 
 
 \subsection{Cálculo de \emph{Message Key} a partir de \emph{Chain Key}}
 La \emph{Message Key} se genera:
@@ -409,25 +409,26 @@ La \emph{Message Key} se genera:
 	\item $Message Key = HMAC$-$SHA256(Chain Key, 0x01)$.
 	\item La \emph{Chain Key} es actualizada como \\ $Chain Key = HMAC$-$SHA256(Chain Key, 0x02)$.
 \end{enumerate}
+
 Este último paso hace que la \emph{Chain key} cambie haciendo imposible que con una \emp{Message Key} antigua se obtenga la \emph{Chain Key} actual.
 
 \subsection{Cálculo de \emph{Chain Key} a partir de \emph{Root Key}}
-Cada vez que un mensaje es enviada una clave pública efímera \emph{Curve25519}. Una vez que la respuesta es definida se calcula una nueva \emph{Chain Key} y una nueva \emph{Root Key} de la siguiente forma:
+Cada vez que un mensaje se envía, es enviada una clave pública efímera \emph{Curve25519}. Cuando la respuesta es definida, se calcula una nueva \emph{Chain Key} y una nueva \emph{Root Key}.
 \begin{enumerate}
 	\item $ephemeral$\_$secret = ECDH(Ephemeral_{sender}, Ephemeral_{recipient})$.
 	\item $Chain$ $Key$, $Root$ $Key$ $= HKDF(Root$ $Key, ephemeral$\textunderscore$secret)$.
 \end{enumerate}
 
 \section{iMessage}
-iMessage es una aplicación de mensajería diseñada para ser utilizada en dispositivos iOS, iPadOS, Apple Watch y ordenadores con MacOS. Esta aplicación permite enviar mensajes de texto, y archivos como pueden ser fotos, contactos, ubicaciones etc. La información para este apartado ha sido obtenido mayormente de \cite{apple2} y \cite{apple1}.\\
+iMessage es una aplicación de mensajería diseñada para ser utilizada en dispositivos iOS, iPadOS, Apple Watch y ordenadores con MacOS. Esta aplicación permite enviar mensajes de texto, y archivos como pueden ser fotos, contactos, ubicaciones etc. La información para este apartado ha sido obtenido mayormente de \cite{apple2} y \cite{apple1}.
 
 \subsubsection{Funcionamiento criptográfico}
-Para iniciar una nueva conversación a partir de una dirección o un nombre. En caso de usar un número de teléfono o una dirección de correo electrónico, la aplicación contacta con el servicio de identidad de Apple (\emph{IDS}). Este es un directorio de claves públicas de iMessage, direcciones del servicio de notificaciones push de Apple (APNs), números de teléfono y direcciones de correo electrónico usadas para obtener las claves y direcciones de los dispositivos \cite{ids}. Una vez que se pone en contacto con este se obtienen las claves públicas y las direcciones APNs de todos los dispositivos asociados al destinatario.
+Para iniciar una nueva conversación se parte de una dirección de correo, un nombre de usuario o un teléfono. En caso de usar un número de teléfono o una dirección de correo electrónico, la aplicación contacta con el servicio de identidad de Apple (\emph{IDS}). Este es un directorio de claves públicas de iMessage, direcciones del servicio de notificaciones push de Apple (APNs), números de teléfono y direcciones de correo electrónico usadas para obtener las claves y direcciones de los dispositivos \cite{ids}. Una vez que se pone en contacto con este, se obtienen las claves públicas y las direcciones APNs de todos los dispositivos asociados al destinatario.
 
-Una vez obtenidas las claves, el mensaje que se envía es encriptado de manera individual para cada uno de los dispositivos del destinatario. Tanto las claves públicas usadas como las clases de firmas se obtienen del IDS. El emisor genera un valor aleatorio de 88bits para cada dispositivo de destino del destinatario y este es utilizado como clave \emph{HMAC-SHA256} para crear una valor de 40 bits a partir de la clave pública del emisor, receptor y del texto sin formato. Los 88 bits generados aleatoriamente se combinan con los 40 bits obtenidos para formar una clave de 128 bits para encriptar el mensaje usando el estándar AES en modo contador (CTR).
+Una vez obtenidas las claves, el mensaje que se envía es encriptado de manera individual para cada uno de los dispositivos del destinatario. Tanto las claves públicas usadas como las clases de firmas se obtienen del IDS. El emisor genera un valor aleatorio de 88 bits para cada dispositivo del destinatario, el cual se utiliza como clave \emph{HMAC-SHA256} para crear una valor de 40 bits a partir de la clave pública del emisor, receptor y del texto sin formato. Los 88 bits generados aleatoriamente se combinan con los 40 bits obtenidos para formar una clave de 128 bits. Esta clave es usada para encriptar el mensaje usando AES.
 El dispositivo receptor usa el valor de 40 bits para comprobar la integridad del texto sin formato una vez que este es desencriptado.
 
-Para encriptar esta clave AES se usa REA-OAEP para la clave pública con el dispositivo receptor. Una vez encriptados el mensaje y la clave se genera un hash SHA1 el cual es firmado con el algoritmo de firma digital de curva elíptica ECDSA, para esto también se usa la clave de firma privada del emisor. En dispositivos más recientes que tengan un sistema operativo iOS13 o posterior y iPadOS 13.1 o posterior se puede utilizar ECIES en lugar de RSA.
+Para encriptar esta clave AES se usa REA-OAEP para la clave pública con el dispositivo receptor. Una vez encriptados el mensaje y la clave se genera un hash SHA-1 el cual es firmado con el algoritmo de firma digital de curva elíptica ECDSA. Para esto también se usa la clave de firma privada del emisor. En dispositivos más recientes que tengan un sistema operativo iOS 13 o posterior y iPadOS 13.1 o posterior se puede utilizar ECIES en lugar de RSA.
 
 Los mensajes obtenidos después del proceso encriptación contienen:
 \begin{itemize}
@@ -435,11 +436,12 @@ Los mensajes obtenidos después del proceso encriptación contienen:
 	\item Clave del mensaje encriptada.
 	\item Firma digital del emisor.
 \end{itemize}
+
 Para enviar los mensajes se mandan al APNs, donde los metadatos asociados a este como son la fecha o la información sobre el enrutamiento del APNs no son encriptados. Para comunicarse con el APNs se una comunicación encriptada a través de un canal TLS de secreto-hacia-delante.
 
-Como el APNs solo puede emitir mensajes de 4 o 16KB como máximo dependiendo de la versión del sistema operativo. Por lo que si el mensaje tiene un tamaño más grande como podría pasar si se envía una foto o un vídeo, lo que se hace es encriptar el archivo adjunto con AES en modo CTR utilizando una clave de 256 bits generada aleatoriamente y se carga en iCloud. Una vez subido el archivo encriptado se envía al receptor la clave AES del archivo adjunto, su identificador uniforme de recursos(URI) y un hash SHA1 de su forma encriptada.
+Como el APNs solo puede emitir mensajes de 4 o 16KB como máximo dependiendo de la versión del sistema operativo, si el mensaje tiene un tamaño más grande como podría pasar si se envía una foto o un vídeo, lo que se hace es encriptar el archivo adjunto con AES utilizando una clave de 256 bits generada aleatoriamente y se carga en iCloud. Una vez subido el archivo encriptado se envía al receptor la clave AES del archivo adjunto, su identificador uniforme de recursos(URI) y un hash SHA1.
 
-En el siguiente esquema se puede ver resumido el proceso de encriptado y desencriptado de los mensajes.
+En el siguiente esquema se puede ver resumido el proceso de encriptado y desencriptado de los mensajes, así como el envío de estos.
 \begin{figure}[htb]
 	\centering
 	\includegraphics[scale=0.15]{imagenes/apple.png} 
@@ -447,16 +449,16 @@ En el siguiente esquema se puede ver resumido el proceso de encriptado y desencr
 	\label{iMessagefoto}
 \end{figure}
 
-Al igual que en las notificaciones push, los mensajes son eliminados del APNs una vez que se envían. Si es verdad que a diferencia de otras notificaciones que se envían del APNs, los mensajes se guardan en una cola para enviarlos a dispositivos sin conexión. Esto permite almacenar los mensajes en un plazo de 30 días máximo permitiendo así que un mensaje llegue tiempo después a un dispositivo que esta sin conexión.
+Al igual que en las notificaciones push, los mensajes son eliminados del APNs una vez que se envían. Si es verdad que a diferencia de otras notificaciones que se envían del APNs, los mensajes se guardan en una cola para enviarlos a dispositivos sin conexión. Esto permite almacenar los mensajes en un plazo de 30 días máximo permitiendo así que un mensaje llegue tiempo a un dispositivo que al momento del envío, estaba sin conexión.
 
 \section{Line Messenger (Letter Sealing)}
 Line es una aplicación de mensajería diseñada para ser utilizadas en dispositivos móviles y ordenadores independientemente del sistema operativo. Fue diseñada en 2011 por la empresa surcoreana NHN en Japón.
-Apareció con la finalidad de paliar la caída de los servicios de telefonía en Japón debido al terremoto. Utiliza un protocolo criptográfico criptográfico propio llamado \emph{Letter Sealing}.
+Apareció con la finalidad de paliar la caída de los servicios de telefonía en Japón debido al terremoto de 2011. Utiliza un protocolo criptográfico propio llamado \emph{Letter Sealing}.
 
 Este protocolo apareció en 2016 y en la actualidad cuenta con dos versiones.
 \begin{itemize}
-	\item \textbf{Letter Sealing v1}. Fue desarrollado en 2016 y garantiza una protección extremo a extremo en mensajes individuales y en grupo.
-	\item \textbf{Letter Sealing v2}. Fue desarrollado en 2019. Gracias a un \emph{Bug Bounty  Program}, iniciativa por la cual se recompensa a las personas que descubren y notifican errores de software,  desarrollado por Takanori Isobe y Kazuhiko Minematsu se encontraron una serie de vulnerabilidades que aunque en ese momento no eran explotables, en un futuro si podrían llegar a serlo. Por ello se decidió desarrollar una nueva versión de este que garantizara una mayor seguridad.
+	\item \textbf{Letter Sealing v1}: Fue desarrollado en 2016 y garantiza una protección extremo a extremo en mensajes individuales y en grupo.
+	\item \textbf{Letter Sealing v2}: Fue desarrollado en 2019. Gracias a un \emph{Bug Bounty  Program}, iniciativa por la cual se recompensa a las personas que descubren y notifican errores de software,  desarrollado por Takanori Isobe y Kazuhiko Minematsu al encontrar una serie de vulnerabilidades que aunque en ese momento no eran explotables, en un futuro si podrían llegar a serlo. Por ello se decidió desarrollar una nueva versión de este que garantizara una mayor seguridad.
 \end{itemize}
 La información para esta sección ha sido obtenida de \cite{line}.
 \begin{table}[htb]
@@ -480,9 +482,9 @@ Al igual que en las aplicaciones de mensajería vistas, en \emph{Letter Sealing}
 Una vez generadas la clave pública se registra en un servidor de LINE, el servidor la asocia la clave al usuario de LINE y le devuelve un \emph{ID} de clave único. Este \emph{ID} representa la última versión de clave pública del usuario. 
 
 \subsection{Intercambio de claves}
-Para poder intercambiar mensajes utilizando \emph{AES-256} los usuarios tienen que intercambiar previamente una clave secreta para poder cifrar los mensajes. Para ello se utiliza el intercambio de claves \emph{Diffie-Hellman} sobre la familia de curvas \emph{curve25519} como hemos visto en el capítulo 4.
+Para poder intercambiar mensajes utilizando \emph{AES-256} los usuarios tienen que intercambiar previamente una clave secreta para poder cifrar los mensajes. Para ello se utiliza el intercambio de claves \emph{Diffie-Hellman} sobre la familia de curvas \emph{curve25519} como hemos visto en \autoref{chap:cuatro}.
 
-Todo el proceso es transparente para los usuarios y no se necesita de otro elemento para verificar las claves públicas. Esto se debe a que LINE permite a los usuarios ver las huellas de sus recipientes de clave pública.
+Todo el proceso es transparente para los usuarios y no se necesita de otro elemento para verificar las claves públicas. Esto se debe a que LINE permite a los usuarios ver las huellas que va dejando el uso de su clave pública.
 
 \subsection{Cifrado de mensajes}
 El funcionamiento de cifrado de mensajes en \emph{Letter Sealing v2} es el siguiente.
@@ -505,11 +507,12 @@ El funcionamiento de cifrado de mensajes en \emph{Letter Sealing v2} es el sigui
 		$$
 			 recipientID\:||\: senderID\:||\:senderkeyID\:||\:recipientkeyID\:||\:version\:||\:contenttype.
 		$$
+
 		También se utiliza una función llamada \emph{GCM} que es un esquema \emph{AEAD}, \emph{Authenticated Encryption with Associated Data} que garantiza la integridad y confidencialidad del mensaje. La salida del cifrado sería la siguiente.
 		$$
 			(C,tag) = AES - GCM(Key_{encrypt}, nonce, M, AAD).
 		$$
-	\item Una vez seguidos estos pasos el emisor envía al receptor un mensaje que consta de los siguientes elementos.\\
+	\item Una vez seguidos estos pasos el emisor envía al receptor un mensaje que consta de los siguientes elementos.
 	\begin{itemize}
 		\item \emph{version},
 		\item \emph{content type},
@@ -520,7 +523,7 @@ El funcionamiento de cifrado de mensajes en \emph{Letter Sealing v2} es el sigui
 		\item \emph{recipient key ID}.
 	\end{itemize}
 \end{enumerate}
-Donde 
+Donde:
 \begin{description}
 	\item \textbf{Version, Content type} sirven para identificar la version de \emph{Letter Sealing} que se ha utilizado.
 	\item \textbf{Sender Key ID} es utilizada por el receptor del mensaje para recuperar la clave pública usada en el cifrado del mensaje.
